@@ -886,3 +886,77 @@ body {
   .hero-stats { gap: 0.8rem; }
   .hstat span { font-size: 1.5rem; }
 }
+/* ─────────────────────────────────────────────
+   DEV NAVIGATOR
+───────────────────────────────────────────── */
+.dev-nav {
+  position: fixed;
+  bottom: 2rem;
+  left: 2rem;
+  z-index: 9999;
+}
+
+.dev-nav-toggle {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: #6B3F69;
+  border: none;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(107,63,105,0.4);
+  transition: all 0.25s ease;
+}
+
+.dev-nav-toggle:hover {
+  background: #8D5F8C;
+  transform: scale(1.08);
+}
+
+.dev-nav-menu {
+  position: absolute;
+  bottom: 60px;
+  left: 0;
+  background: white;
+  border-radius: 16px;
+  padding: 0.8rem;
+  box-shadow: 0 8px 32px rgba(107,63,105,0.2);
+  border: 1px solid #f0e8f0;
+  min-width: 200px;
+  animation: fadeUp 0.2s ease both;
+}
+
+.dev-nav-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #a376a2;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.6rem 0.6rem;
+  border-bottom: 1px solid #f0e8f0;
+  margin-bottom: 0.4rem;
+}
+
+.dev-nav-item {
+  display: block;
+  width: 100%;
+  padding: 9px 12px;
+  border: none;
+  background: transparent;
+  color: #2d1f2d;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 10px;
+  text-align: left;
+  transition: all 0.2s ease;
+  font-family: 'Poppins', sans-serif;
+}
+
+.dev-nav-item:hover {
+  background: #f5eaf5;
+  color: #6B3F69;
+}
