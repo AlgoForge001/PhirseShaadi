@@ -960,3 +960,199 @@ body {
   background: #f5eaf5;
   color: #6B3F69;
 }
+/* ─────────────────────────────────────────────
+   FLOWER & MANDALA DECORATIONS
+───────────────────────────────────────────── */
+
+/* Base styles */
+.flower-decor,
+.mandala-decor,
+.petal-ring {
+  position: absolute;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Spinning animations */
+.mandala-decor { animation: spinSlow 30s linear infinite; }
+.petal-ring { animation: spinSlow 40s linear infinite reverse; }
+.flower-decor { animation: floatFlower 6s ease-in-out infinite; }
+
+@keyframes spinSlow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes floatFlower {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-10px) rotate(15deg); }
+}
+
+/* ── HERO FLOWERS ── */
+.hero-mandala-1 {
+  top: -80px;
+  right: -80px;
+  animation-duration: 25s;
+}
+
+.hero-mandala-2 {
+  bottom: -60px;
+  left: 30%;
+  animation-duration: 35s;
+  animation-direction: reverse;
+}
+
+.hero-flower-1 {
+  top: 15%;
+  right: 5%;
+  animation-delay: 0s;
+}
+
+.hero-flower-2 {
+  bottom: 20%;
+  left: 2%;
+  animation-delay: 1s;
+}
+
+.hero-flower-3 {
+  top: 60%;
+  right: 35%;
+  animation-delay: 2s;
+}
+
+.hero-petal-1 {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.hero-right-petal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation-duration: 50s;
+}
+
+/* ── FEATURES FLOWERS ── */
+.features-flower-1 {
+  top: 20px;
+  right: 40px;
+  animation-delay: 0.5s;
+}
+
+.features-flower-2 {
+  bottom: 30px;
+  left: 20px;
+  animation-delay: 1.5s;
+}
+
+.features-mandala {
+  top: 50%;
+  right: -60px;
+  transform: translateY(-50%);
+}
+
+/* ── HOW IT WORKS FLOWERS ── */
+.hiw-flower-1 {
+  top: 30px;
+  left: 30px;
+  animation-delay: 0s;
+}
+
+.hiw-flower-2 {
+  bottom: 40px;
+  right: 60px;
+  animation-delay: 2s;
+}
+
+.hiw-petal {
+  top: 50%;
+  left: -60px;
+  transform: translateY(-50%);
+}
+
+/* ── PLANS FLOWERS ── */
+.plans-flower-1 {
+  top: 30px;
+  left: 50px;
+  animation-delay: 1s;
+}
+
+.plans-flower-2 {
+  bottom: 40px;
+  right: 30px;
+  animation-delay: 0.5s;
+}
+
+.plans-mandala {
+  bottom: -80px;
+  left: -60px;
+}
+
+.plan-header-flower {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  animation: spinSlow 15s linear infinite;
+}
+
+/* ── CTA FLOWERS ── */
+.cta-mandala-1 {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation-duration: 20s;
+}
+
+.cta-mandala-2 {
+  top: -50px;
+  right: 10%;
+  animation-duration: 28s;
+}
+
+.cta-flower-1 {
+  top: 20px;
+  left: 8%;
+  animation-delay: 0s;
+}
+
+.cta-flower-2 {
+  bottom: 20px;
+  right: 8%;
+  animation-delay: 1.5s;
+}
+
+.cta-petal {
+  bottom: -60px;
+  left: 5%;
+}
+
+/* ── FOOTER FLOWERS ── */
+.footer-flower-1 {
+  top: 20px;
+  right: 5%;
+  animation-delay: 0s;
+}
+
+.footer-flower-2 {
+  bottom: 30px;
+  left: 3%;
+  animation-delay: 1s;
+}
+
+/* Make sure sections have position relative */
+.hero,
+.features,
+.howitworks,
+.plans,
+.cta-banner,
+.footer {
+  position: relative;
+  overflow: hidden;
+}
+
+.plan-header {
+  position: relative;
+  overflow: hidden;
+}

@@ -1,0 +1,168 @@
+/* ─────────────────────────────────────────────
+   SIDEBAR TOGGLE BUTTON
+───────────────────────────────────────────── */
+.sidebar-toggle-btn {
+  position: fixed;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  z-index: 10000;
+  width: 28px;
+  height: 56px;
+  background: #6B3F69;
+  border: none;
+  border-radius: 0 10px 10px 0;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 2px 0 12px rgba(107,63,105,0.3);
+  transition: all 0.25s ease;
+}
+
+.sidebar-toggle-btn:hover {
+  background: #8D5F8C;
+  width: 32px;
+}
+
+/* ─────────────────────────────────────────────
+   OVERLAY
+───────────────────────────────────────────── */
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 9998;
+  backdrop-filter: blur(2px);
+}
+
+/* ─────────────────────────────────────────────
+   SIDEBAR
+───────────────────────────────────────────── */
+.app-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 240px;
+  background: white;
+  border-right: 1px solid #f0e8f0;
+  display: flex;
+  flex-direction: column;
+  padding: 1.2rem 0.8rem;
+  z-index: 9999;
+  box-shadow: 4px 0 24px rgba(107,63,105,0.15);
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+}
+
+.app-sidebar.open {
+  transform: translateX(0);
+}
+
+/* LOGO */
+.app-sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #6B3F69;
+  cursor: pointer;
+  padding: 0.5rem 0.6rem 1rem;
+  border-bottom: 1px solid #f0e8f0;
+  margin-bottom: 0.8rem;
+}
+
+/* LABEL */
+.app-sidebar-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #c4afc4;
+  letter-spacing: 0.12em;
+  padding: 0 0.8rem 0.5rem;
+}
+
+/* NAV */
+.app-sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.app-sidebar-nav::-webkit-scrollbar { width: 3px; }
+.app-sidebar-nav::-webkit-scrollbar-thumb {
+  background: #e8dde8;
+  border-radius: 3px;
+}
+
+/* NAV ITEM */
+.app-sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 10px 12px;
+  border: none;
+  background: transparent;
+  color: #6b5b6b;
+  font-size: 0.88rem;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+  font-family: 'Poppins', sans-serif;
+  text-align: left;
+  width: 100%;
+}
+
+.app-sidebar-item:hover {
+  background: #f5eaf5;
+  color: #6B3F69;
+}
+
+.app-sidebar-item.active {
+  background: #6B3F69;
+  color: white;
+}
+
+.app-sidebar-icon { flex-shrink: 0; }
+
+/* CLOSE BTN */
+.app-sidebar-close {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 1px solid #f0e8f0;
+  background: transparent;
+  color: #a376a2;
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+  font-family: 'Poppins', sans-serif;
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.app-sidebar-close:hover {
+  background: #f5eaf5;
+  color: #6B3F69;
+  border-color: #e8dde8;
+}
+
+/* ─────────────────────────────────────────────
+   RESPONSIVE
+───────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .sidebar-toggle-btn {
+    top: auto;
+    bottom: 2rem;
+    transform: none;
+  }
+}

@@ -4,9 +4,93 @@ import {
   Heart, Shield, Lock, Star, MessageCircle, Sparkles,
   CheckCircle, Users, Award, ChevronRight,
   Menu, X, Instagram, Facebook, Twitter,
-  Gem, UserCheck, Search, Plus
+  Gem, UserCheck, Search
 } from "lucide-react";
 import "./LandingPage.css";
+
+// ─────────────────────────────────────────────
+// FLOWER DECORATIONS (SVG)
+// ─────────────────────────────────────────────
+const FlowerDecor = ({ size = 60, color = "#DDC3C3", opacity = 0.4, className = "" }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 100 100"
+    className={`flower-decor ${className}`}
+    style={{ opacity }}
+  >
+    {[0, 45, 90, 135, 180, 225, 270, 315].map((angle, i) => (
+      <ellipse
+        key={i}
+        cx="50"
+        cy="50"
+        rx="8"
+        ry="20"
+        fill={color}
+        transform={`rotate(${angle} 50 50) translate(0 -15)`}
+      />
+    ))}
+    <circle cx="50" cy="50" r="10" fill={color} />
+  </svg>
+);
+
+const MandalaDecor = ({ size = 80, color = "#A376A2", opacity = 0.15, className = "" }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 100 100"
+    className={`mandala-decor ${className}`}
+    style={{ opacity }}
+  >
+    {[0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330].map((angle, i) => (
+      <g key={i} transform={`rotate(${angle} 50 50)`}>
+        <ellipse cx="50" cy="20" rx="4" ry="12" fill={color} />
+        <circle cx="50" cy="10" r="3" fill={color} />
+      </g>
+    ))}
+    {[0, 45, 90, 135, 180, 225, 270, 315].map((angle, i) => (
+      <g key={i + 12} transform={`rotate(${angle} 50 50)`}>
+        <ellipse cx="50" cy="32" rx="3" ry="8" fill={color} />
+      </g>
+    ))}
+    <circle cx="50" cy="50" r="8" fill="none" stroke={color} strokeWidth="1.5" />
+    <circle cx="50" cy="50" r="4" fill={color} />
+  </svg>
+);
+
+const PetalRing = ({ size = 120, color = "#8D5F8C", opacity = 0.1, className = "" }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 100 100"
+    className={`petal-ring ${className}`}
+    style={{ opacity }}
+  >
+    {[0, 36, 72, 108, 144, 180, 216, 252, 288, 324].map((angle, i) => (
+      <ellipse
+        key={i}
+        cx="50"
+        cy="50"
+        rx="6"
+        ry="18"
+        fill={color}
+        transform={`rotate(${angle} 50 50) translate(0 -18)`}
+      />
+    ))}
+    <circle cx="50" cy="50" r="7" fill={color} />
+    {[0, 36, 72, 108, 144, 180, 216, 252, 288, 324].map((angle, i) => (
+      <ellipse
+        key={i + 10}
+        cx="50"
+        cy="50"
+        rx="3"
+        ry="9"
+        fill={color}
+        transform={`rotate(${angle + 18} 50 50) translate(0 -30)`}
+      />
+    ))}
+  </svg>
+);
 
 // ─────────────────────────────────────────────
 // NAVBAR
@@ -26,7 +110,7 @@ const Navbar = () => {
     <nav className={`navbar ${scrolled ? "scrolled" : ""}`}>
       <div className="nav-logo">
         <Heart size={22} fill="#6B3F69" color="#6B3F69" />
-        <span>BandhanSetu</span>
+        <span>PhirseShaadi</span>
       </div>
 
       <ul className={`nav-links ${menuOpen ? "open" : ""}`}>
@@ -54,6 +138,14 @@ const Hero = () => {
   const navigate = useNavigate();
   return (
     <section className="hero">
+      {/* FLOWER DECORATIONS */}
+      <MandalaDecor size={300} color="#6B3F69" opacity={0.07} className="hero-mandala-1" />
+      <MandalaDecor size={200} color="#A376A2" opacity={0.08} className="hero-mandala-2" />
+      <FlowerDecor size={80} color="#DDC3C3" opacity={0.5} className="hero-flower-1" />
+      <FlowerDecor size={50} color="#A376A2" opacity={0.4} className="hero-flower-2" />
+      <FlowerDecor size={40} color="#8D5F8C" opacity={0.3} className="hero-flower-3" />
+      <PetalRing size={160} color="#6B3F69" opacity={0.06} className="hero-petal-1" />
+
       <div className="hero-left">
         <div className="hero-tag">
           <Award size={14} />
@@ -80,6 +172,7 @@ const Hero = () => {
 
       <div className="hero-right">
         <div className="hero-ring-bg" />
+        <PetalRing size={320} color="#6B3F69" opacity={0.08} className="hero-right-petal" />
         <div className="profile-float pf1">
           <div className="pf-avatar"><Users size={28} color="#6B3F69" /></div>
           <div className="pf-info">
@@ -129,6 +222,11 @@ const features = [
 
 const Features = () => (
   <section className="features" id="features">
+    {/* FLOWER DECORATIONS */}
+    <FlowerDecor size={70} color="#DDC3C3" opacity={0.5} className="features-flower-1" />
+    <FlowerDecor size={50} color="#A376A2" opacity={0.3} className="features-flower-2" />
+    <MandalaDecor size={180} color="#6B3F69" opacity={0.05} className="features-mandala" />
+
     <div className="sec-label">WHY CHOOSE US</div>
     <h2 className="sec-title">Everything You Need,<br /><span className="grad-text">All in One Place</span></h2>
     <div className="features-grid">
@@ -155,6 +253,11 @@ const steps = [
 
 const HowItWorks = () => (
   <section className="howitworks" id="howitworks">
+    {/* FLOWER DECORATIONS */}
+    <FlowerDecor size={90} color="#DDC3C3" opacity={0.45} className="hiw-flower-1" />
+    <FlowerDecor size={55} color="#8D5F8C" opacity={0.3} className="hiw-flower-2" />
+    <PetalRing size={200} color="#A376A2" opacity={0.07} className="hiw-petal" />
+
     <div className="sec-label">SIMPLE PROCESS</div>
     <h2 className="sec-title">Your Journey to <span className="grad-text">Forever</span></h2>
     <div className="steps-grid">
@@ -206,6 +309,11 @@ const Plans = () => {
   const navigate = useNavigate();
   return (
     <section className="plans" id="plans">
+      {/* FLOWER DECORATIONS */}
+      <FlowerDecor size={75} color="#DDC3C3" opacity={0.45} className="plans-flower-1" />
+      <FlowerDecor size={45} color="#6B3F69" opacity={0.25} className="plans-flower-2" />
+      <MandalaDecor size={220} color="#8D5F8C" opacity={0.05} className="plans-mandala" />
+
       <div className="sec-label">MEMBERSHIP</div>
       <h2 className="sec-title">Choose Your <span className="grad-text">Perfect Plan</span></h2>
       <div className="plans-grid">
@@ -213,6 +321,7 @@ const Plans = () => {
           <div className={`plan-card ${p.popular ? "popular" : ""}`} key={i}>
             {p.popular && <div className="popular-tag"><Star size={13} fill="white" color="white" /> Most Popular</div>}
             <div className="plan-header" style={{ background: p.color }}>
+              <FlowerDecor size={40} color="rgba(255,255,255,0.15)" opacity={1} className="plan-header-flower" />
               <h3>{p.name}</h3>
               <div className="plan-price">{p.price}</div>
             </div>
@@ -238,6 +347,13 @@ const CTABanner = () => {
   const navigate = useNavigate();
   return (
     <section className="cta-banner">
+      {/* FLOWER DECORATIONS */}
+      <MandalaDecor size={300} color="white" opacity={0.06} className="cta-mandala-1" />
+      <MandalaDecor size={180} color="white" opacity={0.07} className="cta-mandala-2" />
+      <FlowerDecor size={80} color="white" opacity={0.1} className="cta-flower-1" />
+      <FlowerDecor size={55} color="white" opacity={0.08} className="cta-flower-2" />
+      <PetalRing size={200} color="white" opacity={0.05} className="cta-petal" />
+
       <div className="cta-content">
         <Heart size={40} fill="white" color="white" className="cta-heart" />
         <h2>Ready to Begin Your Journey?</h2>
@@ -255,11 +371,15 @@ const CTABanner = () => {
 // ─────────────────────────────────────────────
 const Footer = () => (
   <footer className="footer">
+    {/* FLOWER DECORATIONS */}
+    <FlowerDecor size={60} color="#DDC3C3" opacity={0.15} className="footer-flower-1" />
+    <FlowerDecor size={40} color="#A376A2" opacity={0.12} className="footer-flower-2" />
+
     <div className="footer-top">
       <div className="footer-brand">
         <div className="footer-logo">
           <Heart size={20} fill="#DDC3C3" color="#DDC3C3" />
-          <span>BandhanSetu</span>
+          <span>PhirseShaadi</span>
         </div>
         <p>A trusted matrimonial platform — from match to marriage.</p>
         <div className="footer-social">
@@ -293,55 +413,10 @@ const Footer = () => (
       </div>
     </div>
     <div className="footer-bottom">
-      <p>© 2025 BandhanSetu. All rights reserved.</p>
+      <p>© 2025 PhirseShaadi. All rights reserved.</p>
     </div>
   </footer>
 );
-
-// ─────────────────────────────────────────────
-// DEV NAVIGATOR
-// ─────────────────────────────────────────────
-const DevNavigator = () => {
-  const navigate = useNavigate();
-  const [open, setOpen] = useState(false);
-
-  const pages = [
-    { label: "Landing Page", path: "/" },
-    { label: "Register", path: "/register" },
-    { label: "Login", path: "/login" },
-    { label: "OTP Verify", path: "/otp-verify" },
-    { label: "Profile Creation", path: "/profile-creation" },
-    { label: "Search & Browse", path: "/search" },
-    { label: "Profile View", path: "/profile/1" },
-    { label: "Chat", path: "/chat" },
-    { label: "My Profile", path: "/my-profile" },
-    { label: "Notifications", path: "/notifications" },
-    { label: "Premium", path: "/premium" },
-  ];
-
-  return (
-    <div className="dev-nav">
-      <button className="dev-nav-toggle" onClick={() => setOpen(!open)}>
-        {open ? <X size={22} /> : <Plus size={22} />}
-      </button>
-
-      {open && (
-        <div className="dev-nav-menu">
-          <div className="dev-nav-title">All Pages</div>
-          {pages.map((p, i) => (
-            <button
-              key={i}
-              className="dev-nav-item"
-              onClick={() => { navigate(p.path); setOpen(false); }}
-            >
-              {p.label}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-};
 
 // ─────────────────────────────────────────────
 // MAIN EXPORT
@@ -355,7 +430,6 @@ const LandingPage = () => (
     <Plans />
     <CTABanner />
     <Footer />
-    <DevNavigator />
   </div>
 );
 
