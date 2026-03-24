@@ -11,8 +11,8 @@ router.post('/register', authController.register);
 // Task 3: Login
 router.post('/login', authController.login);
 
-// Task 4: Send OTP
-router.post('/send-otp', authController.sendOTP);
+// Task 4: Send/Resend OTP
+router.post('/resend-otp', authController.sendOTP);
 
 // Task 5: Verify OTP
 router.post('/verify-otp', authController.verifyOTP);

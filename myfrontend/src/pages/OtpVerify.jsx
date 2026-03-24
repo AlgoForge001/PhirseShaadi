@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Heart, ChevronRight, Shield } from "lucide-react";
-import axios from "axios";
+import api from "../utils/api";
 import "./OtpVerify.css";
 
 const OtpVerify = () => {
@@ -78,7 +78,7 @@ const OtpVerify = () => {
     setApiError("");
 
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/verify-otp", {
+      const res = await api.post("/auth/verify-otp", {
         phone: phone,
         otp: otpValue,
       });
@@ -129,7 +129,7 @@ const OtpVerify = () => {
     setApiError("");
 
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/resend-otp", {
+      const res = await api.post("/auth/resend-otp", {
         phone: phone,
       });
 
@@ -162,7 +162,7 @@ const OtpVerify = () => {
         <div className="otp-left-content">
           <div className="otp-logo" onClick={() => navigate("/")}>
             <Heart size={22} fill="#fff" color="#fff" />
-            <span>BandhanSetu</span>
+            <span>PhirseShaadi</span>
           </div>
           <div className="otp-shield">
             <Shield size={64} color="rgba(255,255,255,0.9)" />

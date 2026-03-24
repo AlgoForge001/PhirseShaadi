@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { User, Mail, Phone, Lock, Eye, EyeOff, Heart, ChevronRight, CheckCircle, Users, Calendar } from "lucide-react";
-import axios from "axios";
+import api from "../utils/api";
 import { useAuth } from "../context/AuthContext";
 import "./Register.css";
 
@@ -100,7 +100,7 @@ const Register = () => {
     try {
       // TODO [BACKEND]: POST http://localhost:5000/api/auth/register
       // Expected response: { success: true, token: "...", user: {...} }
-      const res = await axios.post("http://localhost:5000/api/auth/register", {
+      const res = await api.post("/auth/register", {
         fullName: formData.fullName,
         email: formData.email,
         phone: formData.phone,

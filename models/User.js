@@ -17,7 +17,15 @@ const userSchema = new mongoose.Schema({
   gender: {
     type: String
   },
-  dateOfBirth: {
+  phone: {
+    type: String,
+    required: [true, "Phone number is required"],
+    unique: true
+  },
+  profileFor: {
+    type: String
+  },
+  dob: {
     type: Date
   },
   religion: {
@@ -27,6 +35,24 @@ const userSchema = new mongoose.Schema({
     type: String
   },
   motherTongue: {
+    type: String
+  },
+  maritalStatus: {
+    type: String
+  },
+  height: {
+    type: String
+  },
+  city: {
+    type: String
+  },
+  state: {
+    type: String
+  },
+  education: {
+    type: String
+  },
+  profession: {
     type: String
   },
   isVerified: {
