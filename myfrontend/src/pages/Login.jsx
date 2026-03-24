@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import {
   Heart, Mail, Lock, Eye, EyeOff, ChevronRight, Phone
 } from "lucide-react";
+import axios from "axios";
 import "./Login.css";
 
 const Login = () => {
@@ -11,6 +12,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const [apiError, setApiError] = useState("");
 
   const [formData, setFormData] = useState({
     email: "",
@@ -22,6 +24,7 @@ const Login = () => {
     const { name, value } = e.target;
     setFormData((p) => ({ ...p, [name]: value }));
     setErrors((p) => ({ ...p, [name]: "" }));
+    setApiError("");
   };
 
   const validate = () => {
@@ -46,36 +49,51 @@ const Login = () => {
     }
 
     setLoading(true);
+    setApiError("");
 
-    // TODO [BACKEND]: POST /api/auth/login
-    // Body: { email/phone, password }
-    // Response: { success: true, token: "...", user: {...} }
-    // On success: save token to localStorage and navigate to /search
-    // Example:
-    // const res = await fetch("/api/auth/login", {
-    //   method: "POST",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify({
-    //     identifier: loginType === "email" ? formData.email : formData.phone,
-    //     password: formData.password,
-    //   }),
-    // });
-    // const data = await res.json();
-    // if (data.success) {
-    //   localStorage.setItem("token", data.token);
-    //   navigate("/search");
-    // }
+    try {
+      const res = await axios.post("http://localhost:5000/api/auth/login", {
+        identifier: loginType === "email" ? formData.email : formData.phone,
+        password: formData.password,
+      });
 
-    setTimeout(() => {
+      if (res.data.success) {
+        // Save token to localStorage
+        localStorage.setItem("token", res.data.token);
+        
+        // Save user data if needed
+        if (res.data.user) {
+          localStorage.setItem("user", JSON.stringify(res.data.user));
+        }
+        
+        // Navigate to dashboard
+        navigate("/dashboard");
+      } else {
+        setApiError(res.data.message || "Login failed. Please try again.");
+      }
+    } catch (error) {
+      // Handle different error types
+      if (error.response?.data?.message) {
+        setApiError(error.response.data.message);
+      } else if (error.response?.status === 401) {
+        setApiError("Invalid email/phone or password. Please try again.");
+      } else if (error.response?.status === 404) {
+        setApiError("User not found. Please check your email/phone.");
+      } else if (error.message === "Network Error") {
+        setApiError("Network error. Please check your connection.");
+      } else {
+        setApiError("Something went wrong. Please try again later.");
+      }
+      console.error("Login error:", error);
+    } finally {
       setLoading(false);
-      navigate("/search");
-    }, 1500);
+    }
   };
 
   const handleGoogleLogin = () => {
     // TODO [BACKEND]: GET /api/auth/google
     // Redirect to Google OAuth
-    window.location.href = "/api/auth/google";
+    window.location.href = "http://localhost:5000/api/auth/google";
   };
 
   const handleForgotPassword = () => {
@@ -123,17 +141,24 @@ const Login = () => {
           <div className="login-toggle">
             <button
               className={loginType === "email" ? "active" : ""}
-              onClick={() => { setLoginType("email"); setErrors({}); }}
+              onClick={() => { setLoginType("email"); setErrors({}); setApiError(""); }}
             >
               <Mail size={15} /> Email
             </button>
             <button
               className={loginType === "phone" ? "active" : ""}
-              onClick={() => { setLoginType("phone"); setErrors({}); }}
+              onClick={() => { setLoginType("phone"); setErrors({}); setApiError(""); }}
             >
               <Phone size={15} /> Phone
             </button>
           </div>
+
+          {/* API ERROR MESSAGE */}
+          {apiError && (
+            <div className="api-error-msg">
+              {apiError}
+            </div>
+          )}
 
           {/* EMAIL INPUT */}
           {loginType === "email" && (

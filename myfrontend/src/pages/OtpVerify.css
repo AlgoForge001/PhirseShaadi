@@ -359,3 +359,13 @@
   .otp-inputs { gap: 0.5rem; }
   .otp-form-wrap { max-width: 100%; }
 }
+/* API ERROR MESSAGE */
+.api-error-msg {
+  background-color: #fee;
+  color: #c33;
+  padding: 12px 16px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  border-left: 4px solid #c33;
+  font-size: 14px;
+}

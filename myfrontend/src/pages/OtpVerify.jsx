@@ -1,21 +1,23 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Heart, ChevronRight, Shield } from "lucide-react";
+import axios from "axios";
 import "./OtpVerify.css";
 
 const OtpVerify = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [timer, setTimer] = useState(30);
   const [canResend, setCanResend] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [verified, setVerified] = useState(false);
+  const [apiError, setApiError] = useState("");
   const inputRefs = useRef([]);
 
-  // TODO [BACKEND]: Get phone number from location state or redux/context
-  // const phone = location.state?.phone || "";
-  const phone = "XXXXXXXXXX"; // replace with actual phone from state
+  // Get phone number from location state (passed from Register page)
+  const phone = location.state?.phone || "XXXXXXXXXX";
 
   // ── COUNTDOWN TIMER ──
   useEffect(() => {
@@ -34,6 +36,7 @@ const OtpVerify = () => {
     newOtp[index] = value.slice(-1); // only last digit
     setOtp(newOtp);
     setError("");
+    setApiError("");
 
     // auto focus next
     if (value && index < 5) {
@@ -72,51 +75,83 @@ const OtpVerify = () => {
 
     setLoading(true);
     setError("");
+    setApiError("");
 
-    // TODO [BACKEND]: POST /api/auth/verify-otp
-    // Body: { phone, otp: otpValue }
-    // Response: { success: true, token: "...", user: {...} }
-    // On success: save token, navigate to /profile-creation
-    // Example:
-    // const res = await fetch("/api/auth/verify-otp", {
-    //   method: "POST",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify({ phone, otp: otpValue }),
-    // });
-    // const data = await res.json();
-    // if (data.success) {
-    //   localStorage.setItem("token", data.token);
-    //   navigate("/profile-creation");
-    // } else {
-    //   setError("Invalid OTP. Please try again.");
-    // }
+    try {
+      const res = await axios.post("http://localhost:5000/api/auth/verify-otp", {
+        phone: phone,
+        otp: otpValue,
+      });
 
-    setTimeout(() => {
+      if (res.data.success) {
+        // Save token to localStorage
+        localStorage.setItem("token", res.data.token);
+
+        // Save user data if needed
+        if (res.data.user) {
+          localStorage.setItem("user", JSON.stringify(res.data.user));
+        }
+
+        // Show success state
+        setVerified(true);
+
+        // Navigate to profile-creation after 1.5 seconds
+        setTimeout(() => {
+          navigate("/profile-creation");
+        }, 1500);
+      } else {
+        setApiError(res.data.message || "Failed to verify OTP");
+      }
+    } catch (error) {
+      // Handle different error types
+      if (error.response?.data?.message) {
+        setApiError(error.response.data.message);
+      } else if (error.response?.status === 400) {
+        setApiError("Wrong OTP. Please try again.");
+      } else if (error.response?.status === 404) {
+        setApiError("Phone number not found.");
+      } else if (error.message === "Network Error") {
+        setApiError("Network error. Please check your connection.");
+      } else {
+        setApiError("Something went wrong. Please try again.");
+      }
+      console.error("OTP verification error:", error);
+    } finally {
       setLoading(false);
-      setVerified(true);
-      setTimeout(() => navigate("/profile-creation"), 1500);
-    }, 1500);
+    }
   };
 
   // ── RESEND OTP ──
   const handleResend = async () => {
     if (!canResend) return;
 
-    // TODO [BACKEND]: POST /api/auth/resend-otp
-    // Body: { phone }
-    // Response: { success: true }
-    // Example:
-    // await fetch("/api/auth/resend-otp", {
-    //   method: "POST",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify({ phone }),
-    // });
+    setLoading(true);
+    setApiError("");
 
-    setOtp(["", "", "", "", "", ""]);
-    setTimer(30);
-    setCanResend(false);
-    setError("");
-    inputRefs.current[0]?.focus();
+    try {
+      const res = await axios.post("http://localhost:5000/api/auth/resend-otp", {
+        phone: phone,
+      });
+
+      if (res.data.success) {
+        setOtp(["", "", "", "", "", ""]);
+        setTimer(30);
+        setCanResend(false);
+        setError("");
+        inputRefs.current[0]?.focus();
+      } else {
+        setApiError(res.data.message || "Failed to resend OTP");
+      }
+    } catch (error) {
+      if (error.response?.data?.message) {
+        setApiError(error.response.data.message);
+      } else {
+        setApiError("Failed to resend OTP. Please try again.");
+      }
+      console.error("Resend OTP error:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -174,6 +209,13 @@ const OtpVerify = () => {
                 </span>
               </p>
 
+              {/* API ERROR MESSAGE */}
+              {apiError && (
+                <div className="api-error-msg">
+                  {apiError}
+                </div>
+              )}
+
               {/* OTP INPUTS */}
               <div className="otp-inputs">
                 {otp.map((digit, index) => (
@@ -198,8 +240,8 @@ const OtpVerify = () => {
               {/* TIMER & RESEND */}
               <div className="otp-resend">
                 {canResend ? (
-                  <button className="resend-btn" onClick={handleResend}>
-                    Resend OTP
+                  <button className="resend-btn" onClick={handleResend} disabled={loading}>
+                    {loading ? "Resending..." : "Resend OTP"}
                   </button>
                 ) : (
                   <p className="otp-timer">
