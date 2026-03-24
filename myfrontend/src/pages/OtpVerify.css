@@ -1,0 +1,361 @@
+/* ─────────────────────────────────────────────
+   OTP VERIFY PAGE
+───────────────────────────────────────────── */
+.otp-page {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* ── LEFT PANEL ── */
+.otp-left {
+  width: 42%;
+  background: linear-gradient(160deg, #6B3F69, #8D5F8C, #A376A2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+.otp-left-content {
+  max-width: 360px;
+  color: white;
+  text-align: center;
+}
+
+.otp-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 2.5rem;
+  cursor: pointer;
+}
+
+.otp-shield {
+  margin-bottom: 1.5rem;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.08); opacity: 0.85; }
+}
+
+.otp-left-content h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.6rem, 2.5vw, 2.2rem);
+  margin-bottom: 1rem;
+}
+
+.otp-left-content > p {
+  color: rgba(255,255,255,0.75);
+  font-size: 0.93rem;
+  line-height: 1.7;
+  margin-bottom: 2.5rem;
+}
+
+/* STEPS */
+.otp-steps {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin-top: 2rem;
+}
+
+.otp-step-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.otp-step-item span {
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.7);
+  white-space: nowrap;
+}
+
+.otp-step-dot {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  color: rgba(255,255,255,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.82rem;
+  font-weight: 700;
+  border: 2px solid rgba(255,255,255,0.2);
+}
+
+.otp-step-dot.active {
+  background: white;
+  color: #6B3F69;
+  border-color: white;
+}
+
+.otp-step-line {
+  width: 40px;
+  height: 2px;
+  background: rgba(255,255,255,0.2);
+  margin: 0 4px;
+  margin-bottom: 22px;
+}
+
+.otp-step-line.active {
+  background: white;
+}
+
+/* ── RIGHT PANEL ── */
+.otp-right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 2rem;
+  background: #faf7fa;
+  min-height: 100vh;
+}
+
+.otp-form-wrap {
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.otp-icon-top {
+  width: 72px;
+  height: 72px;
+  background: #f5eaf5;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+}
+
+.otp-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  color: #2d1f2d;
+  margin-bottom: 0.6rem;
+}
+
+.otp-subtitle {
+  font-size: 0.9rem;
+  color: #6b5b6b;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.otp-subtitle strong { color: #2d1f2d; }
+
+.change-number {
+  color: #6B3F69;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.82rem;
+  text-decoration: underline;
+}
+
+/* OTP INPUTS */
+.otp-inputs {
+  display: flex;
+  gap: 0.7rem;
+  justify-content: center;
+  margin-bottom: 1.2rem;
+}
+
+.otp-input {
+  width: 52px;
+  height: 56px;
+  border: 2px solid #e8dde8;
+  border-radius: 12px;
+  text-align: center;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #2d1f2d;
+  background: white;
+  outline: none;
+  transition: all 0.25s ease;
+  font-family: 'Poppins', sans-serif;
+}
+
+.otp-input:focus {
+  border-color: #6B3F69;
+  box-shadow: 0 0 0 3px rgba(107,63,105,0.12);
+}
+
+.otp-input.filled {
+  border-color: #8D5F8C;
+  background: #f5eaf5;
+  color: #6B3F69;
+}
+
+.otp-input.error {
+  border-color: #e53935;
+  box-shadow: 0 0 0 3px rgba(229,57,53,0.08);
+}
+
+/* ERROR */
+.otp-error {
+  color: #e53935;
+  font-size: 0.82rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+}
+
+/* RESEND */
+.otp-resend {
+  margin-bottom: 1.5rem;
+}
+
+.otp-timer {
+  font-size: 0.85rem;
+  color: #6b5b6b;
+}
+
+.otp-timer strong { color: #6B3F69; }
+
+.resend-btn {
+  background: none;
+  border: none;
+  color: #6B3F69;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  font-family: 'Poppins', sans-serif;
+  transition: opacity 0.2s;
+}
+.resend-btn:hover { opacity: 0.75; }
+
+/* VERIFY BUTTON */
+.btn-verify {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 14px;
+  background: #6B3F69;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 0.97rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  font-family: 'Poppins', sans-serif;
+  margin-bottom: 1rem;
+}
+
+.btn-verify:hover {
+  background: #8D5F8C;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(107,63,105,0.25);
+}
+
+.btn-verify:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* NOTE */
+.otp-note {
+  font-size: 0.78rem;
+  color: #a376a2;
+  line-height: 1.6;
+}
+
+/* SUCCESS STATE */
+.otp-success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  animation: fadeUp 0.5s ease both;
+}
+
+.success-circle {
+  animation: scaleIn 0.4s ease both;
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.check-path {
+  stroke-dasharray: 40;
+  stroke-dashoffset: 40;
+  animation: drawCheck 0.4s 0.3s ease forwards;
+}
+
+@keyframes drawCheck {
+  to { stroke-dashoffset: 0; }
+}
+
+.otp-success h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  color: #6B3F69;
+}
+
+.otp-success p {
+  font-size: 0.9rem;
+  color: #6b5b6b;
+  line-height: 1.7;
+  max-width: 300px;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* SPINNER */
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2.5px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ─────────────────────────────────────────────
+   RESPONSIVE
+───────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .otp-left { display: none; }
+  .otp-right { padding: 2rem 1.5rem; }
+}
+
+@media (max-width: 480px) {
+  .otp-input { width: 44px; height: 50px; font-size: 1.2rem; }
+  .otp-inputs { gap: 0.5rem; }
+  .otp-form-wrap { max-width: 100%; }
+}

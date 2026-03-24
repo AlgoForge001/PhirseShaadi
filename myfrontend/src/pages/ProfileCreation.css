@@ -1,0 +1,443 @@
+/* ─────────────────────────────────────────────
+   PROFILE CREATION PAGE
+───────────────────────────────────────────── */
+.pc-page {
+  min-height: 100vh;
+  width: 100%;
+  background: #faf7fa;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* ── HEADER ── */
+.pc-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: white;
+  box-shadow: 0 2px 12px rgba(107,63,105,0.08);
+  padding: 1rem 4%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.pc-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #6B3F69;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.pc-progress {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+  max-width: 400px;
+}
+
+.pc-progress-bar {
+  flex: 1;
+  height: 6px;
+  background: #f0e8f0;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.pc-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #6B3F69, #A376A2);
+  border-radius: 6px;
+  transition: width 0.4s ease;
+}
+
+.pc-progress span {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #6B3F69;
+  white-space: nowrap;
+}
+
+/* ── BODY ── */
+.pc-body {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 2rem 4%;
+}
+
+/* ── STEP TABS ── */
+.pc-steps {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  background: white;
+  border-radius: 16px;
+  padding: 0.8rem;
+  box-shadow: 0 2px 12px rgba(107,63,105,0.08);
+  gap: 0.4rem;
+}
+
+.pc-step {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 0.6rem;
+  border-radius: 10px;
+  transition: all 0.25s ease;
+  cursor: default;
+}
+
+.pc-step.active {
+  background: #f5eaf5;
+}
+
+.pc-step.done {
+  background: #f0e8f0;
+}
+
+.pc-step-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #e8dde8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #a376a2;
+  transition: all 0.25s ease;
+}
+
+.pc-step.active .pc-step-icon {
+  background: #6B3F69;
+  color: white;
+}
+
+.pc-step.done .pc-step-icon {
+  background: #8D5F8C;
+  color: white;
+}
+
+.pc-step span {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #a376a2;
+}
+
+.pc-step.active span { color: #6B3F69; }
+.pc-step.done span { color: #8D5F8C; }
+
+/* ── FORM CARD ── */
+.pc-card {
+  background: white;
+  border-radius: 20px;
+  padding: 2.5rem;
+  box-shadow: 0 4px 24px rgba(107,63,105,0.1);
+}
+
+.pc-form h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  color: #2d1f2d;
+  margin-bottom: 0.4rem;
+}
+
+.pc-form-desc {
+  font-size: 0.88rem;
+  color: #6b5b6b;
+  margin-bottom: 1.8rem;
+}
+
+/* ── PHOTO UPLOAD ── */
+.photo-upload-section {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  background: #faf7fa;
+  border-radius: 14px;
+  padding: 1.2rem;
+  margin-bottom: 1.5rem;
+  border: 1.5px dashed #e8dde8;
+}
+
+.photo-preview {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: #f0e8f0;
+  border: 3px solid #e8dde8;
+}
+
+.photo-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.photo-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-size: 0.65rem;
+  color: #A376A2;
+  font-weight: 600;
+}
+
+.photo-upload-info h4 {
+  font-size: 0.95rem;
+  color: #2d1f2d;
+  margin-bottom: 0.3rem;
+}
+
+.photo-upload-info p {
+  font-size: 0.8rem;
+  color: #6b5b6b;
+  margin-bottom: 0.8rem;
+  line-height: 1.5;
+}
+
+.photo-upload-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: #6B3F69;
+  color: white;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.photo-upload-btn:hover { background: #8D5F8C; }
+
+/* ── FORM ELEMENTS ── */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 1.2rem;
+}
+
+.form-group label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #2d1f2d;
+}
+
+.req { color: #e53935; }
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.2rem;
+}
+
+.input-wrap {
+  display: flex;
+  align-items: center;
+  background: #faf7fa;
+  border: 1.5px solid #e8dde8;
+  border-radius: 12px;
+  padding: 0 14px;
+  transition: all 0.25s ease;
+}
+
+.input-wrap:focus-within {
+  border-color: #6B3F69;
+  box-shadow: 0 0 0 3px rgba(107,63,105,0.1);
+  background: white;
+}
+
+.input-wrap.error {
+  border-color: #e53935;
+}
+
+.input-wrap input,
+.input-wrap select {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 13px 6px;
+  font-size: 0.9rem;
+  font-family: 'Poppins', sans-serif;
+  background: transparent;
+  color: #2d1f2d;
+  width: 100%;
+}
+
+.input-wrap select { cursor: pointer; }
+
+.pc-textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid #e8dde8;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-family: 'Poppins', sans-serif;
+  color: #2d1f2d;
+  background: #faf7fa;
+  resize: vertical;
+  outline: none;
+  transition: all 0.25s ease;
+  line-height: 1.6;
+}
+
+.pc-textarea:focus {
+  border-color: #6B3F69;
+  box-shadow: 0 0 0 3px rgba(107,63,105,0.1);
+  background: white;
+}
+
+.char-count {
+  font-size: 0.75rem;
+  color: #a376a2;
+  text-align: right;
+}
+
+.err-msg {
+  font-size: 0.78rem;
+  color: #e53935;
+  font-weight: 500;
+}
+
+/* RADIO */
+.radio-group {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.radio-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.88rem;
+  color: #2d1f2d;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.radio-label input[type="radio"] {
+  accent-color: #6B3F69;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+/* ── NAVIGATION ── */
+.pc-nav {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.btn-back {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 13px 22px;
+  border: 1.5px solid #e8dde8;
+  border-radius: 12px;
+  background: white;
+  color: #6b5b6b;
+  font-size: 0.93rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  font-family: 'Poppins', sans-serif;
+}
+.btn-back:hover { border-color: #6B3F69; color: #6B3F69; }
+
+.btn-next,
+.btn-submit {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 13px;
+  background: #6B3F69;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  font-family: 'Poppins', sans-serif;
+}
+
+.btn-next:hover,
+.btn-submit:hover {
+  background: #8D5F8C;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(107,63,105,0.25);
+}
+
+.btn-submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-skip {
+  display: block;
+  width: 100%;
+  margin-top: 0.8rem;
+  background: none;
+  border: none;
+  color: #a376a2;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: center;
+  font-family: 'Poppins', sans-serif;
+  transition: color 0.2s;
+}
+.btn-skip:hover { color: #6B3F69; }
+
+/* SPINNER */
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2.5px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ─────────────────────────────────────────────
+   RESPONSIVE
+───────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .pc-card { padding: 1.5rem; }
+  .form-row { grid-template-columns: 1fr; }
+  .pc-steps { gap: 0.2rem; }
+  .pc-step span { display: none; }
+  .photo-upload-section { flex-direction: column; text-align: center; }
+}
+
+@media (max-width: 480px) {
+  .pc-body { padding: 1rem 1rem; }
+  .pc-header { padding: 0.8rem 1rem; }
+  .pc-logo span { display: none; }
+}
