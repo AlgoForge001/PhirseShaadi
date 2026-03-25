@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
-  Heart, Home, UserPlus, LogIn, Shield,
-  User, Search, Eye, MessageCircle,
-  Bell, Star, ChevronLeft, ChevronRight, Image
+  Heart, Home, UserPlus, LogIn, User, Search,
+  ChevronLeft, ChevronRight
 } from "lucide-react";
 import "./Sidebar.css";
 
@@ -11,21 +10,27 @@ const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [open, setOpen] = useState(false);
+  
+  // Get token from localStorage to check if user is logged in
+  const token = localStorage.getItem("token");
+  const isLoggedIn = !!token;
 
-  const pages = [
-    { label: "Landing Page", path: "/", icon: <Home size={19} /> },
+  // PUBLIC PAGES (Before Login)
+  const publicPages = [
+    { label: "Home", path: "/", icon: <Home size={19} /> },
     { label: "Register", path: "/register", icon: <UserPlus size={19} /> },
     { label: "Login", path: "/login", icon: <LogIn size={19} /> },
-    { label: "OTP Verify", path: "/otp-verify", icon: <Shield size={19} /> },
-    { label: "Profile Creation", path: "/profile-creation", icon: <User size={19} /> },
-    { label: "Search & Browse", path: "/search", icon: <Search size={19} /> },
-    { label: "Profile View", path: "/profile/1", icon: <Eye size={19} /> },
-    { label: "Chat", path: "/chat", icon: <MessageCircle size={19} /> },
-    { label: "My Profile", path: "/my-profile", icon: <User size={19} /> },
-    { label: "Notifications", path: "/notifications", icon: <Bell size={19} /> },
-    { label: "Premium", path: "/premium", icon: <Star size={19} /> },
-    { label: "Upload Photos", path: "/upload-photos", icon: <Image size={19} /> },
   ];
+
+  // PRIVATE PAGES (After Login)
+  const privatePages = [
+    { label: "Dashboard", path: "/dashboard", icon: <Home size={19} /> },
+    { label: "Search", path: "/search", icon: <Search size={19} /> },
+    { label: "My Profile", path: "/my-profile", icon: <User size={19} /> },
+  ];
+
+  // Select pages based on login status
+  const pages = isLoggedIn ? privatePages : publicPages;
 
   return (
     <>
@@ -45,13 +50,15 @@ const Sidebar = () => {
       <div className={`app-sidebar ${open ? "open" : ""}`}>
 
         {/* LOGO */}
-        <div className="app-sidebar-logo" onClick={() => { navigate("/"); setOpen(false); }}>
+        <div className="app-sidebar-logo" onClick={() => { navigate(isLoggedIn ? "/dashboard" : "/"); setOpen(false); }}>
           <Heart size={20} fill="#6B3F69" color="#6B3F69" />
           <span>PhirseShaadi</span>
         </div>
 
         {/* LABEL */}
-        <div className="app-sidebar-label">PAGES</div>
+        <div className="app-sidebar-label">
+          {isLoggedIn ? "NAVIGATION" : "PAGES"}
+        </div>
 
         {/* NAV LINKS */}
         <nav className="app-sidebar-nav">
