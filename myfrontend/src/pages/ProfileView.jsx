@@ -6,14 +6,14 @@ import {
   CheckCircle, Flag, X, Send, Bookmark,
   Phone, MessageCircle, Shield
 } from "lucide-react";
-import axios from "axios";
+import api from "../utils/api";
 import { useAuth } from "../context/AuthContext";
 import "./ProfileView.css";
 
 const ProfileView = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { token } = useAuth();
+  const { token, logout } = useAuth();
 
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -39,65 +39,31 @@ const ProfileView = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        // TODO [BACKEND]: GET /api/profile/:id
-        // Headers: { Authorization: Bearer token }
-        // Response: { success: true, profile: {...} }
-        const res = await axios.get(
-          `http://localhost:5000/api/profile/${id}`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+        setLoading(true);
+        setError("");
+        // Using interceptor
+        const res = await api.get(`/profile/${id}`);
         setProfile(res.data.profile);
         setInterested(res.data.profile.isInterested || false);
         setShortlisted(res.data.profile.isShortlisted || false);
       } catch (err) {
+        console.error("Failed to load profile:", err);
         setError("Failed to load profile.");
-        // DUMMY DATA for UI testing
-        setProfile({
-          id,
-          fullName: "Priya Sharma",
-          age: 26,
-          height: "5'4\"",
-          weight: "55 kg",
-          city: "Mumbai",
-          state: "Maharashtra",
-          country: "India",
-          religion: "Hindu",
-          community: "Brahmin",
-          motherTongue: "Hindi",
-          isVerified: true,
-          isPremium: true,
-          online: true,
-          lastSeen: "Today",
-          about: "I am a software engineer who loves to travel, read books and explore new cuisines. Looking for a kind, ambitious and family-oriented life partner who values honesty and respect.",
-          photos: [],
-          education: "B.Tech - Computer Science",
-          occupation: "Software Engineer",
-          employedIn: "Private Sector",
-          companyName: "Tech Corp",
-          annualIncome: "₹10L - ₹15L",
-          familyType: "Nuclear Family",
-          familyStatus: "Middle Class",
-          familyValues: "Moderate",
-          fatherOccupation: "Retired",
-          motherOccupation: "Homemaker",
-          siblings: "1 Brother",
-          maritalStatus: "Never Married",
-          complexion: "Fair",
-          bodyType: "Slim",
-          dob: "1998-05-15",
-          manglik: "No",
-          rashi: "Taurus",
-          nakshatra: "Rohini",
-          isInterested: false,
-          isShortlisted: false,
-        });
+        if (err.response?.status === 401) {
+          logout();
+          navigate("/login");
+        }
       } finally {
         setLoading(false);
       }
     };
 
-    fetchProfile();
-  }, [id, token]);
+    if (token) {
+      fetchProfile();
+    } else {
+      navigate("/login");
+    }
+  }, [id, token, navigate, logout]);
 
   // ── PHOTO CAROUSEL ──
   const nextPhoto = () => {
@@ -120,11 +86,7 @@ const ProfileView = () => {
       // Body: { toUserId: id }
       // Headers: { Authorization: Bearer token }
       // Response: { success: true, message: "Interest sent" }
-      await axios.post(
-        "http://localhost:5000/api/interest/send",
-        { toUserId: id },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      await api.post("/interest/send", { toUserId: id });
       setInterested(true);
     } catch (err) {
       console.error("Failed to send interest");
@@ -141,11 +103,7 @@ const ProfileView = () => {
       // Body: { userId: id }
       // Headers: { Authorization: Bearer token }
       // Response: { success: true }
-      await axios.post(
-        "http://localhost:5000/api/shortlist",
-        { userId: id },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      await api.post("/shortlist", { userId: id });
       setShortlisted(!shortlisted);
     } catch (err) {
       console.error("Failed to shortlist");
@@ -162,11 +120,7 @@ const ProfileView = () => {
       // TODO [BACKEND]: POST /api/report
       // Body: { userId: id, reason: reportReason }
       // Headers: { Authorization: Bearer token }
-      await axios.post(
-        "http://localhost:5000/api/report",
-        { userId: id, reason: reportReason },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      await api.post("/report", { userId: id, reason: reportReason });
       setReportSuccess(true);
       setTimeout(() => {
         setShowReport(false);
@@ -230,7 +184,7 @@ const ProfileView = () => {
           <>
             <img
               src={profile.photos[activePhoto]?.url}
-              alt={profile.fullName}
+              alt={profile.fullName || profile.name}
               className="pv-carousel-img"
             />
             {profile.photos.length > 1 && (
@@ -290,7 +244,7 @@ const ProfileView = () => {
       {/* ── PROFILE HEADER ── */}
       <div className="pv-header">
         <div className="pv-header-left">
-          <h1>{profile.fullName}</h1>
+          <h1>{profile.fullName || profile.name}</h1>
           <div className="pv-header-meta">
             <span><Users size={14} /> {profile.age} yrs • {profile.height}</span>
             <span><MapPin size={14} /> {profile.city}, {profile.state}</span>

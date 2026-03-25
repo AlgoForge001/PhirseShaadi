@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import {
   Upload, X, Star, Heart, ChevronRight, Image
 } from "lucide-react";
-import axios from "axios";
+import api from "../utils/api";
 import { useAuth } from "../context/AuthContext";
 import "./UploadPhotos.css";
 
@@ -81,8 +81,8 @@ const UploadPhotos = () => {
       try {
         // TODO [BACKEND]: DELETE /api/profile/photo/:publicId
         // Headers: { Authorization: Bearer token }
-        await axios.delete(
-          `http://localhost:5000/api/profile/photo/${photo.publicId}`,
+        await api.delete(
+          `/profile/photo/${photo.publicId}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
       } catch (err) {
@@ -121,8 +121,8 @@ const UploadPhotos = () => {
       // TODO [BACKEND]: POST /api/profile/photo
       // Headers: { Authorization: Bearer token, Content-Type: multipart/form-data }
       // Response: { success: true, publicId: "...", url: "..." }
-      const res = await axios.post(
-        "http://localhost:5000/api/profile/photo",
+      const res = await api.post(
+        "/profile/photo",
         formData,
         {
           headers: {
@@ -169,8 +169,8 @@ const UploadPhotos = () => {
       // TODO [BACKEND]: POST /api/profile/photo/set-primary
       // Body: { publicId: uploadedPhotos[primaryIndex].publicId }
       // Headers: { Authorization: Bearer token }
-      await axios.post(
-        "http://localhost:5000/api/profile/photo/set-primary",
+      await api.post(
+        "/profile/photo/set-primary",
         { publicId: uploadedPhotos[primaryIndex].publicId },
         { headers: { Authorization: `Bearer ${token}` } }
       );

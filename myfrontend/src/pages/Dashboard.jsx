@@ -5,47 +5,33 @@ import {
   Briefcase, CheckCircle, Star, Bell, User,
   MessageCircle, Search, LogOut
 } from "lucide-react";
-import axios from "axios";
+import api from "../utils/api";
 import { useAuth } from "../context/AuthContext";
 import "./Dashboard.css";
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const { logout } = useAuth();
-  const token = localStorage.getItem("token");
+  const { logout, token } = useAuth();
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   // ── FETCH USER DATA ──
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        // TODO [BACKEND]: GET /api/profile/me
-        const res = await axios.get("http://localhost:5000/api/profile/me", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setUserData(res.data.profile);
+        setLoading(true);
+        setError(null);
+        // Using interceptor now, so no manual header needed
+        const response = await api.get("/profile/me");
+        setUserData(response.data.profile);
       } catch (err) {
-        console.error("Failed to load profile");
-        // DUMMY DATA for testing
-        setUserData({
-          _id: "user123",
-          fullName: "Priya Sharma",
-          age: 26,
-          city: "Mumbai",
-          state: "Maharashtra",
-          religion: "Hindu",
-          community: "Brahmin",
-          education: "M.Tech",
-          occupation: "Software Engineer",
-          income: "₹10L - ₹15L",
-          height: "5'4\"",
-          about: "Software engineer who loves travel and reading.",
-          isVerified: true,
-          isPremium: true,
-          online: true,
-          photos: [{ url: "https://via.placeholder.com/400x500?text=Profile+Photo", isPrimary: true }],
-        });
+        console.error("Failed to load profile:", err);
+        setError("Unable to load your profile. Please try logging in again.");
+        if (err.response?.status === 401) {
+          logout();
+          navigate("/login");
+        }
       } finally {
         setLoading(false);
       }
@@ -53,22 +39,19 @@ const Dashboard = () => {
 
     if (token) {
       fetchUserData();
-    } else {
+    } else if (!token && !localStorage.getItem("token")) {
+      // Small delay to allow any pending token saves to happen 
+      // (important for post-OAuth redirect)
       navigate("/login");
     }
-  }, [token, navigate]);
+  }, [token, navigate, logout]);
 
   const handleLogout = async () => {
     try {
-      await axios.post(
-        "http://localhost:5000/api/auth/logout",
-        {},
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      await api.post("/auth/logout");
     } catch (err) {
       console.error("Logout failed");
     }
-    localStorage.removeItem("token");
     logout();
     navigate("/");
   };
@@ -82,11 +65,13 @@ const Dashboard = () => {
     );
   }
 
-  if (!userData) {
+  if (error || !userData) {
     return (
       <div className="dashboard-error">
-        <h2>Unable to load profile</h2>
-        <button onClick={() => navigate("/login")}>Go to Login</button>
+        <h2>{error || "Unable to load profile"}</h2>
+        <p>This could be due to a network issue or an expired session.</p>
+        <button className="dashboard-btn" onClick={() => window.location.reload()}>Retry</button>
+        <button className="dashboard-btn-secondary" onClick={() => navigate("/login")}>Back to Login</button>
       </div>
     );
   }
@@ -98,7 +83,7 @@ const Dashboard = () => {
 
         {/* TOP HEADER */}
         <div className="dashboard-header">
-          <h1>Welcome back, {userData.fullName}! 👋</h1>
+          <h1>Welcome back, {userData.fullName || userData.name}! 👋</h1>
           <div className="dashboard-header-actions">
             <button className="dashboard-action-btn" onClick={() => navigate("/search")}>
               <Search size={18} />
@@ -120,7 +105,7 @@ const Dashboard = () => {
             {/* PHOTO */}
             <div className="dashboard-photo-section">
               {userData.photos && userData.photos.length > 0 ? (
-                <img src={userData.photos[0].url} alt={userData.fullName} className="dashboard-photo" />
+                <img src={userData.photos[0].url} alt={userData.fullName || userData.name} className="dashboard-photo" />
               ) : (
                 <div className="dashboard-photo-placeholder">
                   <User size={80} color="#A376A2" />
@@ -148,7 +133,7 @@ const Dashboard = () => {
             {/* INFO */}
             <div className="dashboard-profile-info">
               <div className="dashboard-name-row">
-                <h2>{userData.fullName}</h2>
+                <h2>{userData.fullName || userData.name}</h2>
                 {userData.age && <span className="dashboard-age">{userData.age} yrs</span>}
               </div>
 

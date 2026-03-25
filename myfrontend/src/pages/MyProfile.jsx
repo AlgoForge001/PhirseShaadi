@@ -5,13 +5,13 @@ import {
   Briefcase, GraduationCap, Users, Sun,
   Phone, Mail, Camera, ChevronRight
 } from "lucide-react";
-import axios from "axios";
+import api from "../utils/api";
 import { useAuth } from "../context/AuthContext";
 import "./MyProfile.css";
 
 const MyProfile = () => {
   const navigate = useNavigate();
-  const { token } = useAuth();
+  const { token, logout } = useAuth();
   const [activeTab, setActiveTab] = useState("basic");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -24,68 +24,29 @@ const MyProfile = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        // TODO [BACKEND]: GET /api/profile/me
-        // Headers: { Authorization: Bearer token }
-        // Response: { success: true, profile: { ...all profile data } }
-        const res = await axios.get("http://localhost:5000/api/profile/me", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        setLoading(true);
+        setError("");
+        // Using interceptor
+        const res = await api.get("/profile/me");
         setProfile(res.data.profile);
       } catch (err) {
+        console.error("Failed to load profile:", err);
         setError("Failed to load profile. Please try again.");
-        // DUMMY DATA for UI testing when backend is not ready
-        setProfile({
-          fullName: "Priya Sharma",
-          age: 26,
-          city: "Mumbai",
-          state: "Maharashtra",
-          phone: "+91 9876543210",
-          email: "priya@example.com",
-          isVerified: true,
-          isPremium: true,
-          profileFor: "Myself",
-          photos: [],
-          // Basic
-          height: "5'4\"",
-          weight: "55 kg",
-          complexion: "Fair",
-          bodyType: "Slim",
-          physicalStatus: "Normal",
-          about: "I am a software engineer who loves to travel and explore new places. Looking for a life partner who shares similar values.",
-          // Education
-          education: "B.Tech",
-          educationDetail: "Computer Science from Mumbai University",
-          occupation: "Software Engineer",
-          employedIn: "Private Sector",
-          companyName: "Tech Corp",
-          annualIncome: "₹10L - ₹15L",
-          // Family
-          religion: "Hindu",
-          community: "Brahmin",
-          motherTongue: "Hindi",
-          familyType: "Nuclear Family",
-          familyStatus: "Middle Class",
-          familyValues: "Moderate",
-          fatherOccupation: "Retired",
-          motherOccupation: "Homemaker",
-          siblings: "1 Brother",
-          aboutFamily: "We are a small happy family based in Mumbai.",
-          // Horoscope
-          dob: "1998-05-15",
-          birthTime: "10:30 AM",
-          birthPlace: "Mumbai",
-          manglik: "No",
-          gotra: "Kashyap",
-          nakshatra: "Rohini",
-          rashi: "Taurus",
-        });
+        if (err.response?.status === 401) {
+          logout();
+          navigate("/login");
+        }
       } finally {
         setLoading(false);
       }
     };
 
-    fetchProfile();
-  }, [token]);
+    if (token) {
+      fetchProfile();
+    } else {
+      navigate("/login");
+    }
+  }, [token, navigate, logout]);
 
   const tabs = [
     { key: "basic", label: "Basic", icon: <Users size={16} /> },
@@ -168,7 +129,7 @@ const MyProfile = () => {
         {/* NAME & INFO */}
         <div className="mp-identity">
           <div className="mp-name-row">
-            <h1>{profile.fullName}</h1>
+            <h1>{profile.fullName || profile.name}</h1>
             <div className="mp-badges">
               {profile.isVerified && (
                 <span className="mp-badge verified">

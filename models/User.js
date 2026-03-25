@@ -5,6 +5,12 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, "Name is required"]
   },
+  fullName: {
+    type: String
+  },
+  bio: {
+    type: String
+  },
   email: {
     type: String,
     required: [true, "Email is required"],
@@ -43,6 +49,19 @@ const userSchema = new mongoose.Schema({
   height: {
     type: String
   },
+  weight: {
+    type: String
+  },
+  bodyType: {
+    type: String
+  },
+  complexion: {
+    type: String
+  },
+  physicalStatus: {
+    type: String,
+    default: 'normal'
+  },
   city: {
     type: String
   },
@@ -52,9 +71,69 @@ const userSchema = new mongoose.Schema({
   education: {
     type: String
   },
+  educationDetail: {
+    type: String
+  },
   profession: {
     type: String
   },
+  occupation: {
+    type: String
+  },
+  employedIn: {
+    type: String
+  },
+  income: {
+    type: String
+  },
+  annualIncome: {
+    type: String
+  },
+  companyName: {
+    type: String
+  },
+  familyType: {
+    type: String
+  },
+  familyStatus: {
+    type: String
+  },
+  familyValues: {
+    type: String
+  },
+  fatherOccupation: {
+    type: String
+  },
+  motherOccupation: {
+    type: String
+  },
+  siblings: {
+    type: String
+  },
+  aboutFamily: {
+    type: String
+  },
+  birthTime: {
+    type: String
+  },
+  birthPlace: {
+    type: String
+  },
+  gotra: {
+    type: String
+  },
+  nakshatra: {
+    type: String
+  },
+  rashi: {
+    type: String
+  },
+  photos: [
+    {
+      url: String,
+      isPrimary: { type: Boolean, default: false }
+    }
+  ],
   isVerified: {
     type: Boolean,
     default: false
@@ -74,6 +153,34 @@ const userSchema = new mongoose.Schema({
   otpExpiry: {
     type: Date
   },
+  income: {
+    type: String
+  },
+  jobType: {
+    type: String
+  },
+  manglik: {
+    type: String
+  },
+  lastActive: {
+    type: Date,
+    default: Date.now
+  },
+  partnerPreferences: {
+    religion: String,
+    minAge: Number,
+    maxAge: Number,
+    city: String,
+    state: String,
+    education: String,
+    income: String
+  },
+  blockedUsers: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    }
+  ],
   createdAt: {
     type: Date,
     default: Date.now

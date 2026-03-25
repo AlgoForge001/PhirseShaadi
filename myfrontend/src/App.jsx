@@ -11,11 +11,22 @@ import MyProfile from './pages/MyProfile'
 import ProfileView from './pages/ProfileView'
 import EditProfile from './pages/EditProfile'
 import Dashboard from './pages/Dashboard'
+import GoogleSuccess from './pages/GoogleSuccess'
+import { useAuth } from './context/AuthContext'
 
 // Simple Protected Route check
 const ProtectedRoute = ({ children }) => {
-  const token = localStorage.getItem("token");
-  return token ? children : <Navigate to="/login" replace />;
+  const { isLoggedIn, loading } = useAuth();
+  
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <div className="spinner" style={{ border: '4px solid rgba(0,0,0,0.1)', borderLeftColor: '#6B3F69', borderRadius: '50%', width: '40px', height: '40px', animation: 'spin 1s linear infinite' }}></div>
+      </div>
+    );
+  }
+  
+  return isLoggedIn ? children : <Navigate to="/login" replace />;
 };
 
 function App() {
@@ -41,6 +52,7 @@ function App() {
         <Route path="/my-profile" element={<ProtectedRoute><MyProfile /></ProtectedRoute>} />
         <Route path="/edit-profile" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
         <Route path="/profile/:id" element={<ProtectedRoute><ProfileView /></ProtectedRoute>} />
+        <Route path="/google-success" element={<GoogleSuccess />} />
 
         {/* FALLBACK */}
         <Route path="*" element={<Navigate to="/" replace />} />

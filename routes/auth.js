@@ -32,16 +32,8 @@ router.get('/google/callback',
       { expiresIn: '7d' }
     );
 
-    // Return token and user info
-    res.status(200).json({
-      message: "Google Login successful",
-      token,
-      user: {
-        name: req.user.name,
-        email: req.user.email,
-        role: req.user.role
-      }
-    });
+    // Redirect to frontend with token
+    res.redirect(`http://localhost:5173/google-success?token=${token}`);
   }
 );
 

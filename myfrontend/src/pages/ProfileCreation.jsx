@@ -5,10 +5,13 @@ import {
   Briefcase, GraduationCap, Camera, CheckCircle,
   Users, Star, FileText
 } from "lucide-react";
+import api from "../utils/api";
+import { useAuth } from "../context/AuthContext";
 import "./ProfileCreation.css";
 
 const ProfileCreation = () => {
   const navigate = useNavigate();
+  const { token, logout } = useAuth();
   const [step, setStep] = useState(1); // 5 steps total
   const [errors, setErrors] = useState({});
   const [photoPreview, setPhotoPreview] = useState(null);
@@ -116,28 +119,22 @@ const ProfileCreation = () => {
 
   const handleSubmit = async () => {
     setLoading(true);
-
-    // TODO [BACKEND]: POST /api/profile/create
-    // Headers: { Authorization: Bearer token }
-    // Body: formData (all profile details)
-    // Response: { success: true, profileId: "..." }
-    // On success: navigate to /search
-    // Example:
-    // const res = await fetch("/api/profile/create", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //     Authorization: `Bearer ${localStorage.getItem("token")}`,
-    //   },
-    //   body: JSON.stringify(formData),
-    // });
-    // const data = await res.json();
-    // if (data.success) navigate("/search");
-
-    setTimeout(() => {
+    try {
+      const res = await api.put("/profile/update", formData);
+      if (res.data.success) {
+        navigate("/dashboard");
+      }
+    } catch (err) {
+      console.error("Failed to update profile:", err);
+      if (err.response?.status === 401) {
+        logout();
+        navigate("/login");
+      } else {
+        alert("Failed to save profile. Please try again.");
+      }
+    } finally {
       setLoading(false);
-      navigate("/search");
-    }, 1500);
+    }
   };
 
   // ── DATA OPTIONS ──
@@ -173,7 +170,7 @@ const ProfileCreation = () => {
       <div className="pc-header">
         <div className="pc-logo" onClick={() => navigate("/")}>
           <Heart size={20} fill="#6B3F69" color="#6B3F69" />
-          <span>BandhanSetu</span>
+          <span>PhirseShaadi</span>
         </div>
         <div className="pc-progress">
           <div className="pc-progress-bar">
@@ -248,7 +245,7 @@ const ProfileCreation = () => {
                   className="pc-textarea"
                   maxLength={500}
                 />
-                <span className="char-count">{formData.bio.length}/500</span>
+                <span className="char-count">{(formData.bio || "").length}/500</span>
               </div>
 
               {/* HEIGHT & WEIGHT */}
@@ -569,7 +566,7 @@ const ProfileCreation = () => {
                   className="pc-textarea"
                   maxLength={300}
                 />
-                <span className="char-count">{formData.aboutFamily.length}/300</span>
+                <span className="char-count">{(formData.aboutFamily || "").length}/300</span>
               </div>
             </div>
           )}
@@ -691,7 +688,7 @@ const ProfileCreation = () => {
                   className="pc-textarea"
                   maxLength={500}
                 />
-                <span className="char-count">{formData.prefAbout.length}/500</span>
+                <span className="char-count">{(formData.prefAbout || "").length}/500</span>
               </div>
             </div>
           )}
