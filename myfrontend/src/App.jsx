@@ -6,13 +6,14 @@ import Login from './pages/Login'
 import OtpVerify from './pages/OtpVerify'
 import ProfileCreation from './pages/ProfileCreation'
 import SearchBrowse from './pages/SearchBrowse'
-
+import UploadPhotos from './pages/UploadPhotos'
+import MyProfile from './pages/MyProfile'
+import ProfileView from './pages/ProfileView'
 function App() {
   return (
     <BrowserRouter>
       <Sidebar />
       <Routes>
-        {/* TODO [BACKEND]: Protected routes need auth token check */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
@@ -21,6 +22,10 @@ function App() {
         <Route path="/dashboard" element={<SearchBrowse />} />
         <Route path="/profile-creation" element={<ProfileCreation />} />
         <Route path="/search" element={<SearchBrowse />} />
+        <Route path="/upload-photos" element={<UploadPhotos />} />
+        <Route path="/my-profile" element={<MyProfile />} />
+
+<Route path="/profile/:id" element={<ProfileView />} />
       </Routes>
     </BrowserRouter>
   )

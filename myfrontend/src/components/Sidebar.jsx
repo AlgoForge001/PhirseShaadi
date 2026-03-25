@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import {
   Heart, Home, UserPlus, LogIn, Shield,
   User, Search, Eye, MessageCircle,
-  Bell, Star, ChevronLeft, ChevronRight
+  Bell, Star, ChevronLeft, ChevronRight, Image
 } from "lucide-react";
 import "./Sidebar.css";
 
@@ -24,6 +24,7 @@ const Sidebar = () => {
     { label: "My Profile", path: "/my-profile", icon: <User size={19} /> },
     { label: "Notifications", path: "/notifications", icon: <Bell size={19} /> },
     { label: "Premium", path: "/premium", icon: <Star size={19} /> },
+    { label: "Upload Photos", path: "/upload-photos", icon: <Image size={19} /> },
   ];
 
   return (
