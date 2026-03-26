@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Heart, Search, Filter, MapPin, Briefcase,
@@ -6,78 +6,22 @@ import {
   SlidersHorizontal, CheckCircle, Star, MessageCircle,
   Bell, User, Home, LogOut
 } from "lucide-react";
+import api from "../utils/api";
+import { useAuth } from "../context/AuthContext";
+import Sidebar from "../components/Sidebar";
 import "./SearchBrowse.css";
 
-// ─────────────────────────────────────────────
-// DUMMY PROFILES DATA
-// TODO [BACKEND]: GET /api/profiles/search?filters=...
-// Replace this with actual API call
-// ─────────────────────────────────────────────
-const dummyProfiles = [
-  { id: 1, name: "Priya Sharma", age: 26, height: "5'4\"", city: "Mumbai", state: "Maharashtra", religion: "Hindu", community: "Brahmin", education: "M.Tech", occupation: "Software Engineer", income: "₹10L - ₹15L", verified: true, premium: true, online: true, compatibility: 96 },
-  { id: 2, name: "Sneha Patel", age: 24, height: "5'2\"", city: "Ahmedabad", state: "Gujarat", religion: "Hindu", community: "Patel", education: "MBA", occupation: "Business Owner", income: "₹15L - ₹20L", verified: true, premium: false, online: false, compatibility: 88 },
-  { id: 3, name: "Ayesha Khan", age: 25, height: "5'3\"", city: "Hyderabad", state: "Telangana", religion: "Muslim", community: "Sunni", education: "MBBS", occupation: "Doctor", income: "₹10L - ₹15L", verified: true, premium: true, online: true, compatibility: 92 },
-  { id: 4, name: "Divya Nair", age: 27, height: "5'5\"", city: "Kochi", state: "Kerala", religion: "Hindu", community: "Nair", education: "CA", occupation: "Accountant", income: "₹10L - ₹15L", verified: false, premium: false, online: false, compatibility: 78 },
-  { id: 5, name: "Simran Kaur", age: 23, height: "5'6\"", city: "Chandigarh", state: "Punjab", religion: "Sikh", community: "Khatri", education: "B.Tech", occupation: "Engineer", income: "₹5L - ₹10L", verified: true, premium: false, online: true, compatibility: 84 },
-  { id: 6, name: "Meera Iyer", age: 28, height: "5'3\"", city: "Chennai", state: "Tamil Nadu", religion: "Hindu", community: "Brahmin", education: "PhD", occupation: "Researcher", income: "₹10L - ₹15L", verified: true, premium: true, online: false, compatibility: 90 },
-];
-
-// ─────────────────────────────────────────────
-// SIDEBAR NAVBAR
-// ─────────────────────────────────────────────
-const Sidebar = ({ active }) => {
-  const navigate = useNavigate();
-
-  const navItems = [
-    { icon: <Home size={20} />, label: "Home", path: "/" },
-    { icon: <Search size={20} />, label: "Search", path: "/search" },
-    { icon: <Heart size={20} />, label: "Matches", path: "/matches" },
-    { icon: <MessageCircle size={20} />, label: "Chat", path: "/chat" },
-    { icon: <Bell size={20} />, label: "Notifications", path: "/notifications" },
-    { icon: <User size={20} />, label: "My Profile", path: "/my-profile" },
-  ];
-
-  return (
-    <div className="sidebar">
-      <div className="sidebar-logo" onClick={() => navigate("/")}>
-        <Heart size={20} fill="#6B3F69" color="#6B3F69" />
-        <span>BandhanSetu</span>
-      </div>
-
-      <nav className="sidebar-nav">
-        {navItems.map((item, i) => (
-          <button
-            key={i}
-            className={`sidebar-item ${active === item.label ? "active" : ""}`}
-            onClick={() => navigate(item.path)}
-          >
-            {item.icon}
-            <span>{item.label}</span>
-          </button>
-        ))}
-      </nav>
-
-      <button className="sidebar-logout">
-        {/* TODO [BACKEND]: POST /api/auth/logout */}
-        <LogOut size={18} />
-        <span>Logout</span>
-      </button>
-    </div>
-  );
-};
-
-// ─────────────────────────────────────────────
-// TOP NAVBAR (mobile)
-// ─────────────────────────────────────────────
-const TopNav = () => {
+// TopNav moved to a simple component if needed elsewhere, 
+// but for SearchBrowse we'll just use a simple header since Sidebar is present.
+const SearchHeader = () => {
   const navigate = useNavigate();
   return (
-    <div className="top-nav">
-      <div className="top-nav-logo">
+    <div className="search-top-mobile">
+      <div className="search-top-logo">
         <Heart size={18} fill="#6B3F69" color="#6B3F69" />
-        <span>BandhanSetu</span>
+        <span>PhirseShaadi</span>
       </div>
-      <div className="top-nav-actions">
+      <div className="search-top-actions">
         <button onClick={() => navigate("/notifications")}><Bell size={20} /></button>
         <button onClick={() => navigate("/my-profile")}><User size={20} /></button>
       </div>
@@ -231,7 +175,7 @@ const FilterPanel = ({ filters, setFilters, onClose }) => {
 
       </div>
 
-      <button className="apply-filters-btn">
+      <button className="apply-filters-btn" onClick={filters.onApply}>
         Apply Filters
       </button>
     </div>
@@ -246,21 +190,24 @@ const ProfileCard = ({ profile }) => {
   const [liked, setLiked] = useState(false);
 
   return (
-    <div className="profile-card" onClick={() => navigate(`/profile/${profile.id}`)}>
-
+    <div className="profile-card" onClick={() => navigate(`/profile/${profile._id}`)}>
       {/* PHOTO */}
       <div className="card-photo">
         <div className="card-avatar">
-          <User size={40} color="#A376A2" />
+          {profile.photos && profile.photos.length > 0 ? (
+            <img src={profile.photos[0].url} alt={profile.fullName || profile.name} className="card-img" />
+          ) : (
+            <User size={40} color="#A376A2" />
+          )}
         </div>
         {/* Badges */}
         <div className="card-badges">
-          {profile.verified && (
+          {profile.isVerified && (
             <span className="badge badge-verified">
               <CheckCircle size={11} /> Verified
             </span>
           )}
-          {profile.premium && (
+          {profile.isPremium && (
             <span className="badge badge-premium">
               <Star size={11} /> Premium
             </span>
@@ -268,10 +215,12 @@ const ProfileCard = ({ profile }) => {
         </div>
         {profile.online && <div className="online-dot" />}
         {/* Compatibility */}
-        <div className="compatibility-pill">
-          <Heart size={11} fill="white" color="white" />
-          {profile.compatibility}% Match
-        </div>
+        {profile.compatibility && (
+           <div className="compatibility-pill">
+           <Heart size={11} fill="white" color="white" />
+           {profile.compatibility}% Match
+         </div>
+        )}
         {/* Like Button */}
         <button
           className={`like-btn ${liked ? "liked" : ""}`}
@@ -284,20 +233,20 @@ const ProfileCard = ({ profile }) => {
       {/* INFO */}
       <div className="card-info">
         <div className="card-name-row">
-          <h3>{profile.name}</h3>
-          <span className="card-age">{profile.age} yrs</span>
+          <h3>{profile.fullName || profile.name}</h3>
+          {profile.dob && <span className="card-age">{new Date().getFullYear() - new Date(profile.dob).getFullYear()} yrs</span>}
         </div>
 
         <div className="card-details">
           <span><MapPin size={13} /> {profile.city}, {profile.state}</span>
           <span><GraduationCap size={13} /> {profile.education}</span>
-          <span><Briefcase size={13} /> {profile.occupation}</span>
+          <span><Briefcase size={13} /> {profile.profession || profile.occupation}</span>
           <span><Star size={13} /> {profile.religion} • {profile.community}</span>
         </div>
 
         <div className="card-height-income">
           <span>{profile.height}</span>
-          <span>{profile.income}</span>
+          <span>{profile.income || profile.annualIncome}</span>
         </div>
 
         <div className="card-actions">
@@ -305,7 +254,15 @@ const ProfileCard = ({ profile }) => {
             className="card-btn card-btn-interest"
             onClick={(e) => {
               e.stopPropagation();
-              // TODO [BACKEND]: POST /api/interest/send { toUserId: profile.id }
+              const sendInterest = async () => {
+                try {
+                  await api.post("/interest/send", { toUserId: profile._id });
+                  alert("Interest sent successfully!");
+                } catch (err) {
+                  alert("Already sent or failed to send interest.");
+                }
+              };
+              sendInterest();
             }}
           >
             <Heart size={15} /> Send Interest
@@ -314,7 +271,7 @@ const ProfileCard = ({ profile }) => {
             className="card-btn card-btn-chat"
             onClick={(e) => {
               e.stopPropagation();
-              // TODO [BACKEND]: POST /api/chat/initiate { toUserId: profile.id }
+              navigate(`/chat?userId=${profile._id}`);
             }}
           >
             <MessageCircle size={15} /> Chat
@@ -329,9 +286,13 @@ const ProfileCard = ({ profile }) => {
 // MAIN SEARCH PAGE
 // ─────────────────────────────────────────────
 const SearchBrowse = () => {
+  const { token, logout } = useAuth();
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [showFilter, setShowFilter] = useState(false);
   const [activeTab, setActiveTab] = useState("all");
+  const [profiles, setProfiles] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [filters, setFilters] = useState({
     ageFrom: "18", ageTo: "40",
     heightFrom: "", heightTo: "",
@@ -341,31 +302,68 @@ const SearchBrowse = () => {
   });
 
   const tabs = [
-    { key: "all", label: "All Matches" },
+    { key: "all", label: "All Members" },
     { key: "new", label: "New Joins" },
     { key: "nearby", label: "Near You" },
-    { key: "premium", label: "Premium" },
-    { key: "shortlisted", label: "Shortlisted" },
   ];
 
-  // TODO [BACKEND]: GET /api/profiles/search
-  // Query params: searchQuery, filters, tab, page
-  // Replace dummyProfiles with API response
-  const filteredProfiles = dummyProfiles.filter((p) => {
-    if (searchQuery && !p.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
-      !p.city.toLowerCase().includes(searchQuery.toLowerCase())) return false;
-    if (filters.onlyVerified && !p.verified) return false;
-    if (filters.onlyPremium && !p.premium) return false;
-    if (filters.religion !== "Any" && p.religion !== filters.religion) return false;
-    if (activeTab === "premium" && !p.premium) return false;
-    if (activeTab === "nearby") return true;
-    return true;
-  });
+  // ── FETCH PROFILES FROM BACKEND ──
+  const fetchProfiles = async () => {
+    try {
+      setLoading(true);
+      let endpoint = "/search";
+      
+      // Map tabs to match endpoints
+      if (activeTab === "new") endpoint = "/matches/new-joins";
+      if (activeTab === "nearby") endpoint = "/matches/near-you";
+      if (activeTab === "recommended") endpoint = "/matches/recommended";
+      
+      const params = {
+        minAge: filters.ageFrom,
+        maxAge: filters.ageTo,
+        religion: filters.religion !== "Any" ? filters.religion : undefined,
+        city: filters.city || undefined,
+        education: filters.education !== "Any" ? filters.education : undefined,
+        jobType: filters.occupation !== "Any" ? filters.occupation : undefined,
+        income: filters.income !== "Any" ? filters.income : undefined,
+        search: searchQuery || undefined
+      };
+
+      const res = await api.get(endpoint, { params });
+
+      if (res.data.success) {
+        setProfiles(res.data.data || []);
+      }
+    } catch (err) {
+      console.error("Failed to fetch profiles:", err);
+      if (err.response?.status === 401) {
+        logout();
+        navigate("/login");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (token) {
+      fetchProfiles();
+    } else {
+      navigate("/login");
+    }
+  }, [activeTab, token]); // Re-fetch on tab change or token
+
+  const handleApplyFilters = () => {
+    fetchProfiles();
+    setShowFilter(false);
+  };
+
+  const filteredProfiles = profiles;
 
   return (
     <div className="search-page">
-      <Sidebar active="Search" />
-      <TopNav />
+      <Sidebar />
+      <SearchHeader />
 
       <div className="search-main">
 
@@ -398,7 +396,7 @@ const SearchBrowse = () => {
         {/* FILTER PANEL */}
         {showFilter && (
           <FilterPanel
-            filters={filters}
+            filters={{ ...filters, onApply: handleApplyFilters }}
             setFilters={setFilters}
             onClose={() => setShowFilter(false)}
           />

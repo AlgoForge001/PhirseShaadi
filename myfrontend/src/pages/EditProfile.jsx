@@ -4,17 +4,18 @@ import {
   Heart, ChevronRight, ChevronLeft, Edit, MapPin,
   Briefcase, GraduationCap, Users, Sun, CheckCircle
 } from "lucide-react";
-import axios from "axios";
+import api from "../utils/api";
 import { useAuth } from "../context/AuthContext";
 import "./EditProfile.css";
 
 const EditProfile = () => {
   const navigate = useNavigate();
-  const { token } = useAuth();
+  const { token, logout } = useAuth();
   const [step, setStep] = useState(1); // 4 steps: Basic, Education, Family, Horoscope
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [apiError, setApiError] = useState(null);
 
   const [formData, setFormData] = useState({
     // Basic
@@ -63,57 +64,39 @@ const EditProfile = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        // TODO [BACKEND]: GET /api/profile/me
-        // Headers: { Authorization: Bearer token }
-        const res = await axios.get("http://localhost:5000/api/profile/me", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setFormData(res.data.profile);
+        setLoading(true);
+        setApiError(null);
+        // Using interceptor
+        const response = await api.get("/profile/me");
+        
+        // Merge API data with default state to avoid undefined fields
+        const profileData = response.data.profile || {};
+        setFormData(prev => ({
+          ...prev,
+          ...profileData,
+          fullName: profileData.fullName || profileData.name || prev.fullName || "",
+          bio: profileData.bio || "",
+          aboutFamily: profileData.aboutFamily || "",
+          // Ensure other fields are strings to avoid crashes
+        }));
       } catch (err) {
-        console.error("Failed to load profile");
-        // DUMMY DATA for testing
-        setFormData({
-          fullName: "Priya Sharma",
-          bio: "I am a software engineer who loves to travel.",
-          height: "5'4\"",
-          weight: "55 kg",
-          bodyType: "Slim",
-          complexion: "Fair",
-          city: "Mumbai",
-          state: "Maharashtra",
-          profileFor: "Myself",
-          motherTongue: "Hindi",
-          religion: "Hindu",
-          community: "Brahmin",
-          physicalStatus: "normal",
-          education: "B.Tech",
-          educationDetail: "Computer Science from Mumbai University",
-          occupation: "Software Engineer",
-          employedIn: "Private Sector",
-          annualIncome: "₹10L - ₹15L",
-          companyName: "Tech Corp",
-          familyType: "Nuclear Family",
-          familyStatus: "Middle Class",
-          familyValues: "Moderate",
-          fatherOccupation: "Retired",
-          motherOccupation: "Homemaker",
-          siblings: "1 Brother",
-          aboutFamily: "We are a small happy family.",
-          dob: "1998-05-15",
-          birthTime: "10:30 AM",
-          birthPlace: "Mumbai",
-          manglik: "No",
-          gotra: "Kashyap",
-          nakshatra: "Rohini",
-          rashi: "Taurus",
-        });
+        console.error("Failed to load profile:", err);
+        setApiError("Failed to load profile data.");
+        if (err.response?.status === 401) {
+          logout();
+          navigate("/login");
+        }
       } finally {
         setLoading(false);
       }
     };
 
-    fetchProfile();
-  }, [token]);
+    if (token) {
+      fetchProfile();
+    } else {
+      navigate("/login");
+    }
+  }, [token, navigate, logout]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -160,79 +143,59 @@ const EditProfile = () => {
     try {
       // Step 1 - Basic Info
       if (step === 1) {
-        // TODO [BACKEND]: PUT /api/profile/basic
-        await axios.put(
-          "http://localhost:5000/api/profile/basic",
-          {
-            fullName: formData.fullName,
-            bio: formData.bio,
-            height: formData.height,
-            weight: formData.weight,
-            bodyType: formData.bodyType,
-            complexion: formData.complexion,
-            city: formData.city,
-            state: formData.state,
-            profileFor: formData.profileFor,
-            motherTongue: formData.motherTongue,
-            religion: formData.religion,
-            community: formData.community,
-            physicalStatus: formData.physicalStatus,
-          },
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+        await api.put("/profile/basic", {
+          fullName: formData.fullName,
+          bio: formData.bio,
+          height: formData.height,
+          weight: formData.weight,
+          bodyType: formData.bodyType,
+          complexion: formData.complexion,
+          city: formData.city,
+          state: formData.state,
+          profileFor: formData.profileFor,
+          motherTongue: formData.motherTongue,
+          religion: formData.religion,
+          community: formData.community,
+          physicalStatus: formData.physicalStatus,
+        });
       }
 
       // Step 2 - Education
       if (step === 2) {
-        // TODO [BACKEND]: PUT /api/profile/education
-        await axios.put(
-          "http://localhost:5000/api/profile/education",
-          {
-            education: formData.education,
-            educationDetail: formData.educationDetail,
-            occupation: formData.occupation,
-            employedIn: formData.employedIn,
-            annualIncome: formData.annualIncome,
-            companyName: formData.companyName,
-          },
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+        await api.put("/profile/education", {
+          education: formData.education,
+          educationDetail: formData.educationDetail,
+          occupation: formData.occupation,
+          employedIn: formData.employedIn,
+          annualIncome: formData.annualIncome,
+          companyName: formData.companyName,
+        });
       }
 
       // Step 3 - Family
       if (step === 3) {
-        // TODO [BACKEND]: PUT /api/profile/family
-        await axios.put(
-          "http://localhost:5000/api/profile/family",
-          {
-            familyType: formData.familyType,
-            familyStatus: formData.familyStatus,
-            familyValues: formData.familyValues,
-            fatherOccupation: formData.fatherOccupation,
-            motherOccupation: formData.motherOccupation,
-            siblings: formData.siblings,
-            aboutFamily: formData.aboutFamily,
-          },
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+        await api.put("/profile/family", {
+          familyType: formData.familyType,
+          familyStatus: formData.familyStatus,
+          familyValues: formData.familyValues,
+          fatherOccupation: formData.fatherOccupation,
+          motherOccupation: formData.motherOccupation,
+          siblings: formData.siblings,
+          aboutFamily: formData.aboutFamily,
+        });
       }
 
       // Step 4 - Horoscope
       if (step === 4) {
-        // TODO [BACKEND]: PUT /api/profile/horoscope
-        await axios.put(
-          "http://localhost:5000/api/profile/horoscope",
-          {
-            dob: formData.dob,
-            birthTime: formData.birthTime,
-            birthPlace: formData.birthPlace,
-            manglik: formData.manglik,
-            gotra: formData.gotra,
-            nakshatra: formData.nakshatra,
-            rashi: formData.rashi,
-          },
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+        await api.put("/profile/horoscope", {
+          dob: formData.dob,
+          birthTime: formData.birthTime,
+          birthPlace: formData.birthPlace,
+          manglik: formData.manglik,
+          gotra: formData.gotra,
+          nakshatra: formData.nakshatra,
+          rashi: formData.rashi,
+        });
       }
 
       if (step === 4) {
@@ -354,7 +317,7 @@ const EditProfile = () => {
                   rows={3}
                   maxLength={500}
                 />
-                <span className="char-count">{formData.bio.length}/500</span>
+                <span className="char-count">{(formData.bio || "").length}/500</span>
               </div>
 
               {/* HEIGHT & WEIGHT */}
@@ -643,7 +606,7 @@ const EditProfile = () => {
                   rows={3}
                   maxLength={300}
                 />
-                <span className="char-count">{formData.aboutFamily.length}/300</span>
+                <span className="char-count">{(formData.aboutFamily || "").length}/300</span>
               </div>
             </div>
           )}

@@ -1,13 +1,15 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Heart, MapPin, Briefcase, CheckCircle, Star,
   Send, Bookmark, Eye, Users, Calendar
 } from "lucide-react";
-import axios from "axios";
+import api from "../utils/api";
 import { useAuth } from "../context/AuthContext";
 import "./ProfileCard.css";
 
 const ProfileCard = ({ profile, onInterest, onShortlist }) => {
+  const navigate = useNavigate();
   const { token } = useAuth();
   const [interested, setInterested] = useState(false);
   const [shortlisted, setShortlisted] = useState(false);
@@ -33,8 +35,8 @@ const ProfileCard = ({ profile, onInterest, onShortlist }) => {
     setInterestLoading(true);
     try {
       // TODO [BACKEND]: POST /api/interest/send
-      await axios.post(
-        "http://localhost:5000/api/interest/send",
+      await api.post(
+        "/interest/send",
         { toUserId: profile._id },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -53,8 +55,8 @@ const ProfileCard = ({ profile, onInterest, onShortlist }) => {
     setShortlistLoading(true);
     try {
       // TODO [BACKEND]: POST /api/shortlist
-      await axios.post(
-        "http://localhost:5000/api/shortlist",
+      await api.post(
+        "/shortlist",
         { userId: profile._id },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -175,7 +177,7 @@ const ProfileCard = ({ profile, onInterest, onShortlist }) => {
             className="pc-action-btn view"
             onClick={(e) => {
               e.stopPropagation();
-              window.location.href = `/profile/${profile._id}`;
+              navigate(`/profile/${profile._id}`);
             }}
             title="View Profile"
           >

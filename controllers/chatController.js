@@ -1,0 +1,62 @@
+const Message = require('../models/Message');
+const Conversation = require('../models/Conversation');
+
+// Task 5: GET /api/chat/conversations
+exports.getConversations = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+
+    const conversations = await Conversation.find({
+      participants: userId
+    })
+    .populate('participants', 'name city state education profession') // photos field not in model
+    .sort({ lastMessageTime: -1 });
+
+    res.status(200).json({
+      success: true,
+      count: conversations.length,
+      data: conversations
+    });
+  } catch (error) {
+    console.error("Get Conversations Error:", error);
+    res.status(500).json({ success: false, message: "Internal Server Error", error: error.message });
+  }
+};
+
+// Task 6: GET /api/chat/:userId
+exports.getChatHistory = async (req, res) => {
+  try {
+    const myId = req.user.userId;
+    const otherId = req.params.userId;
+
+    // Build conversationId from both userIds (sorted alphabetically)
+    const conversationId = [myId, otherId].sort().join('_');
+
+    // 1. Find all messages
+    const messages = await Message.find({ conversationId })
+      .sort({ createdAt: 1 });
+
+    // 2. Mark all unread messages as read
+    await Message.updateMany(
+      { conversationId, to: myId, isRead: false },
+      { $set: { isRead: true } }
+    );
+
+    // 3. Reset unreadCount for current user in Conversation
+    const conversation = await Conversation.findOne({ conversationId });
+    if (conversation) {
+      conversation.unreadCount.set(myId, 0);
+      await conversation.save();
+    }
+
+    res.status(200).json({
+      success: true,
+      count: messages.length,
+      data: messages
+    });
+
+  } catch (error) {
+    console.error("Get Chat History Error:", error);
+    res.status(500).json({ success: false, message: "Internal Server Error", error: error.message });
+  }
+};
