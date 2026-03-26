@@ -6,7 +6,7 @@ import {
   faHeart, faSearch, faCheckCircle, faShield,
   faArrowRight, faUsers, faComments, faStar,
   faChevronDown, faChevronUp, faMapPin, faInfoCircle,
-  faQuestionCircle
+  faQuestionCircle, faHeadset, faBell, faLock
 } from "@fortawesome/free-solid-svg-icons";
 
 const LandingPage = () => {
@@ -17,33 +17,45 @@ const LandingPage = () => {
   const faqItems = [
     {
       id: 1,
+      icon: faQuestionCircle,
+      category: "Getting Started",
       question: "How does PhirseShaadi work?",
-      answer: "Create a profile, browse matches based on your preferences, send interest to profiles you like, and start chatting. It's that simple!"
+      answer: "PhirseShaadi is an AI-powered matrimonial platform that uses advanced matching algorithms to connect you with compatible partners. Simply create a detailed profile, set your preferences, and let our system suggest matches based on values, lifestyle, location, and interests."
     },
     {
       id: 2,
+      icon: faShield,
+      category: "Safety & Security",
       question: "Is my personal information safe on PhirseShaadi?",
-      answer: "Yes, we take privacy seriously. Your personal details are encrypted and never shared with third parties. You have full control over your information."
+      answer: "Absolutely! We implement bank-level encryption (SSL 256-bit) for all data. Your personal details are never shared with third parties without consent. You have complete control over your visibility, and we employ 24/7 security monitoring to prevent fraud."
     },
     {
       id: 3,
+      icon: faUsers,
+      category: "Membership",
       question: "What is the difference between free and paid membership?",
-      answer: "Free members can create a profile and browse. Premium members get advanced filters, unlimited messaging, and priority visibility."
+      answer: "Free members can create profiles and browse matches. Premium members get unlimited messaging, advanced filters (caste, subcaste, education), priority visibility in search results, and profile verification badges. Premium also includes AI-powered match recommendations."
     },
     {
       id: 4,
+      icon: faBell,
+      category: "Communication",
       question: "How can I contact other members?",
-      answer: "Send interest to profiles you like. If they accept, you can start chatting with them through our in-app messaging system."
+      answer: "Send an interest to profiles you like. If they accept, you unlock direct messaging. You can also use our video chat feature (Premium only) to get to know matches better before deciding to meet. All conversations are private and encrypted."
     },
     {
       id: 5,
+      icon: faLock,
+      category: "Account Management",
       question: "Can I delete my profile anytime?",
-      answer: "Yes, you can deactivate or delete your profile anytime from account settings. Your data will be removed within 30 days."
+      answer: "Yes! You can deactivate your profile temporarily (keeps data for 3 months) or permanently delete it from account settings. Permanent deletion removes all your data within 30 days per GDPR compliance. You won't be visible to others immediately after deactivation."
     },
     {
       id: 6,
-      question: "Is there a mobile app?",
-      answer: "Yes! PhirseShaadi is available on both Android and iOS. Download it to browse profiles on the go."
+      icon: faHeadset,
+      category: "Mobile & Support",
+      question: "Is there a mobile app and customer support?",
+      answer: "Yes! PhirseShaadi is available on iOS and Android with the same features as the web version. Our customer support team is available 24/7 via chat, email, and phone. Premium members get priority support with response times under 2 hours."
     }
   ];
 
@@ -61,6 +73,10 @@ const LandingPage = () => {
     "All Religions", "Hindu", "Muslim", "Christian", "Sikh",
     "Jain", "Buddhist", "Parsi", "Jewish"
   ];
+
+  const toggleFAQ = (id) => {
+    setExpandedFAQ(expandedFAQ === id ? null : id);
+  };
 
   return (
     <div className="landing-page">
@@ -264,39 +280,54 @@ const LandingPage = () => {
 
         <div className="browse-grid">
           <div className="browse-category">
-            <h3>
-              <FontAwesomeIcon icon={faHeart} /> By Community
-            </h3>
+            <div className="browse-header">
+              <FontAwesomeIcon icon={faHeart} className="browse-icon" />
+              <h3>By Community</h3>
+            </div>
             <div className="browse-items">
               {communities.map((comm, i) => (
-                <button key={i} className="browse-item">
-                  {comm}
+                <button 
+                  key={i} 
+                  className="browse-item"
+                >
+                  <span className="item-text">{comm}</span>
+                  <FontAwesomeIcon icon={faArrowRight} className="item-icon" />
                 </button>
               ))}
             </div>
           </div>
 
           <div className="browse-category">
-            <h3>
-              <FontAwesomeIcon icon={faMapPin} /> By City
-            </h3>
+            <div className="browse-header">
+              <FontAwesomeIcon icon={faMapPin} className="browse-icon" />
+              <h3>By City</h3>
+            </div>
             <div className="browse-items">
               {locations.map((loc, i) => (
-                <button key={i} className="browse-item">
-                  {loc}
+                <button 
+                  key={i} 
+                  className="browse-item"
+                >
+                  <span className="item-text">{loc}</span>
+                  <FontAwesomeIcon icon={faArrowRight} className="item-icon" />
                 </button>
               ))}
             </div>
           </div>
 
           <div className="browse-category">
-            <h3>
-              <FontAwesomeIcon icon={faUsers} /> By Religion
-            </h3>
+            <div className="browse-header">
+              <FontAwesomeIcon icon={faUsers} className="browse-icon" />
+              <h3>By Religion</h3>
+            </div>
             <div className="browse-items">
               {religions.map((rel, i) => (
-                <button key={i} className="browse-item">
-                  {rel}
+                <button 
+                  key={i} 
+                  className="browse-item"
+                >
+                  <span className="item-text">{rel}</span>
+                  <FontAwesomeIcon icon={faArrowRight} className="item-icon" />
                 </button>
               ))}
             </div>
@@ -308,35 +339,74 @@ const LandingPage = () => {
       {/* FAQ */}
       {/* ══════════════════════════════════════════════════════════ */}
       <section className="faq-section">
+        <div className="faq-background">
+          <div className="faq-blob faq-blob-1"></div>
+          <div className="faq-blob faq-blob-2"></div>
+          <div className="faq-blob faq-blob-3"></div>
+        </div>
+
         <div className="section-header">
           <h2>Frequently Asked Questions</h2>
           <p>Everything you need to know about PhirseShaadi</p>
         </div>
 
         <div className="faq-container">
-          {faqItems.map((item) => (
-            <div key={item.id} className="faq-item">
-              <button
-                className="faq-question"
-                onClick={() => setExpandedFAQ(expandedFAQ === item.id ? null : item.id)}
+          <div className="faq-items-wrapper">
+            {faqItems.map((item) => (
+              <div 
+                key={item.id} 
+                className={`faq-item ${expandedFAQ === item.id ? "expanded" : ""}`}
               >
-                <span>
-                  <span className="faq-number">{String(item.id).padStart(2, '0')}</span>
-                  {item.question}
-                </span>
-                {expandedFAQ === item.id ? (
-                  <FontAwesomeIcon icon={faChevronUp} />
-                ) : (
-                  <FontAwesomeIcon icon={faChevronDown} />
+                <button
+                  className="faq-question"
+                  onClick={() => toggleFAQ(item.id)}
+                >
+                  <div className="faq-question-content">
+                    <div className="faq-icon-badge">
+                      <FontAwesomeIcon icon={item.icon} />
+                    </div>
+                    <div className="faq-question-text">
+                      <span className="faq-category">{item.category}</span>
+                      <span className="faq-number">{String(item.id).padStart(2, '0')}</span>
+                      <p>{item.question}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="faq-toggle-icon">
+                    {expandedFAQ === item.id ? (
+                      <FontAwesomeIcon icon={faChevronUp} />
+                    ) : (
+                      <FontAwesomeIcon icon={faChevronDown} />
+                    )}
+                  </div>
+                </button>
+
+                {expandedFAQ === item.id && (
+                  <div className="faq-answer">
+                    <div className="faq-answer-content">
+                      <div className="answer-icon">
+                        <FontAwesomeIcon icon={faCheckCircle} />
+                      </div>
+                      <p>{item.answer}</p>
+                    </div>
+                  </div>
                 )}
-              </button>
-              {expandedFAQ === item.id && (
-                <div className="faq-answer">
-                  <p>{item.answer}</p>
-                </div>
-              )}
-            </div>
-          ))}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="faq-contact">
+          <h3>Still have questions?</h3>
+          <p>Our support team is here to help 24/7</p>
+          <div className="faq-contact-buttons">
+            <button className="faq-btn faq-btn-primary">
+              <FontAwesomeIcon icon={faHeadset} /> Contact Support
+            </button>
+            <button className="faq-btn faq-btn-secondary">
+              <FontAwesomeIcon icon={faQuestionCircle} /> Browse Help Center
+            </button>
+          </div>
         </div>
       </section>
 
