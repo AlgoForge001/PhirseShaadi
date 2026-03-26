@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { User, Mail, Phone, Lock, Eye, EyeOff, Heart, ChevronRight, CheckCircle, Users, Calendar } from "lucide-react";
+import { User, Mail, Phone, Lock, Eye, EyeOff, Heart, ChevronRight, CheckCircle, Users, Calendar, AlertCircle } from "lucide-react";
 import api from "../utils/api";
 import { useAuth } from "../context/AuthContext";
 import "./Register.css";
@@ -98,8 +98,6 @@ const Register = () => {
     setApiError("");
 
     try {
-      // TODO [BACKEND]: POST http://localhost:5000/api/auth/register
-      // Expected response: { success: true, token: "...", user: {...} }
       const res = await api.post("/auth/register", {
         fullName: formData.fullName,
         email: formData.email,
@@ -120,14 +118,11 @@ const Register = () => {
       });
 
       if (res.data.success) {
-        // Save token and user to context + localStorage
         login(res.data.token, res.data.user);
-        // Navigate to OTP verify with phone number
         navigate("/otp-verify", { state: { phone: formData.phone } });
       }
 
     } catch (error) {
-      // Show error message from backend
       if (error.response?.data?.message) {
         setApiError(error.response.data.message);
       } else {
@@ -139,7 +134,6 @@ const Register = () => {
   };
 
   const handleGoogleLogin = () => {
-    // Redirect to backend google auth route
     window.location.href = "http://localhost:5000/api/auth/google";
   };
 
@@ -244,7 +238,7 @@ const Register = () => {
               {/* Full Name */}
               <div className="form-group">
                 <label>Full Name <span className="req">*</span></label>
-                <div className={`input-wrap ${errors.fullName ? "error" : ""}`}>
+                <div className={`input-wrap ${formData.fullName && !errors.fullName ? "success" : ""} ${errors.fullName ? "error" : ""}`}>
                   <User size={17} className="input-icon" />
                   <input
                     type="text"
@@ -254,13 +248,13 @@ const Register = () => {
                     onChange={handleChange}
                   />
                 </div>
-                {errors.fullName && <span className="err-msg">{errors.fullName}</span>}
+                {errors.fullName && <span className="err-msg"><AlertCircle size={13} /> {errors.fullName}</span>}
               </div>
 
               {/* Email */}
               <div className="form-group">
                 <label>Email Address <span className="req">*</span></label>
-                <div className={`input-wrap ${errors.email ? "error" : ""}`}>
+                <div className={`input-wrap ${formData.email && !errors.email && /\S+@\S+\.\S+/.test(formData.email) ? "success" : ""} ${errors.email ? "error" : ""}`}>
                   <Mail size={17} className="input-icon" />
                   <input
                     type="email"
@@ -270,13 +264,13 @@ const Register = () => {
                     onChange={handleChange}
                   />
                 </div>
-                {errors.email && <span className="err-msg">{errors.email}</span>}
+                {errors.email && <span className="err-msg"><AlertCircle size={13} /> {errors.email}</span>}
               </div>
 
               {/* Phone */}
               <div className="form-group">
                 <label>Mobile Number <span className="req">*</span></label>
-                <div className={`input-wrap ${errors.phone ? "error" : ""}`}>
+                <div className={`input-wrap ${formData.phone && !errors.phone && /^[6-9]\d{9}$/.test(formData.phone) ? "success" : ""} ${errors.phone ? "error" : ""}`}>
                   <Phone size={17} className="input-icon" />
                   <span className="phone-code">+91</span>
                   <input
@@ -288,13 +282,13 @@ const Register = () => {
                     maxLength={10}
                   />
                 </div>
-                {errors.phone && <span className="err-msg">{errors.phone}</span>}
+                {errors.phone && <span className="err-msg"><AlertCircle size={13} /> {errors.phone}</span>}
               </div>
 
               {/* Password */}
               <div className="form-group">
                 <label>Password <span className="req">*</span></label>
-                <div className={`input-wrap ${errors.password ? "error" : ""}`}>
+                <div className={`input-wrap ${formData.password && !errors.password && formData.password.length >= 8 ? "success" : ""} ${errors.password ? "error" : ""}`}>
                   <Lock size={17} className="input-icon" />
                   <input
                     type={showPassword ? "text" : "password"}
@@ -307,19 +301,19 @@ const Register = () => {
                     {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
                   </button>
                 </div>
-                {errors.password && <span className="err-msg">{errors.password}</span>}
+                {errors.password && <span className="err-msg"><AlertCircle size={13} /> {errors.password}</span>}
                 {formData.password && (
                   <div className="password-strength">
                     <div className={`strength-bar ${formData.password.length >= 8 ? "strong" : formData.password.length >= 5 ? "medium" : "weak"}`} />
-                    <span>{formData.password.length >= 8 ? "Strong" : formData.password.length >= 5 ? "Medium" : "Weak"}</span>
+                    <span>{formData.password.length >= 8 ? "✓ Strong" : formData.password.length >= 5 ? "Medium" : "Weak"}</span>
                   </div>
                 )}
               </div>
 
-              {/* Confirm Password — NEW */}
+              {/* Confirm Password */}
               <div className="form-group">
                 <label>Confirm Password <span className="req">*</span></label>
-                <div className={`input-wrap ${errors.confirmPassword ? "error" : ""}`}>
+                <div className={`input-wrap ${formData.confirmPassword && formData.password === formData.confirmPassword ? "success" : ""} ${errors.confirmPassword ? "error" : ""}`}>
                   <Lock size={17} className="input-icon" />
                   <input
                     type={showConfirmPassword ? "text" : "password"}
@@ -332,14 +326,13 @@ const Register = () => {
                     {showConfirmPassword ? <EyeOff size={17} /> : <Eye size={17} />}
                   </button>
                 </div>
-                {errors.confirmPassword && <span className="err-msg">{errors.confirmPassword}</span>}
-                {/* Show match indicator */}
+                {errors.confirmPassword && <span className="err-msg"><AlertCircle size={13} /> {errors.confirmPassword}</span>}
                 {formData.confirmPassword && formData.password && (
                   <div className="password-match">
                     {formData.password === formData.confirmPassword ? (
-                      <span className="match-ok"><CheckCircle size={13} /> Passwords match</span>
+                      <span className="match-ok">✓ Passwords match</span>
                     ) : (
-                      <span className="match-no">Passwords do not match</span>
+                      <span className="match-no">✗ Passwords don't match</span>
                     )}
                   </div>
                 )}
@@ -348,7 +341,6 @@ const Register = () => {
               {/* Social Login */}
               <div className="divider"><span>or register with</span></div>
               <div className="social-btns">
-                {/* TODO [BACKEND]: GET /api/auth/google */}
                 <button type="button" className="social-btn google" onClick={handleGoogleLogin}>
                   <svg width="18" height="18" viewBox="0 0 24 24">
                     <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -380,7 +372,7 @@ const Register = () => {
                     </button>
                   ))}
                 </div>
-                {errors.gender && <span className="err-msg">{errors.gender}</span>}
+                {errors.gender && <span className="err-msg"><AlertCircle size={13} /> {errors.gender}</span>}
               </div>
 
               <div className="form-group">
@@ -395,7 +387,7 @@ const Register = () => {
                     max={new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split("T")[0]}
                   />
                 </div>
-                {errors.dob && <span className="err-msg">{errors.dob}</span>}
+                {errors.dob && <span className="err-msg"><AlertCircle size={13} /> {errors.dob}</span>}
               </div>
 
               <div className="form-group">
@@ -406,7 +398,7 @@ const Register = () => {
                     {religions.map((r) => <option key={r} value={r}>{r}</option>)}
                   </select>
                 </div>
-                {errors.religion && <span className="err-msg">{errors.religion}</span>}
+                {errors.religion && <span className="err-msg"><AlertCircle size={13} /> {errors.religion}</span>}
               </div>
 
               <div className="form-group">
@@ -430,7 +422,7 @@ const Register = () => {
                     {motherTongues.map((m) => <option key={m} value={m}>{m}</option>)}
                   </select>
                 </div>
-                {errors.motherTongue && <span className="err-msg">{errors.motherTongue}</span>}
+                {errors.motherTongue && <span className="err-msg"><AlertCircle size={13} /> {errors.motherTongue}</span>}
               </div>
             </div>
           )}
@@ -446,7 +438,7 @@ const Register = () => {
                     {maritalStatuses.map((m) => <option key={m} value={m}>{m}</option>)}
                   </select>
                 </div>
-                {errors.maritalStatus && <span className="err-msg">{errors.maritalStatus}</span>}
+                {errors.maritalStatus && <span className="err-msg"><AlertCircle size={13} /> {errors.maritalStatus}</span>}
               </div>
 
               <div className="form-group">
@@ -457,7 +449,7 @@ const Register = () => {
                     {heights.map((h) => <option key={h} value={h}>{h}</option>)}
                   </select>
                 </div>
-                {errors.height && <span className="err-msg">{errors.height}</span>}
+                {errors.height && <span className="err-msg"><AlertCircle size={13} /> {errors.height}</span>}
               </div>
 
               <div className="form-row">
@@ -472,7 +464,7 @@ const Register = () => {
                       onChange={handleChange}
                     />
                   </div>
-                  {errors.city && <span className="err-msg">{errors.city}</span>}
+                  {errors.city && <span className="err-msg"><AlertCircle size={13} /> {errors.city}</span>}
                 </div>
                 <div className="form-group">
                   <label>State</label>
@@ -493,7 +485,7 @@ const Register = () => {
                     {educations.map((e) => <option key={e} value={e}>{e}</option>)}
                   </select>
                 </div>
-                {errors.education && <span className="err-msg">{errors.education}</span>}
+                {errors.education && <span className="err-msg"><AlertCircle size={13} /> {errors.education}</span>}
               </div>
 
               <div className="form-group">
@@ -507,14 +499,12 @@ const Register = () => {
               </div>
 
               <p className="terms-text">
-                By registering, you agree to our{" "}
-                <a href="#">Terms of Service</a> and{" "}
-                <a href="#">Privacy Policy</a>.
+                By registering, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
               </p>
 
-              {/* API ERROR MESSAGE */}
               {apiError && (
                 <div className="api-error">
+                  <AlertCircle size={16} />
                   {apiError}
                 </div>
               )}
@@ -540,8 +530,7 @@ const Register = () => {
           </div>
 
           <p className="login-link">
-            Already have an account?{" "}
-            <span onClick={() => navigate("/login")}>Sign In</span>
+            Already have an account? <span onClick={() => navigate("/login")}>Sign In</span>
           </p>
         </div>
       </div>
