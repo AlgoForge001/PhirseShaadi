@@ -90,7 +90,10 @@ const LandingPage = () => {
             <span>PhirseShaadi</span>
           </div>
           <div className="navbar-links">
-            <a href="#about" className="navbar-link">
+            <a 
+              href="/about" 
+              className="navbar-link"
+            >
               <FontAwesomeIcon icon={faInfoCircle} /> About
             </a>
             <a href="#help" className="navbar-link">
@@ -101,7 +104,7 @@ const LandingPage = () => {
         </div>
       </nav>
 
-      {/* ══════════════════════════════════════════════════════════ */}
+      {/* ════════════════════════════════════���═════════════════════ */}
       {/* HERO SECTION */}
       {/* ══════════════════════════════════════════════════════════ */}
       <section className="hero-with-image">
@@ -208,88 +211,90 @@ const LandingPage = () => {
           </div>
         </div>
       </section>
+
       {/* ══════════════════════════════════════════════════════════ */}
-{/* FEATURES - WHY CHOOSE US */}
-{/* ══════════════════════════════════════════════════════════ */}
-<section className="features">
-  <div className="features-background">
-    <div className="features-blob features-blob-1"></div>
-    <div className="features-blob features-blob-2"></div>
-  </div>
-
-  <div className="section-header">
-    <h2>Why Choose PhirseShaadi?</h2>
-    <p>Built on trust, authenticity, and genuine connections</p>
-  </div>
-
-  <div className="features-grid">
-    <div className="feature-box">
-      <div className="feature-top">
-        <div className="feature-number">01</div>
-        <div className="feature-icon icon-verified">
-          <FontAwesomeIcon icon={faCheckCircle} size="2x" />
+      {/* FEATURES - WHY CHOOSE US */}
+      {/* ══════════════════════════════════════════════════════════ */}
+      <section className="features">
+        <div className="features-background">
+          <div className="features-blob features-blob-1"></div>
+          <div className="features-blob features-blob-2"></div>
         </div>
-      </div>
-      <h3>Verified Profiles</h3>
-      <p>All members are verified for authenticity and safety. We ensure genuine, trustworthy connections.</p>
-    </div>
 
-    <div className="feature-box">
-      <div className="feature-top">
-        <div className="feature-number">02</div>
-        <div className="feature-icon icon-secure">
-          <FontAwesomeIcon icon={faShield} size="2x" />
+        <div className="section-header">
+          <h2>Why Choose PhirseShaadi?</h2>
+          <p>Built on trust, authenticity, and genuine connections</p>
         </div>
-      </div>
-      <h3>Privacy First</h3>
-      <p>Your information is encrypted and protected. You have complete control over your visibility and data.</p>
-    </div>
 
-    <div className="feature-box">
-      <div className="feature-top">
-        <div className="feature-number">03</div>
-        <div className="feature-icon icon-chat">
-          <FontAwesomeIcon icon={faComments} size="2x" />
-        </div>
-      </div>
-      <h3>Easy Communication</h3>
-      <p>Connect directly with matches through our secure messaging platform. Build relationships at your pace.</p>
-    </div>
+        <div className="features-grid">
+          <div className="feature-box">
+            <div className="feature-top">
+              <div className="feature-number">01</div>
+              <div className="feature-icon icon-verified">
+                <FontAwesomeIcon icon={faCheckCircle} size="2x" />
+              </div>
+            </div>
+            <h3>Verified Profiles</h3>
+            <p>All members are verified for authenticity and safety. We ensure genuine, trustworthy connections.</p>
+          </div>
 
-    <div className="feature-box">
-      <div className="feature-top">
-        <div className="feature-number">04</div>
-        <div className="feature-icon icon-search">
-          <FontAwesomeIcon icon={faSearch} size="2x" />
-        </div>
-      </div>
-      <h3>Smart Filters</h3>
-      <p>Find matches based on values, lifestyle, and preferences that truly matter to you.</p>
-    </div>
+          <div className="feature-box">
+            <div className="feature-top">
+              <div className="feature-number">02</div>
+              <div className="feature-icon icon-secure">
+                <FontAwesomeIcon icon={faShield} size="2x" />
+              </div>
+            </div>
+            <h3>Privacy First</h3>
+            <p>Your information is encrypted and protected. You have complete control over your visibility and data.</p>
+          </div>
 
-    <div className="feature-box">
-      <div className="feature-top">
-        <div className="feature-number">05</div>
-        <div className="feature-icon icon-mobile">
-          <FontAwesomeIcon icon={faHeart} size="2x" />
-        </div>
-      </div>
-      <h3>Mobile App</h3>
-      <p>Browse and connect on the go. Available on iOS and Android for your convenience.</p>
-    </div>
+          <div className="feature-box">
+            <div className="feature-top">
+              <div className="feature-number">03</div>
+              <div className="feature-icon icon-chat">
+                <FontAwesomeIcon icon={faComments} size="2x" />
+              </div>
+            </div>
+            <h3>Easy Communication</h3>
+            <p>Connect directly with matches through our secure messaging platform. Build relationships at your pace.</p>
+          </div>
 
-    <div className="feature-box">
-      <div className="feature-top">
-        <div className="feature-number">06</div>
-        <div className="feature-icon icon-support">
-          <FontAwesomeIcon icon={faHeadset} size="2x" />
+          <div className="feature-box">
+            <div className="feature-top">
+              <div className="feature-number">04</div>
+              <div className="feature-icon icon-search">
+                <FontAwesomeIcon icon={faSearch} size="2x" />
+              </div>
+            </div>
+            <h3>Smart Filters</h3>
+            <p>Find matches based on values, lifestyle, and preferences that truly matter to you.</p>
+          </div>
+
+          <div className="feature-box">
+            <div className="feature-top">
+              <div className="feature-number">05</div>
+              <div className="feature-icon icon-mobile">
+                <FontAwesomeIcon icon={faHeart} size="2x" />
+              </div>
+            </div>
+            <h3>Mobile App</h3>
+            <p>Browse and connect on the go. Available on iOS and Android for your convenience.</p>
+          </div>
+
+          <div className="feature-box">
+            <div className="feature-top">
+              <div className="feature-number">06</div>
+              <div className="feature-icon icon-support">
+                <FontAwesomeIcon icon={faHeadset} size="2x" />
+              </div>
+            </div>
+            <h3>24/7 Support</h3>
+            <p>Get help anytime. Our dedicated support team is here to assist you throughout your journey.</p>
+          </div>
         </div>
-      </div>
-      <h3>24/7 Support</h3>
-      <p>Get help anytime. Our dedicated support team is here to assist you throughout your journey.</p>
-    </div>
-  </div>
-</section>
+      </section>
+
       {/* ══════════════════════════════════════════════════════════ */}
       {/* BROWSE BY CATEGORY */}
       {/* ══════════════════════════════════════════════════════════ */}
@@ -448,122 +453,122 @@ const LandingPage = () => {
       )}
 
       {/* ══════════════════════════════════════════════════════════ */}
-{/* FOOTER */}
-{/* ══════════════════════════════════════════════════════════ */}
-<footer className="landing-footer">
-  <div className="footer-content">
-    {/* Footer Top */}
-    <div className="footer-top">
-      <div className="footer-column footer-brand">
-        <div className="footer-logo">
-          <FontAwesomeIcon icon={faHeart} style={{ color: '#A376A2' }} />
-          <span>PhirseShaadi</span>
-        </div>
-        <p className="footer-description">
-          A matrimonial platform dedicated to helping you find your perfect life partner with trust, authenticity, and genuine connections.
-        </p>
-        <div className="footer-social">
-          <a href="#" className="social-icon" title="Facebook">
-            <FontAwesomeIcon icon={faHeart} />
-          </a>
-          <a href="#" className="social-icon" title="Instagram">
-            <FontAwesomeIcon icon={faHeart} />
-          </a>
-          <a href="#" className="social-icon" title="Twitter">
-            <FontAwesomeIcon icon={faHeart} />
-          </a>
-          <a href="#" className="social-icon" title="LinkedIn">
-            <FontAwesomeIcon icon={faHeart} />
-          </a>
-        </div>
-      </div>
-
-      {/* Platform Links */}
-      <div className="footer-column">
-        <h4>Platform</h4>
-        <ul>
-          <li><a href="#about">About Us</a></li>
-          <li><a href="#how">How It Works</a></li>
-          <li><a href="#success">Success Stories</a></li>
-          <li><a href="#blog">Blog & Articles</a></li>
-          <li><a href="#careers">Careers</a></li>
-          <li><a href="#press">Press Kit</a></li>
-        </ul>
-      </div>
-
-      {/* Support Links */}
-      <div className="footer-column">
-        <h4>Support & Help</h4>
-        <ul>
-          <li><a href="#faq">FAQ</a></li>
-          <li><a href="#contact">Contact Us</a></li>
-          <li><a href="#safety">Safety Tips</a></li>
-          <li><a href="#help">Help Center</a></li>
-          <li><a href="#community">Community Guidelines</a></li>
-          <li><a href="#report">Report Abuse</a></li>
-        </ul>
-      </div>
-
-      {/* Legal Links */}
-      <div className="footer-column">
-        <h4>Legal & Privacy</h4>
-        <ul>
-          <li><a href="#privacy">Privacy Policy</a></li>
-          <li><a href="#terms">Terms of Service</a></li>
-          <li><a href="#cookies">Cookie Policy</a></li>
-          <li><a href="#security">Security</a></li>
-          <li><a href="#compliance">Compliance</a></li>
-          <li><a href="#gdpr">GDPR</a></li>
-        </ul>
-      </div>
-
-      {/* Download App */}
-      <div className="footer-column footer-app">
-        <h4>Download App</h4>
-        <div className="app-download-buttons">
-          <a href="#" className="app-download-btn ios-btn">
-            <FontAwesomeIcon icon={faHeart} />
-            <div>
-              <div className="app-label">Download on</div>
-              <div className="app-name">App Store</div>
+      {/* FOOTER */}
+      {/* ══════════════════════════════════════════════════════════ */}
+      <footer className="landing-footer">
+        <div className="footer-content">
+          {/* Footer Top */}
+          <div className="footer-top">
+            <div className="footer-column footer-brand">
+              <div className="footer-logo">
+                <FontAwesomeIcon icon={faHeart} style={{ color: '#A376A2' }} />
+                <span>PhirseShaadi</span>
+              </div>
+              <p className="footer-description">
+                A matrimonial platform dedicated to helping you find your perfect life partner with trust, authenticity, and genuine connections.
+              </p>
+              <div className="footer-social">
+                <a href="#" className="social-icon" title="Facebook">
+                  <FontAwesomeIcon icon={faHeart} />
+                </a>
+                <a href="#" className="social-icon" title="Instagram">
+                  <FontAwesomeIcon icon={faHeart} />
+                </a>
+                <a href="#" className="social-icon" title="Twitter">
+                  <FontAwesomeIcon icon={faHeart} />
+                </a>
+                <a href="#" className="social-icon" title="LinkedIn">
+                  <FontAwesomeIcon icon={faHeart} />
+                </a>
+              </div>
             </div>
-          </a>
-          <a href="#" className="app-download-btn android-btn">
-            <FontAwesomeIcon icon={faHeart} />
-            <div>
-              <div className="app-label">Get it on</div>
-              <div className="app-name">Google Play</div>
+
+            {/* Platform Links */}
+            <div className="footer-column">
+              <h4>Platform</h4>
+              <ul>
+                <li><a href="/about">About Us</a></li>
+                <li><a href="#how">How It Works</a></li>
+                <li><a href="#success">Success Stories</a></li>
+                <li><a href="#blog">Blog & Articles</a></li>
+                <li><a href="#careers">Careers</a></li>
+                <li><a href="#press">Press Kit</a></li>
+              </ul>
             </div>
-          </a>
+
+            {/* Support Links */}
+            <div className="footer-column">
+              <h4>Support & Help</h4>
+              <ul>
+                <li><a href="#faq">FAQ</a></li>
+                <li><a href="#contact">Contact Us</a></li>
+                <li><a href="#safety">Safety Tips</a></li>
+                <li><a href="#help">Help Center</a></li>
+                <li><a href="#community">Community Guidelines</a></li>
+                <li><a href="#report">Report Abuse</a></li>
+              </ul>
+            </div>
+
+            {/* Legal Links */}
+            <div className="footer-column">
+              <h4>Legal & Privacy</h4>
+              <ul>
+                <li><a href="#privacy">Privacy Policy</a></li>
+                <li><a href="#terms">Terms of Service</a></li>
+                <li><a href="#cookies">Cookie Policy</a></li>
+                <li><a href="#security">Security</a></li>
+                <li><a href="#compliance">Compliance</a></li>
+                <li><a href="#gdpr">GDPR</a></li>
+              </ul>
+            </div>
+
+            {/* Download App */}
+            <div className="footer-column footer-app">
+              <h4>Download App</h4>
+              <div className="app-download-buttons">
+                <a href="#" className="app-download-btn ios-btn">
+                  <FontAwesomeIcon icon={faHeart} />
+                  <div>
+                    <div className="app-label">Download on</div>
+                    <div className="app-name">App Store</div>
+                  </div>
+                </a>
+                <a href="#" className="app-download-btn android-btn">
+                  <FontAwesomeIcon icon={faHeart} />
+                  <div>
+                    <div className="app-label">Get it on</div>
+                    <div className="app-name">Google Play</div>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          {/* Footer Divider */}
+          <div className="footer-divider"></div>
+
+          {/* Footer Bottom */}
+          <div className="footer-bottom">
+            <div className="footer-bottom-left">
+              <p>&copy; 2026 PhirseShaadi. All rights reserved.</p>
+              <p className="footer-tagline">Building meaningful connections across India with trust and authenticity.</p>
+            </div>
+
+            <div className="footer-bottom-right">
+              <div className="footer-languages">
+                <span className="language-label">Available in:</span>
+                <a href="#" className="language-badge">English</a>
+                <a href="#" className="language-badge">हिंदी</a>
+                <a href="#" className="language-badge">मराठी</a>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
 
-    {/* Footer Divider */}
-    <div className="footer-divider"></div>
-
-    {/* Footer Bottom */}
-    <div className="footer-bottom">
-      <div className="footer-bottom-left">
-        <p>&copy; 2026 PhirseShaadi. All rights reserved.</p>
-        <p className="footer-tagline">Building meaningful connections across India with trust and authenticity.</p>
-      </div>
-
-      <div className="footer-bottom-right">
-        <div className="footer-languages">
-          <span className="language-label">Available in:</span>
-          <a href="#" className="language-badge">English</a>
-          <a href="#" className="language-badge">हिंदी</a>
-          <a href="#" className="language-badge">मराठी</a>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  {/* Floating decoration */}
-  <div className="footer-decoration footer-deco-1"></div>
-  <div className="footer-decoration footer-deco-2"></div>
-</footer>
+        {/* Floating decoration */}
+        <div className="footer-decoration footer-deco-1"></div>
+        <div className="footer-decoration footer-deco-2"></div>
+      </footer>
     </div>
   );
 };
