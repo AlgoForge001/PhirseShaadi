@@ -53,28 +53,21 @@ const About = () => {
         </div>
       </nav>
 
-      {/* Hero Section */}
+      {/* Hero Section - IMPROVED */}
       <section className="about-hero">
         <div className="hero-content">
           <h1>About PhirseShaadi</h1>
-          <p>Building Meaningful Connections, Creating Happy Families</p>
-        </div>
-        <div className="hero-decoration">
-          <div className="deco-blob blob-1"></div>
-          <div className="deco-blob blob-2"></div>
-        </div>
-      </section>
-
-      {/* Intro Section */}
-      <section className="about-intro">
-        <div className="intro-container">
-          <h2>Welcome to PhirseShaadi</h2>
-          <p>
+          <p className="hero-tagline">Building Meaningful Connections, Creating Happy Families</p>
+          <p className="hero-description">
             We are more than just a matrimonial platform. We are a community dedicated to helping people find genuine, 
             lasting connections based on mutual respect, shared values, and true compatibility. Our journey began with a 
             simple belief: everyone deserves the chance to find their perfect life partner in a safe, transparent, and 
             respectful environment.
           </p>
+        </div>
+        <div className="hero-decoration">
+          <div className="deco-blob blob-1"></div>
+          <div className="deco-blob blob-2"></div>
         </div>
       </section>
 
