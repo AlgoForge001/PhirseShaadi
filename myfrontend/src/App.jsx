@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Sidebar from './components/Sidebar'
 import LandingPage from './pages/LandingPage'
+import About from './pages/About'
 import Register from './pages/Register'
 import Login from './pages/Login'
 import OtpVerify from './pages/OtpVerify'
@@ -37,6 +38,7 @@ function App() {
               <Routes>
                 {/* PUBLIC ROUTES */}
                 <Route path="/" element={<LandingPage />} />
+                <Route path="/about" element={<About />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/otp-verify" element={<OtpVerify />} />
