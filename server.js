@@ -21,6 +21,9 @@ const io = new Server(server, {
 // Map to track online users: { userId: socketId }
 const onlineUsers = new Map();
 
+app.set('io', io);
+app.set('onlineUsers', onlineUsers);
+
 // Middleware
 app.use(cors());
 app.use(express.json());
@@ -48,15 +51,21 @@ const interestRoutes = require('./routes/interest');
 const shortlistRoutes = require('./routes/shortlist');
 const chatRoutes = require('./routes/chat');
 const profileRoutes = require('./routes/profile');
+const privacyRoutes = require('./routes/privacy');
+const userRoutes = require('./routes/user');
+const notificationRoutes = require('./routes/notification');
 const updateLastActive = require('./middleware/activity');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/profile', updateLastActive, profileRoutes);
+app.use('/api/privacy', updateLastActive, privacyRoutes);
+app.use('/api/user', updateLastActive, userRoutes);
 app.use('/api/search', updateLastActive, searchRoutes);
 app.use('/api/matches', updateLastActive, searchRoutes);
 app.use('/api/interest', updateLastActive, interestRoutes);
 app.use('/api/shortlist', updateLastActive, shortlistRoutes);
 app.use('/api/chat', updateLastActive, chatRoutes);
+app.use('/api/notifications', updateLastActive, notificationRoutes);
 
 // Test Route
 app.get('/', (req, res) => {
@@ -123,8 +132,12 @@ io.on('connection', (socket) => {
       conversation.lastMessageTime = new Date();
       
       // Update unread count for the receiver
-      const currentUnread = conversation.unreadCount.get(to) || 0;
-      conversation.unreadCount.set(to, currentUnread + 1);
+      if (!conversation.unreadCount) conversation.unreadCount = {};
+      const currentUnread = conversation.unreadCount[to] || 0;
+      conversation.unreadCount[to] = currentUnread + 1;
+      
+      // Since it's an Object/Schema.Types.Mixed, we must mark it as modified
+      conversation.markModified('unreadCount');
       
       await conversation.save();
 
@@ -135,6 +148,18 @@ io.on('connection', (socket) => {
       } else {
         console.log(`User ${to} is offline. Message saved.`);
       }
+
+      // Task 3: Notify receiver about new message
+      const sendNotification = require('./utils/sendNotification');
+      await sendNotification({
+        userId: to,
+        type: 'new_message',
+        message: "You have a new message",
+        fromUser: from,
+        link: `/chat/${from}`,
+        io,
+        onlineUsers
+      });
 
       // Also emit back to sender to confirm
       socket.emit('message:sent', newMessage);

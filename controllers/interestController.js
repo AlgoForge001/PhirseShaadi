@@ -27,6 +27,20 @@ exports.sendInterest = async (req, res) => {
 
     await newInterest.save();
 
+    // Task 3: Notify receiver
+    const sendNotification = require('../utils/sendNotification');
+    const io = req.app.get('io');
+    const onlineUsers = req.app.get('onlineUsers');
+    await sendNotification({
+      userId: toUserId,
+      type: 'interest_received',
+      message: "Someone sent you an interest!",
+      fromUser: fromUserId,
+      link: '/interests/received',
+      io,
+      onlineUsers
+    });
+
     res.status(201).json({
       success: true,
       message: "Interest sent successfully"
@@ -95,6 +109,23 @@ exports.respondInterest = async (req, res) => {
     }
 
     interest.status = status;
+    if (status === 'accepted') {
+      interest.chatRequestStatus = 'accepted';
+
+      // Task 3: Notify sender that interest was accepted
+      const sendNotification = require('../utils/sendNotification');
+      const io = req.app.get('io');
+      const onlineUsers = req.app.get('onlineUsers');
+      await sendNotification({
+        userId: interest.from, // interest.from is the original sender
+        type: 'interest_accepted',
+        message: "Your interest was accepted!",
+        fromUser: req.user.userId, // me (the receiver who accepted)
+        link: `/chat/${req.user.userId}`,
+        io,
+        onlineUsers
+      });
+    }
     interest.updatedAt = new Date();
     await interest.save();
 

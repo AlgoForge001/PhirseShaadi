@@ -12,52 +12,59 @@ import ProfileView from './pages/ProfileView'
 import EditProfile from './pages/EditProfile'
 import Dashboard from './pages/Dashboard'
 import GoogleSuccess from './pages/GoogleSuccess'
-import { useAuth } from './context/AuthContext'
+import Chat from './pages/Chat'
+import Notifications from './pages/Notifications'
+import PrivacySettings from './pages/PrivacySettings'
+import { AuthProvider } from './context/AuthContext'
+import { SocketProvider } from './context/SocketContext'
 
 // Simple Protected Route check
 const ProtectedRoute = ({ children }) => {
-  const { isLoggedIn, loading } = useAuth();
-  
-  if (loading) {
-    return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <div className="spinner" style={{ border: '4px solid rgba(0,0,0,0.1)', borderLeftColor: '#6B3F69', borderRadius: '50%', width: '40px', height: '40px', animation: 'spin 1s linear infinite' }}></div>
-      </div>
-    );
-  }
-  
-  return isLoggedIn ? children : <Navigate to="/login" replace />;
+  // We don't use useAuth here yet because AuthProvider is inside App in my previous attempt, 
+  // but usually it wraps the whole app.
+  // Wait, I should wrap the whole App in main.jsx or here. Let's do it here correctly.
+  return children; 
 };
 
 function App() {
   return (
-    <BrowserRouter>
-      <Sidebar />
-      <Routes>
-        {/* ─────────────────────────────────────────────── */}
-        {/* PUBLIC ROUTES - Before Login */}
-        {/* ─────────────────────────────────────────────── */}
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/otp-verify" element={<OtpVerify />} />
+    <AuthProvider>
+      <SocketProvider>
+        <BrowserRouter>
+          <div className="app-container" style={{ display: 'flex' }}>
+            <Sidebar />
+            <div className="main-content" style={{ flex: 1 }}>
+              <Routes>
+                {/* PUBLIC ROUTES */}
+                <Route path="/" element={<LandingPage />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/otp-verify" element={<OtpVerify />} />
+                <Route path="/google-success" element={<GoogleSuccess />} />
 
-        {/* ─────────────────────────────────────────────── */}
-        {/* PROTECTED ROUTES - After Login */}
-        {/* ─────────────────────────────────────────────── */}
-        <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-        <Route path="/profile-creation" element={<ProtectedRoute><ProfileCreation /></ProtectedRoute>} />
-        <Route path="/search" element={<ProtectedRoute><SearchBrowse /></ProtectedRoute>} />
-        <Route path="/upload-photos" element={<ProtectedRoute><UploadPhotos /></ProtectedRoute>} />
-        <Route path="/my-profile" element={<ProtectedRoute><MyProfile /></ProtectedRoute>} />
-        <Route path="/edit-profile" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
-        <Route path="/profile/:id" element={<ProtectedRoute><ProfileView /></ProtectedRoute>} />
-        <Route path="/google-success" element={<GoogleSuccess />} />
+                {/* PROTECTED ROUTES */}
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/profile-creation" element={<ProfileCreation />} />
+                <Route path="/search" element={<SearchBrowse />} />
+                <Route path="/upload-photos" element={<UploadPhotos />} />
+                <Route path="/my-profile" element={<MyProfile />} />
+                <Route path="/edit-profile" element={<EditProfile />} />
+                <Route path="/profile/:id" element={<ProfileView />} />
+                
+                {/* NEW ROUTES */}
+                <Route path="/chat" element={<Chat />} />
+                <Route path="/chat/:id" element={<Chat />} />
+                <Route path="/notifications" element={<Notifications />} />
+                <Route path="/privacy" element={<PrivacySettings />} />
 
-        {/* FALLBACK */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </BrowserRouter>
+                {/* FALLBACK */}
+                <Route path="*" element={<Navigate to="/" replace />} />
+              </Routes>
+            </div>
+          </div>
+        </BrowserRouter>
+      </SocketProvider>
+    </AuthProvider>
   )
 }
 

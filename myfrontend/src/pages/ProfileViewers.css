@@ -1,0 +1,132 @@
+.profile-viewers-page {
+  padding: 40px;
+  background: #f8f9fa;
+  min-height: calc(100vh - 40px);
+  display: flex;
+  justify-content: center;
+}
+
+.viewers-container {
+  width: 800px;
+  max-width: 100%;
+}
+
+.viewers-header {
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.viewers-header h2 {
+  color: #6B3F69;
+  font-size: 2rem;
+  margin-bottom: 5px;
+}
+
+.viewers-header p {
+  color: #888;
+}
+
+.viewers-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 20px;
+}
+
+.viewer-item {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  transition: transform 0.2s;
+}
+
+.viewer-item:hover {
+  transform: translateY(-5px);
+}
+
+.viewer-pic img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 20px;
+}
+
+.viewer-info {
+  flex: 1;
+}
+
+.viewer-info h4 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.viewer-info p {
+  margin: 2px 0;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.view-time {
+  font-size: 0.75rem;
+  color: #aaa;
+}
+
+.view-profile-btn {
+  background: none;
+  border: 1px solid #6B3F69;
+  color: #6B3F69;
+  padding: 6px 15px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.view-profile-btn:hover {
+  background: #6B3F69;
+  color: white;
+}
+
+/* Promo Card */
+.promo-card {
+  background: white;
+  padding: 50px;
+  border-radius: 15px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  max-width: 500px;
+  max-height: 400px;
+}
+
+.premium-icon {
+  font-size: 4rem;
+  display: block;
+  margin-bottom: 20px;
+}
+
+.promo-card h2 {
+  color: #6B3F69;
+  margin-bottom: 15px;
+}
+
+.promo-card p {
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 30px;
+}
+
+.upgrade-btn {
+  background: linear-gradient(135deg, #6B3F69 0%, #a376a2 100%);
+  color: white;
+  border: none;
+  padding: 15px 40px;
+  border-radius: 30px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 5px 15px rgba(107,63,105,0.4);
+}

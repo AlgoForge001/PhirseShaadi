@@ -73,54 +73,83 @@ exports.searchUsers = async (req, res) => {
   }
 };
 
+// Helper: Calculate age from DOB
+const calculateAge = (dob) => {
+  if (!dob) return 0;
+  const diff = Date.now() - new Date(dob).getTime();
+  const ageDate = new Date(diff);
+  return Math.abs(ageDate.getUTCFullYear() - 1970);
+};
+
+// Helper: Match Score Logic
+const calculateMatchScore = (user, candidate) => {
+  let score = 0;
+  const prefs = user.partnerPreferences || {};
+
+  // 1. Religion (20%)
+  if (prefs.religion && candidate.religion === prefs.religion) score += 20;
+
+  // 2. Age (20%)
+  const age = calculateAge(candidate.dob);
+  if (prefs.minAge && prefs.maxAge) {
+    if (age >= prefs.minAge && age <= prefs.maxAge) score += 20;
+    else if (age >= prefs.minAge - 2 && age <= prefs.maxAge + 2) score += 10;
+  }
+
+  // 3. Location (20%)
+  if (prefs.city && candidate.city === prefs.city) score += 20;
+  else if (prefs.state && candidate.state === prefs.state) score += 10;
+
+  // 4. Education (20%)
+  if (prefs.education && candidate.education === prefs.education) score += 20;
+
+  // 5. Income (20%)
+  if (prefs.income && candidate.income === prefs.income) score += 20;
+
+  return score;
+};
+
 // GET /api/matches/recommended
 exports.getRecommendedMatches = async (req, res) => {
   try {
-    const user = await User.findById(req.user.userId).select('partnerPreferences blockedUsers');
+    const user = await User.findById(req.user.userId).select('partnerPreferences blockedUsers gender religion city state education income');
     if (!user) {
       return res.status(404).json({ success: false, message: "User not found" });
     }
 
-    const { partnerPreferences, blockedUsers } = user;
-    const query = { _id: { $ne: req.user.userId } };
+    const { partnerPreferences, blockedUsers, gender } = user;
+    
+    // Base Query: Opposite Gender & Not Blocked
+    const query = { 
+      _id: { $ne: req.user.userId },
+      gender: gender === 'male' ? 'female' : 'male' 
+    };
 
     if (blockedUsers && blockedUsers.length > 0) {
-      query._id.$nin = blockedUsers;
+      query._id = { ...query._id, $nin: blockedUsers };
     }
 
-    if (partnerPreferences) {
-      if (partnerPreferences.religion) query.religion = partnerPreferences.religion;
-      if (partnerPreferences.city) query.city = partnerPreferences.city;
-      if (partnerPreferences.state) query.state = partnerPreferences.state;
-      if (partnerPreferences.education) query.education = partnerPreferences.education;
-      
-      // Age range to DOB range
-      if (partnerPreferences.minAge || partnerPreferences.maxAge) {
-        const currentYear = new Date().getFullYear();
-        const birthQuery = {};
-        if (partnerPreferences.minAge) {
-          const maxBirthDate = new Date();
-          maxBirthDate.setFullYear(currentYear - partnerPreferences.minAge);
-          birthQuery.$lte = maxBirthDate;
-        }
-        if (partnerPreferences.maxAge) {
-          const minBirthDate = new Date();
-          minBirthDate.setFullYear(currentYear - partnerPreferences.maxAge - 1);
-          birthQuery.$gte = minBirthDate;
-        }
-        query.dob = birthQuery;
-      }
-    }
-
-    const matches = await User.find(query)
+    // Fetch potential candidates (limit 100 for ranking)
+    const candidates = await User.find(query)
       .select('-password -otp -otpExpiry')
-      .sort({ createdAt: -1 })
-      .limit(20);
+      .limit(100);
+
+    // Calculate scores and sort
+    const matchedUsers = candidates.map(candidate => {
+      const score = calculateMatchScore(user, candidate);
+      return { 
+        ...candidate.toObject(), 
+        matchPercentage: score 
+      };
+    }).sort((a, b) => b.matchPercentage - a.matchPercentage);
+
+    // Return top 20
+    const finalMatches = matchedUsers.slice(0, 20);
 
     res.status(200).json({
       success: true,
-      count: matches.length,
-      data: matches
+      count: finalMatches.length,
+      data: finalMatches
     });
 
   } catch (error) {
@@ -128,6 +157,7 @@ exports.getRecommendedMatches = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal Server Error", error: error.message });
   }
 };
+
 
 // GET /api/matches/near-you
 exports.getNearYouMatches = async (req, res) => {

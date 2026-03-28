@@ -181,6 +181,25 @@ const userSchema = new mongoose.Schema({
       ref: 'User'
     }
   ],
+  privacySettings: {
+    showLastSeen: { type: Boolean, default: true },
+    showOnlineStatus: { type: Boolean, default: true },
+    showProfileTo: { type: String, default: 'everyone' },
+    photoVisibility: { type: String, default: 'everyone' },
+    incognitoMode: { type: Boolean, default: false }
+  },
+  reports: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    }
+  ],
+  profileViewers: [
+    {
+      userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+      viewedAt: { type: Date, default: Date.now }
+    }
+  ],
   createdAt: {
     type: Date,
     default: Date.now

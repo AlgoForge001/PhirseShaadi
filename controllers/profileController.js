@@ -21,6 +21,36 @@ exports.getProfileById = async (req, res) => {
     if (!user) {
       return res.status(404).json({ success: false, message: "Profile not found" });
     }
+
+    // Task 7: Record profile view (if viewer is different from profile owner)
+    const viewerId = req.user.userId;
+    if (viewerId !== req.params.id) {
+      // Avoid duplicate recent views or just push? Task says "viewedAt time", implying a list.
+      // I'll push new view.
+      await User.findByIdAndUpdate(req.params.id, {
+        $push: { 
+          profileViewers: { 
+            userId: viewerId, 
+            viewedAt: new Date() 
+          } 
+        }
+      });
+
+      // Task 3: Notify profile owner
+      const sendNotification = require('../utils/sendNotification');
+      const io = req.app.get('io');
+      const onlineUsers = req.app.get('onlineUsers');
+      await sendNotification({
+        userId: req.params.id,
+        type: 'profile_viewed',
+        message: "Someone viewed your profile",
+        fromUser: viewerId,
+        link: `/profile/${viewerId}`,
+        io,
+        onlineUsers
+      });
+    }
+
     res.status(200).json({ success: true, profile: user });
   } catch (error) {
     console.error("Get Profile By ID Error:", error);

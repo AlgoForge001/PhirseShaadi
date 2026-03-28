@@ -9,7 +9,7 @@ exports.getConversations = async (req, res) => {
     const conversations = await Conversation.find({
       participants: userId
     })
-    .populate('participants', 'name city state education profession') // photos field not in model
+    .populate('participants', 'name city state education profession photos')
     .sort({ lastMessageTime: -1 });
 
     res.status(200).json({
@@ -43,9 +43,12 @@ exports.getChatHistory = async (req, res) => {
     );
 
     // 3. Reset unreadCount for current user in Conversation
-    const conversation = await Conversation.findOne({ conversationId });
-    if (conversation) {
-      conversation.unreadCount.set(myId, 0);
+    const conversation = await Conversation.findOne({
+      participants: { $all: [myId, otherId] }
+    });
+    if (conversation && conversation.unreadCount) {
+      conversation.unreadCount[myId] = 0;
+      conversation.markModified('unreadCount');
       await conversation.save();
     }
 

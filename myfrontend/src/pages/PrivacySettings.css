@@ -1,0 +1,146 @@
+.privacy-settings-page {
+  padding: 40px;
+  background: #f8f9fa;
+  min-height: calc(100vh - 40px);
+  display: flex;
+  justify-content: center;
+}
+
+.privacy-container {
+  width: 600px;
+  max-width: 100%;
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+}
+
+.privacy-container h2 {
+  color: #6B3F69;
+  margin-bottom: 30px;
+  font-size: 1.8rem;
+}
+
+.section {
+  margin-bottom: 35px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.section h3 {
+  font-size: 1.1rem;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group.row {
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.form-group label {
+  font-size: 0.95rem;
+  color: #555;
+  margin-bottom: 8px;
+}
+
+.form-group.row label {
+  margin-bottom: 0;
+}
+
+.form-group select {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  outline: none;
+}
+
+.form-group input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: #6B3F69;
+}
+
+.save-btn {
+  background: #6B3F69;
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.save-btn:disabled {
+  background: #ccc;
+}
+
+.status-message {
+  margin-top: 15px;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #28a745;
+}
+
+/* Blocked Section */
+.blocked-section {
+  border-bottom: none;
+}
+
+.blocked-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.blocked-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+}
+
+.blocked-user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.blocked-user-info img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.unblock-btn {
+  background: none;
+  border: 1px solid #ff4d4d;
+  color: #ff4d4d;
+  padding: 5px 15px;
+  border-radius: 15px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.unblock-btn:hover {
+  background: #ff4d4d;
+  color: white;
+}
+
+.no-blocked {
+  color: #aaa;
+  font-size: 0.9rem;
+  font-style: italic;
+}

@@ -166,3 +166,23 @@
     transform: none;
   }
 }
+
+/* ─────────────────────────────────────────────
+   BADGE FOR NOTIFICATIONS
+   ───────────────────────────────────────────── */
+.sidebar-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: #ff4d4d;
+  color: white;
+  font-size: 10px;
+  font-weight: bold;
+  height: 15px;
+  min-width: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  padding: 0 4px;
+}

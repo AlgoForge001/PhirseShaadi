@@ -1,0 +1,125 @@
+.notifications-page {
+  padding: 40px;
+  background: #f8f9fa;
+  min-height: calc(100vh - 40px);
+  display: flex;
+  justify-content: center;
+}
+
+.notifications-container {
+  width: 700px;
+  max-width: 100%;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+  overflow: hidden;
+}
+
+.notifications-header {
+  padding: 20px 25px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+}
+
+.notifications-header h2 {
+  font-size: 1.4rem;
+  color: #6B3F69;
+  display: flex;
+  align-items: center;
+}
+
+.unread-dot {
+  background: #ff4d4d;
+  color: white;
+  font-size: 0.8rem;
+  padding: 2px 8px;
+  border-radius: 12px;
+  margin-left: 10px;
+}
+
+.mark-read-btn {
+  background: none;
+  border: none;
+  color: #6B3F69;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.mark-read-btn:hover {
+  text-decoration: underline;
+}
+
+.notifications-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.notification-item {
+  display: flex;
+  padding: 20px 25px;
+  cursor: pointer;
+  border-bottom: 1px solid #f9f9f9;
+  transition: background 0.2s;
+  align-items: center;
+  position: relative;
+}
+
+.notification-item:hover {
+  background: #fafafa;
+}
+
+.notification-item.unread {
+  background: #fdf5fc;
+}
+
+.notification-icon {
+  font-size: 1.5rem;
+  margin-right: 20px;
+  background: #eee;
+  width: 45px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.unread.notification-item .notification-icon {
+  background: #e9ecef;
+}
+
+.notification-content {
+  flex: 1;
+}
+
+.notification-msg {
+  margin: 0 0 5px 0;
+  font-size: 1rem;
+  color: #333;
+}
+
+.unread .notification-msg {
+  font-weight: 600;
+}
+
+.notification-time {
+  font-size: 0.8rem;
+  color: #999;
+}
+
+.unread-indicator {
+  width: 10px;
+  height: 10px;
+  background: #6B3F69;
+  border-radius: 50%;
+  margin-left: 15px;
+}
+
+.no-notifications {
+  padding: 50px;
+  text-align: center;
+  color: #aaa;
+}

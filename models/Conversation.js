@@ -16,8 +16,7 @@ const conversationSchema = new mongoose.Schema({
     default: Date.now
   },
   unreadCount: {
-    type: Map,
-    of: Number,
+    type: Object,
     default: {}
   },
   createdAt: {

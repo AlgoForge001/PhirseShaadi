@@ -19,6 +19,11 @@ const interestSchema = new mongoose.Schema({
   message: {
     type: String
   },
+  chatRequestStatus: {
+    type: String,
+    enum: ['pending', 'accepted', 'rejected'],
+    default: 'pending'
+  },
   createdAt: {
     type: Date,
     default: Date.now

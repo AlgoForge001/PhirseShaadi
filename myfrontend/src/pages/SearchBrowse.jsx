@@ -3,31 +3,16 @@ import { useNavigate } from "react-router-dom";
 import {
   Heart, Search, Filter, MapPin, Briefcase,
   GraduationCap, ChevronDown, ChevronUp, X,
-  SlidersHorizontal, CheckCircle, Star, MessageCircle,
-  Bell, User, Home, LogOut
+  SlidersHorizontal
 } from "lucide-react";
 import api from "../utils/api";
 import { useAuth } from "../context/AuthContext";
-import Sidebar from "../components/Sidebar";
+import ProfileCard from "../components/ProfileCard";
+import Navbar from "../components/Navbar";
 import "./SearchBrowse.css";
 
-// TopNav moved to a simple component if needed elsewhere, 
-// but for SearchBrowse we'll just use a simple header since Sidebar is present.
-const SearchHeader = () => {
-  const navigate = useNavigate();
-  return (
-    <div className="search-top-mobile">
-      <div className="search-top-logo">
-        <Heart size={18} fill="#6B3F69" color="#6B3F69" />
-        <span>PhirseShaadi</span>
-      </div>
-      <div className="search-top-actions">
-        <button onClick={() => navigate("/notifications")}><Bell size={20} /></button>
-        <button onClick={() => navigate("/my-profile")}><User size={20} /></button>
-      </div>
-    </div>
-  );
-};
+// SearchHeader removed as Navbar replaces it.
+
 
 // ─────────────────────────────────────────────
 // FILTER PANEL
@@ -182,105 +167,7 @@ const FilterPanel = ({ filters, setFilters, onClose }) => {
   );
 };
 
-// ─────────────────────────────────────────────
-// PROFILE CARD
-// ─────────────────────────────────────────────
-const ProfileCard = ({ profile }) => {
-  const navigate = useNavigate();
-  const [liked, setLiked] = useState(false);
 
-  return (
-    <div className="profile-card" onClick={() => navigate(`/profile/${profile._id}`)}>
-      {/* PHOTO */}
-      <div className="card-photo">
-        <div className="card-avatar">
-          {profile.photos && profile.photos.length > 0 ? (
-            <img src={profile.photos[0].url} alt={profile.fullName || profile.name} className="card-img" />
-          ) : (
-            <User size={40} color="#A376A2" />
-          )}
-        </div>
-        {/* Badges */}
-        <div className="card-badges">
-          {profile.isVerified && (
-            <span className="badge badge-verified">
-              <CheckCircle size={11} /> Verified
-            </span>
-          )}
-          {profile.isPremium && (
-            <span className="badge badge-premium">
-              <Star size={11} /> Premium
-            </span>
-          )}
-        </div>
-        {profile.online && <div className="online-dot" />}
-        {/* Compatibility */}
-        {profile.compatibility && (
-           <div className="compatibility-pill">
-           <Heart size={11} fill="white" color="white" />
-           {profile.compatibility}% Match
-         </div>
-        )}
-        {/* Like Button */}
-        <button
-          className={`like-btn ${liked ? "liked" : ""}`}
-          onClick={(e) => { e.stopPropagation(); setLiked(!liked); }}
-        >
-          <Heart size={18} fill={liked ? "white" : "none"} color={liked ? "white" : "#6B3F69"} />
-        </button>
-      </div>
-
-      {/* INFO */}
-      <div className="card-info">
-        <div className="card-name-row">
-          <h3>{profile.fullName || profile.name}</h3>
-          {profile.dob && <span className="card-age">{new Date().getFullYear() - new Date(profile.dob).getFullYear()} yrs</span>}
-        </div>
-
-        <div className="card-details">
-          <span><MapPin size={13} /> {profile.city}, {profile.state}</span>
-          <span><GraduationCap size={13} /> {profile.education}</span>
-          <span><Briefcase size={13} /> {profile.profession || profile.occupation}</span>
-          <span><Star size={13} /> {profile.religion} • {profile.community}</span>
-        </div>
-
-        <div className="card-height-income">
-          <span>{profile.height}</span>
-          <span>{profile.income || profile.annualIncome}</span>
-        </div>
-
-        <div className="card-actions">
-          <button
-            className="card-btn card-btn-interest"
-            onClick={(e) => {
-              e.stopPropagation();
-              const sendInterest = async () => {
-                try {
-                  await api.post("/interest/send", { toUserId: profile._id });
-                  alert("Interest sent successfully!");
-                } catch (err) {
-                  alert("Already sent or failed to send interest.");
-                }
-              };
-              sendInterest();
-            }}
-          >
-            <Heart size={15} /> Send Interest
-          </button>
-          <button
-            className="card-btn card-btn-chat"
-            onClick={(e) => {
-              e.stopPropagation();
-              navigate(`/chat?userId=${profile._id}`);
-            }}
-          >
-            <MessageCircle size={15} /> Chat
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
 
 // ─────────────────────────────────────────────
 // MAIN SEARCH PAGE
@@ -303,6 +190,7 @@ const SearchBrowse = () => {
 
   const tabs = [
     { key: "all", label: "All Members" },
+    { key: "recommended", label: "Smart Matches" },
     { key: "new", label: "New Joins" },
     { key: "nearby", label: "Near You" },
   ];
@@ -361,11 +249,13 @@ const SearchBrowse = () => {
   const filteredProfiles = profiles;
 
   return (
-    <div className="search-page">
-      <Sidebar />
-      <SearchHeader />
+    <div className="search-page-new">
+      <Navbar />
+      
+      <div className="search-container-main">
+        <div className="search-content-area">
 
-      <div className="search-main">
+
 
         {/* SEARCH BAR */}
         <div className="search-bar-wrap">
@@ -424,7 +314,7 @@ const SearchBrowse = () => {
         {filteredProfiles.length > 0 ? (
           <div className="profiles-grid">
             {filteredProfiles.map((p) => (
-              <ProfileCard key={p.id} profile={p} />
+              <ProfileCard key={p._id} profile={p} />
             ))}
           </div>
         ) : (
@@ -435,9 +325,11 @@ const SearchBrowse = () => {
           </div>
         )}
 
+        </div>
       </div>
     </div>
   );
+
 };
 
-export default SearchBrowse;
+export default SearchBrowse;

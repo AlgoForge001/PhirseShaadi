@@ -2,14 +2,16 @@ import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   Heart, Home, UserPlus, LogIn, User, Search,
-  ChevronLeft, ChevronRight
+  ChevronLeft, ChevronRight, MessageSquare, Bell, Settings
 } from "lucide-react";
+import { useSocket } from "../context/SocketContext";
 import "./Sidebar.css";
 
 const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [open, setOpen] = useState(false);
+  const { unreadNotifications } = useSocket();
   
   // Get token from localStorage to check if user is logged in
   const token = localStorage.getItem("token");
@@ -26,6 +28,20 @@ const Sidebar = () => {
   const privatePages = [
     { label: "Dashboard", path: "/dashboard", icon: <Home size={19} /> },
     { label: "Search", path: "/search", icon: <Search size={19} /> },
+    { label: "Chat", path: "/chat", icon: <MessageSquare size={19} /> },
+    { 
+      label: "Notifications", 
+      path: "/notifications", 
+      icon: (
+        <div style={{ position: 'relative' }}>
+          <Bell size={19} />
+          {unreadNotifications > 0 && (
+            <span className="sidebar-badge">{unreadNotifications}</span>
+          )}
+        </div>
+      ) 
+    },
+    { label: "Settings", path: "/privacy", icon: <Settings size={19} /> },
     { label: "My Profile", path: "/my-profile", icon: <User size={19} /> },
   ];
 
