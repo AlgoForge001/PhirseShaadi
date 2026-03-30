@@ -1,13 +1,12 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./LandingPage.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faHeart, faSearch, faCheckCircle, faShield,
-  faArrowRight, faUsers, faComments, faStar,
-  faChevronDown, faChevronUp, faMapPin, faInfoCircle,
-  faQuestionCircle, faHeadset, faBell, faLock
-} from "@fortawesome/free-solid-svg-icons";
+  Heart, Search, CheckCircle, Shield,
+  ArrowRight, Users, MessageCircle, Star,
+  ChevronDown, ChevronUp, MapPin, Info,
+  HelpCircle, Headphones, Bell, Lock
+} from "lucide-react";
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -17,42 +16,42 @@ const LandingPage = () => {
   const faqItems = [
     {
       id: 1,
-      icon: faQuestionCircle,
+      icon: HelpCircle,
       category: "Getting Started",
       question: "How does PhirseShaadi work?",
       answer: "PhirseShaadi is an AI-powered matrimonial platform that uses advanced matching algorithms to connect you with compatible partners. Simply create a detailed profile, set your preferences, and let our system suggest matches based on values, lifestyle, location, and interests."
     },
     {
       id: 2,
-      icon: faShield,
+      icon: Shield,
       category: "Safety & Security",
       question: "Is my personal information safe on PhirseShaadi?",
       answer: "Absolutely! We implement bank-level encryption (SSL 256-bit) for all data. Your personal details are never shared with third parties without consent. You have complete control over your visibility, and we employ 24/7 security monitoring to prevent fraud."
     },
     {
       id: 3,
-      icon: faUsers,
+      icon: Users,
       category: "Membership",
       question: "What is the difference between free and paid membership?",
       answer: "Free members can create profiles and browse matches. Premium members get unlimited messaging, advanced filters (caste, subcaste, education), priority visibility in search results, and profile verification badges. Premium also includes AI-powered match recommendations."
     },
     {
       id: 4,
-      icon: faBell,
+      icon: Bell,
       category: "Communication",
       question: "How can I contact other members?",
       answer: "Send an interest to profiles you like. If they accept, you unlock direct messaging. You can also use our video chat feature (Premium only) to get to know matches better before deciding to meet. All conversations are private and encrypted."
     },
     {
       id: 5,
-      icon: faLock,
+      icon: Lock,
       category: "Account Management",
       question: "Can I delete my profile anytime?",
       answer: "Yes! You can deactivate your profile temporarily (keeps data for 3 months) or permanently delete it from account settings. Permanent deletion removes all your data within 30 days per GDPR compliance. You won't be visible to others immediately after deactivation."
     },
     {
       id: 6,
-      icon: faHeadset,
+      icon: Headphones,
       category: "Mobile & Support",
       question: "Is there a mobile app and customer support?",
       answer: "Yes! PhirseShaadi is available on iOS and Android with the same features as the web version. Our customer support team is available 24/7 via chat, email, and phone. Premium members get priority support with response times under 2 hours."
@@ -86,7 +85,7 @@ const LandingPage = () => {
       <nav className="landing-navbar">
         <div className="navbar-container">
           <div className="navbar-logo" onClick={() => navigate("/")}>
-            <FontAwesomeIcon icon={faHeart} size="lg" />
+            <Heart size={24} />
             <span>PhirseShaadi</span>
           </div>
           <div className="navbar-links">
@@ -94,10 +93,10 @@ const LandingPage = () => {
               href="/about" 
               className="navbar-link"
             >
-              <FontAwesomeIcon icon={faInfoCircle} /> About
+              <Info size={16} /> About
             </a>
             <a href="#help" className="navbar-link">
-              <FontAwesomeIcon icon={faQuestionCircle} /> Help
+              <HelpCircle size={16} /> Help
             </a>
           </div>
           <div className="navbar-spacer"></div>
@@ -134,13 +133,13 @@ const LandingPage = () => {
                   className="btn btn-primary-large"
                   onClick={() => navigate("/search")}
                 >
-                  <FontAwesomeIcon icon={faSearch} /> Browse Profiles
+                  <Search size={20} /> Browse Profiles
                 </button>
                 <button 
                   className="btn btn-secondary-large"
                   onClick={() => navigate("/dashboard")}
                 >
-                  <FontAwesomeIcon icon={faHeart} /> My Dashboard
+                  <Heart size={20} /> My Dashboard
                 </button>
               </div>
             ) : (
@@ -148,12 +147,12 @@ const LandingPage = () => {
                 className="btn btn-primary-large"
                 onClick={() => navigate("/register")}
               >
-                Get Started <FontAwesomeIcon icon={faArrowRight} />
+                Get Started <ArrowRight size={20} />
               </button>
             )}
 
             <div className="hero-trust">
-              <FontAwesomeIcon icon={faShield} />
+              <Shield size={16} />
               <span>100% Secure & Verified Profiles</span>
             </div>
           </div>
@@ -172,7 +171,7 @@ const LandingPage = () => {
         <div className="timeline-container">
           <div className="timeline-item">
             <div className="timeline-circle step-1">
-              <FontAwesomeIcon icon={faHeart} size="2x" />
+              <Heart size={32} />
             </div>
             <div className="timeline-content">
               <h3>Create Your Profile</h3>
@@ -182,7 +181,7 @@ const LandingPage = () => {
 
           <div className="timeline-item">
             <div className="timeline-circle step-2">
-              <FontAwesomeIcon icon={faSearch} size="2x" />
+              <Search size={32} />
             </div>
             <div className="timeline-content">
               <h3>Explore Matches</h3>
@@ -192,7 +191,7 @@ const LandingPage = () => {
 
           <div className="timeline-item">
             <div className="timeline-circle step-3">
-              <FontAwesomeIcon icon={faHeart} size="2x" />
+              <Heart size={32} />
             </div>
             <div className="timeline-content">
               <h3>Send Interest</h3>
@@ -202,7 +201,7 @@ const LandingPage = () => {
 
           <div className="timeline-item">
             <div className="timeline-circle step-4">
-              <FontAwesomeIcon icon={faComments} size="2x" />
+              <MessageCircle size={32} />
             </div>
             <div className="timeline-content">
               <h3>Connect & Build</h3>
@@ -231,7 +230,7 @@ const LandingPage = () => {
             <div className="feature-top">
               <div className="feature-number">01</div>
               <div className="feature-icon icon-verified">
-                <FontAwesomeIcon icon={faCheckCircle} size="2x" />
+                <CheckCircle size={32} />
               </div>
             </div>
             <h3>Verified Profiles</h3>
@@ -242,7 +241,7 @@ const LandingPage = () => {
             <div className="feature-top">
               <div className="feature-number">02</div>
               <div className="feature-icon icon-secure">
-                <FontAwesomeIcon icon={faShield} size="2x" />
+                <Shield size={32} />
               </div>
             </div>
             <h3>Privacy First</h3>
@@ -253,7 +252,7 @@ const LandingPage = () => {
             <div className="feature-top">
               <div className="feature-number">03</div>
               <div className="feature-icon icon-chat">
-                <FontAwesomeIcon icon={faComments} size="2x" />
+                <MessageCircle size={32} />
               </div>
             </div>
             <h3>Easy Communication</h3>
@@ -264,7 +263,7 @@ const LandingPage = () => {
             <div className="feature-top">
               <div className="feature-number">04</div>
               <div className="feature-icon icon-search">
-                <FontAwesomeIcon icon={faSearch} size="2x" />
+                <Search size={32} />
               </div>
             </div>
             <h3>Smart Filters</h3>
@@ -275,7 +274,7 @@ const LandingPage = () => {
             <div className="feature-top">
               <div className="feature-number">05</div>
               <div className="feature-icon icon-mobile">
-                <FontAwesomeIcon icon={faHeart} size="2x" />
+                <Heart size={32} />
               </div>
             </div>
             <h3>Mobile App</h3>
@@ -286,7 +285,7 @@ const LandingPage = () => {
             <div className="feature-top">
               <div className="feature-number">06</div>
               <div className="feature-icon icon-support">
-                <FontAwesomeIcon icon={faHeadset} size="2x" />
+                <Headphones size={32} />
               </div>
             </div>
             <h3>24/7 Support</h3>
@@ -307,7 +306,7 @@ const LandingPage = () => {
         <div className="browse-grid">
           <div className="browse-category">
             <div className="browse-header">
-              <FontAwesomeIcon icon={faHeart} className="browse-icon" />
+              <Heart className="browse-icon" />
               <h3>By Community</h3>
             </div>
             <div className="browse-items">
@@ -317,7 +316,7 @@ const LandingPage = () => {
                   className="browse-item"
                 >
                   <span className="item-text">{comm}</span>
-                  <FontAwesomeIcon icon={faArrowRight} className="item-icon" />
+                  <ArrowRight className="item-icon" />
                 </button>
               ))}
             </div>
@@ -325,7 +324,7 @@ const LandingPage = () => {
 
           <div className="browse-category">
             <div className="browse-header">
-              <FontAwesomeIcon icon={faMapPin} className="browse-icon" />
+              <MapPin className="browse-icon" />
               <h3>By City</h3>
             </div>
             <div className="browse-items">
@@ -335,7 +334,7 @@ const LandingPage = () => {
                   className="browse-item"
                 >
                   <span className="item-text">{loc}</span>
-                  <FontAwesomeIcon icon={faArrowRight} className="item-icon" />
+                  <ArrowRight className="item-icon" />
                 </button>
               ))}
             </div>
@@ -343,7 +342,7 @@ const LandingPage = () => {
 
           <div className="browse-category">
             <div className="browse-header">
-              <FontAwesomeIcon icon={faUsers} className="browse-icon" />
+              <Users className="browse-icon" />
               <h3>By Religion</h3>
             </div>
             <div className="browse-items">
@@ -353,7 +352,7 @@ const LandingPage = () => {
                   className="browse-item"
                 >
                   <span className="item-text">{rel}</span>
-                  <FontAwesomeIcon icon={faArrowRight} className="item-icon" />
+                  <ArrowRight className="item-icon" />
                 </button>
               ))}
             </div>
@@ -389,7 +388,7 @@ const LandingPage = () => {
                 >
                   <div className="faq-question-content">
                     <div className="faq-icon-badge">
-                      <FontAwesomeIcon icon={item.icon} />
+                      <item.icon size={20} />
                     </div>
                     <div className="faq-question-text">
                       <span className="faq-category">{item.category}</span>
@@ -400,9 +399,9 @@ const LandingPage = () => {
                   
                   <div className="faq-toggle-icon">
                     {expandedFAQ === item.id ? (
-                      <FontAwesomeIcon icon={faChevronUp} />
+                      <ChevronUp size={20} />
                     ) : (
-                      <FontAwesomeIcon icon={faChevronDown} />
+                      <ChevronDown size={20} />
                     )}
                   </div>
                 </button>
@@ -411,7 +410,7 @@ const LandingPage = () => {
                   <div className="faq-answer">
                     <div className="faq-answer-content">
                       <div className="answer-icon">
-                        <FontAwesomeIcon icon={faCheckCircle} />
+                        <CheckCircle size={16} />
                       </div>
                       <p>{item.answer}</p>
                     </div>
@@ -427,10 +426,10 @@ const LandingPage = () => {
           <p>Our support team is here to help 24/7</p>
           <div className="faq-contact-buttons">
             <button className="faq-btn faq-btn-primary">
-              <FontAwesomeIcon icon={faHeadset} /> Contact Support
+              <Headphones size={20} /> Contact Support
             </button>
             <button className="faq-btn faq-btn-secondary">
-              <FontAwesomeIcon icon={faQuestionCircle} /> Browse Help Center
+              <HelpCircle size={20} /> Browse Help Center
             </button>
           </div>
         </div>
@@ -447,7 +446,7 @@ const LandingPage = () => {
             className="btn btn-large"
             onClick={() => navigate("/register")}
           >
-            Create Free Profile <FontAwesomeIcon icon={faArrowRight} />
+            Create Free Profile <ArrowRight size={20} />
           </button>
         </section>
       )}
@@ -461,7 +460,7 @@ const LandingPage = () => {
           <div className="footer-top">
             <div className="footer-column footer-brand">
               <div className="footer-logo">
-                <FontAwesomeIcon icon={faHeart} style={{ color: '#A376A2' }} />
+                <Heart size={24} style={{ color: '#A376A2' }} />
                 <span>PhirseShaadi</span>
               </div>
               <p className="footer-description">
@@ -469,16 +468,16 @@ const LandingPage = () => {
               </p>
               <div className="footer-social">
                 <a href="#" className="social-icon" title="Facebook">
-                  <FontAwesomeIcon icon={faHeart} />
+                  <Heart size={18} />
                 </a>
                 <a href="#" className="social-icon" title="Instagram">
-                  <FontAwesomeIcon icon={faHeart} />
+                  <Heart size={18} />
                 </a>
                 <a href="#" className="social-icon" title="Twitter">
-                  <FontAwesomeIcon icon={faHeart} />
+                  <Heart size={18} />
                 </a>
                 <a href="#" className="social-icon" title="LinkedIn">
-                  <FontAwesomeIcon icon={faHeart} />
+                  <Heart size={18} />
                 </a>
               </div>
             </div>
@@ -527,14 +526,14 @@ const LandingPage = () => {
               <h4>Download App</h4>
               <div className="app-download-buttons">
                 <a href="#" className="app-download-btn ios-btn">
-                  <FontAwesomeIcon icon={faHeart} />
+                  <Heart size={20} />
                   <div>
                     <div className="app-label">Download on</div>
                     <div className="app-name">App Store</div>
                   </div>
                 </a>
                 <a href="#" className="app-download-btn android-btn">
-                  <FontAwesomeIcon icon={faHeart} />
+                  <Heart size={20} />
                   <div>
                     <div className="app-label">Get it on</div>
                     <div className="app-name">Google Play</div>
