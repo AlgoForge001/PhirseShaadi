@@ -37,7 +37,7 @@ function App() {
             <div className="main-content" style={{ flex: 1 }}>
               <Routes>
                 {/* PUBLIC ROUTES */}
-                <Route path="/" element={<LandingPage />} />
+                <Route path="/" element={<Dashboard />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/login" element={<Login />} />

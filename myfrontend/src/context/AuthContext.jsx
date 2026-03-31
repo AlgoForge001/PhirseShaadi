@@ -16,19 +16,27 @@ export const AuthProvider = ({ children }) => {
   // ── CHECK IF ALREADY LOGGED IN ON APP START ──
   useEffect(() => {
     try {
-      const savedToken = localStorage.getItem("token");
-      const savedUser = localStorage.getItem("user");
+      // DEVELOPMENT ONLY: Auto-Login for easier testing
+      const mockUser = {
+        userId: "679a0ebf356f966144e057f5", 
+        name: "Guest Developer",
+        email: "guest@example.com",
+        role: "user"
+      };
 
-      if (savedToken) {
-        setToken(savedToken);
-        if (savedUser && savedUser !== "null") {
-          setUser(JSON.parse(savedUser));
-        }
+      const savedToken = localStorage.getItem("token") || "dev-token-bypass";
+      const savedUser = localStorage.getItem("user") || JSON.stringify(mockUser);
+
+      setToken(savedToken);
+      setUser(JSON.parse(savedUser));
+
+      // Always ensure they are in storage for this session
+      if (!localStorage.getItem("token")) {
+        localStorage.setItem("token", savedToken);
+        localStorage.setItem("user", savedUser);
       }
     } catch (error) {
-      // If anything goes wrong, clear storage
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
+      console.error("Auth Context Init Error:", error);
     } finally {
       setLoading(false);
     }

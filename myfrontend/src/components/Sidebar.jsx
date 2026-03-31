@@ -14,8 +14,8 @@ const Sidebar = () => {
   const { unreadNotifications } = useSocket();
   
   // Get token from localStorage to check if user is logged in
-  const token = localStorage.getItem("token");
-  const isLoggedIn = !!token;
+  // const token = localStorage.getItem("token");
+  const isLoggedIn = true; // Hardcoded true for development
 
   // PUBLIC PAGES (Before Login)
   const publicPages = [

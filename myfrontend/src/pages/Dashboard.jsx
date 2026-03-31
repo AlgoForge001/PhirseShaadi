@@ -46,6 +46,16 @@ const Dashboard = () => {
 
   if (loading) return <div className="loading-screen">Loading your luxury experience...</div>;
 
+  if (error || !userData) {
+    return (
+      <div className="dashboard-error">
+        <h2>{error || "Profile Load Error"}</h2>
+        <p>Ensure the backend is running and the database is seeded.</p>
+        <button onClick={() => window.location.reload()}>Retry</button>
+      </div>
+    );
+  }
+
   return (
     <div className="dashboard-premium">
       <Navbar />
@@ -68,7 +78,11 @@ const Dashboard = () => {
           </div>
           <div className="hero-image-wrap">
             <div className="abstract-shape" />
-            {userData.photos?.[0] && <img src={userData.photos[0].url} alt="You" />}
+            {userData.photos?.[0]?.url ? (
+              <img src={userData.photos[0].url} alt="You" />
+            ) : (
+              <div className="profile-image-placeholder"><User size={40} /></div>
+            )}
           </div>
         </section>
 
