@@ -6,13 +6,13 @@ import {
   Phone, Mail, Camera, ChevronRight, Lock
 } from "lucide-react";
 import api from "../utils/api";
-import { useAuth } from "../context/AuthContext";
+
 import Navbar from "../components/Navbar";
 import "./MyProfile.css";
 
 const MyProfile = () => {
   const navigate = useNavigate();
-  const { token, logout } = useAuth();
+
   const [activeTab, setActiveTab] = useState("basic");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -28,16 +28,12 @@ const MyProfile = () => {
       } catch (err) {
         console.error("Profile load failed:", err);
         setError("Failed to sync your profile.");
-        if (err.response?.status === 401) {
-          logout();
-          navigate("/login");
-        }
       } finally {
         setLoading(false);
       }
     };
-    if (token) fetchProfile();
-  }, [token, navigate, logout]);
+    fetchProfile();
+  }, []);
 
   if (loading) return <div className="loading-screen">Preparing your profile...</div>;
 

@@ -30,7 +30,7 @@ export const getChatHistory = (userId) => api.get(`/chat/${userId}`);
 // ─────────────────────────────────────────────
 // PRIVACY & USER APIS
 // ─────────────────────────────────────────────
-export const updatePrivacySettings = (settings) => api.put('/privacy/settings', settings);
+export const updatePrivacySettings = (settings) => api.put('/privacy/settings', { privacySettings: settings });
 export const blockUser = (userId) => api.post('/user/block', { userId });
 export const unblockUser = (userId) => api.delete(`/user/block/${userId}`);
 export const getBlockedUsers = () => api.get('/user/blocked');

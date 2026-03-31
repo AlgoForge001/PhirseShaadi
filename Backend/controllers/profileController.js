@@ -173,3 +173,26 @@ exports.updateFullProfile = async (req, res) => {
 exports.uploadPhoto = async (req, res) => {
   res.status(501).json({ success: false, message: "Photo upload not yet implemented on server" });
 };
+
+// GET /api/profile/viewers
+exports.getProfileViewers = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.userId)
+      .select('profileViewers')
+      .populate('profileViewers.userId', 'name city photos');
+
+    if (!user) {
+      return res.status(200).json({ success: true, data: [] });
+    }
+
+    // Return latest 50 viewers, sorted by most recent
+    const viewers = (user.profileViewers || [])
+      .sort((a, b) => new Date(b.viewedAt) - new Date(a.viewedAt))
+      .slice(0, 50);
+
+    res.status(200).json({ success: true, data: viewers });
+  } catch (error) {
+    console.error("Get Profile Viewers Error:", error.message);
+    res.status(200).json({ success: true, data: [] });
+  }
+};

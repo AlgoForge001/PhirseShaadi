@@ -3,7 +3,7 @@ import { useNavigate, Link, NavLink } from "react-router-dom";
 
 import {
   Heart, Bell, MessageCircle, User,
-  Search, Menu, X, LogOut, Settings
+  Search, Menu, X, Settings
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useSocket } from "../context/SocketContext";
@@ -11,7 +11,7 @@ import "./Navbar.css";
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const { unreadNotifications } = useSocket();
   const [isScrolled, setIsScrolled] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -24,11 +24,6 @@ const Navbar = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  const handleLogout = () => {
-    logout();
-    navigate("/login");
-  };
 
   return (
     <nav className={`navbar ${isScrolled ? "scrolled" : ""}`}>
@@ -76,7 +71,7 @@ const Navbar = () => {
                   <User size={18} />
                 )}
               </div>
-              <span className="user-name-text">{user?.name?.split(" ")[0]}</span>
+              <span className="user-name-text">{user?.name?.split(" ")[0] || "User"}</span>
             </button>
 
             {showUserDropdown && (
@@ -86,10 +81,6 @@ const Navbar = () => {
                 </button>
                 <button onClick={() => { navigate("/privacy"); setShowUserDropdown(false); }}>
                   <Settings size={16} /> Privacy Settings
-                </button>
-                <div className="dropdown-divider" />
-                <button className="logout-btn" onClick={handleLogout}>
-                  <LogOut size={16} /> Logout
                 </button>
               </div>
             )}
@@ -112,8 +103,6 @@ const Navbar = () => {
           <Link to="/profile-viewers" onClick={() => setShowMobileMenu(false)}>Viewers</Link>
           <Link to="/chat" onClick={() => setShowMobileMenu(false)}>Messages</Link>
           <Link to="/notifications" onClick={() => setShowMobileMenu(false)}>Notifications</Link>
-          <div className="mobile-divider" />
-          <button className="mobile-logout" onClick={handleLogout}>Logout</button>
         </div>
       )}
     </nav>

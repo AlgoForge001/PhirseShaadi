@@ -39,10 +39,13 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 
-// MongoDB Connection
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB connected!"))
-  .catch((err) => console.log("MongoDB connection error:", err));
+// MongoDB Connection (family: 4 forces IPv4 — fixes Node.js 18+ DNS issues)
+mongoose.connect(process.env.MONGO_URI, {
+  family: 4,
+  serverSelectionTimeoutMS: 10000,
+})
+  .then(() => console.log("✅ MongoDB connected!"))
+  .catch((err) => console.log("❌ MongoDB connection error:", err.message));
 
 // Routes
 const authRoutes = require('./routes/auth');

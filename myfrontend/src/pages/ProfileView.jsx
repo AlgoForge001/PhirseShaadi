@@ -7,14 +7,14 @@ import {
   Phone, MessageCircle, Shield, Share2
 } from "lucide-react";
 import api from "../utils/api";
-import { useAuth } from "../context/AuthContext";
+
 import Navbar from "../components/Navbar";
 import "./ProfileView.css";
 
 const ProfileView = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { token, logout } = useAuth();
+
 
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -43,8 +43,8 @@ const ProfileView = () => {
         setLoading(false);
       }
     };
-    if (token) fetchProfile();
-  }, [id, token]);
+    if (id) fetchProfile();
+  }, [id]);
 
   if (loading) return <div className="loading-screen">Loading profile aesthetics...</div>;
   if (!profile) return <div className="error-screen">{error}</div>;

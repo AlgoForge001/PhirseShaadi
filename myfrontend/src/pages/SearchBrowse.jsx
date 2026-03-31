@@ -6,7 +6,7 @@ import {
   SlidersHorizontal
 } from "lucide-react";
 import api from "../utils/api";
-import { useAuth } from "../context/AuthContext";
+
 import ProfileCard from "../components/ProfileCard";
 import Navbar from "../components/Navbar";
 import "./SearchBrowse.css";
@@ -173,7 +173,7 @@ const FilterPanel = ({ filters, setFilters, onClose }) => {
 // MAIN SEARCH PAGE
 // ─────────────────────────────────────────────
 const SearchBrowse = () => {
-  const { token, logout } = useAuth();
+
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [showFilter, setShowFilter] = useState(false);
@@ -224,22 +224,14 @@ const SearchBrowse = () => {
       }
     } catch (err) {
       console.error("Failed to fetch profiles:", err);
-      if (err.response?.status === 401) {
-        logout();
-        navigate("/login");
-      }
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    if (token) {
-      fetchProfiles();
-    } else {
-      navigate("/login");
-    }
-  }, [activeTab, token]); // Re-fetch on tab change or token
+    fetchProfiles();
+  }, [activeTab]); // Re-fetch on tab change
 
   const handleApplyFilters = () => {
     fetchProfiles();

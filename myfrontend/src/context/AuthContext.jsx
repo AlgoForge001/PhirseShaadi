@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState } from "react";
 
 // ─────────────────────────────────────────────
 // CREATE CONTEXT
@@ -6,80 +6,29 @@ import { createContext, useContext, useState, useEffect } from "react";
 const AuthContext = createContext();
 
 // ─────────────────────────────────────────────
-// AUTH PROVIDER
+// AUTH PROVIDER (DEVELOPMENT MODE — No login required)
 // ─────────────────────────────────────────────
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [token, setToken] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState({
+    _id: "dev-user-001",
+    userId: "dev-user-001",
+    name: "Guest Developer",
+    email: "guest@example.com",
+    role: "user",
+    isPremium: true,
+  });
 
-  // ── CHECK IF ALREADY LOGGED IN ON APP START ──
-  useEffect(() => {
-    try {
-      // DEVELOPMENT ONLY: Auto-Login for easier testing
-      const mockUser = {
-        userId: "679a0ebf356f966144e057f5", 
-        name: "Guest Developer",
-        email: "guest@example.com",
-        role: "user"
-      };
+  // Always "logged in" for dev
+  const token = "dev-token-bypass";
+  const isLoggedIn = true;
+  const isPremium = true;
+  const loading = false;
 
-      const savedToken = localStorage.getItem("token") || "dev-token-bypass";
-      const savedUser = localStorage.getItem("user") || JSON.stringify(mockUser);
-
-      setToken(savedToken);
-      setUser(JSON.parse(savedUser));
-
-      // Always ensure they are in storage for this session
-      if (!localStorage.getItem("token")) {
-        localStorage.setItem("token", savedToken);
-        localStorage.setItem("user", savedUser);
-      }
-    } catch (error) {
-      console.error("Auth Context Init Error:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  // ── LOGIN FUNCTION ──
-  // TODO [BACKEND]: Call POST /api/auth/login before calling this
-  // Pass token and user data from API response
-  const login = (tokenValue, userData) => {
-    // Save to state
-    setToken(tokenValue);
-    setUser(userData);
-
-    // Save to localStorage so user stays logged in after refresh
-    localStorage.setItem("token", tokenValue);
-    localStorage.setItem("user", JSON.stringify(userData));
-  };
-
-  // ── LOGOUT FUNCTION ──
-  // TODO [BACKEND]: Call POST /api/auth/logout before calling this
-  const logout = () => {
-    // Clear state
-    setToken(null);
-    setUser(null);
-
-    // Clear localStorage
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-  };
-
-  // ── IS LOGGED IN CHECK ──
-  const isLoggedIn = !!token;
-
-  // ── IS PREMIUM CHECK ──
-  // TODO [BACKEND]: Get premium status from user object
-  const isPremium = user?.plan === "gold" || user?.plan === "platinum";
-
-  // ── UPDATE USER ──
-  // Call this after profile update
+  // No-op functions (kept so components don't crash)
+  const login = () => {};
+  const logout = () => {};
   const updateUser = (updatedData) => {
-    const newUser = { ...user, ...updatedData };
-    setUser(newUser);
-    localStorage.setItem("user", JSON.stringify(newUser));
+    setUser(prev => ({ ...prev, ...updatedData }));
   };
 
   return (
@@ -95,15 +44,13 @@ export const AuthProvider = ({ children }) => {
         updateUser,
       }}
     >
-      {/* Don't render app until we check localStorage */}
-      {!loading && children}
+      {children}
     </AuthContext.Provider>
   );
 };
 
 // ─────────────────────────────────────────────
-// CUSTOM HOOK — use this in any component
-// Example: const { user, login, logout } = useAuth();
+// CUSTOM HOOK
 // ─────────────────────────────────────────────
 export const useAuth = () => {
   const context = useContext(AuthContext);

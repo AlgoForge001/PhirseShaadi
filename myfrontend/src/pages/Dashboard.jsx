@@ -6,14 +6,14 @@ import {
   Search, User, Bell
 } from "lucide-react";
 import api from "../utils/api";
-import { useAuth } from "../context/AuthContext";
+
 import Navbar from "../components/Navbar";
 import ProfileCard from "../components/ProfileCard";
 import "./Dashboard.css";
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const { logout, token } = useAuth();
+
   const [userData, setUserData] = useState(null);
   const [recommendations, setRecommendations] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -32,17 +32,13 @@ const Dashboard = () => {
       } catch (err) {
         console.error("Dashboard fetch failed:", err);
         setError("Failed to sync your dashboard.");
-        if (err.response?.status === 401) {
-          logout();
-          navigate("/login");
-        }
       } finally {
         setLoading(false);
       }
     };
 
-    if (token) fetchData();
-  }, [token, navigate, logout]);
+    fetchData();
+  }, []);
 
   if (loading) return <div className="loading-screen">Loading your luxury experience...</div>;
 

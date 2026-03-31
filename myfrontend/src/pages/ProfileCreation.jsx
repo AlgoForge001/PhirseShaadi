@@ -6,12 +6,12 @@ import {
   Users, Star, FileText
 } from "lucide-react";
 import api from "../utils/api";
-import { useAuth } from "../context/AuthContext";
+
 import "./ProfileCreation.css";
 
 const ProfileCreation = () => {
   const navigate = useNavigate();
-  const { token, logout } = useAuth();
+
   const [step, setStep] = useState(1); // 5 steps total
   const [errors, setErrors] = useState({});
   const [photoPreview, setPhotoPreview] = useState(null);
@@ -126,12 +126,7 @@ const ProfileCreation = () => {
       }
     } catch (err) {
       console.error("Failed to update profile:", err);
-      if (err.response?.status === 401) {
-        logout();
-        navigate("/login");
-      } else {
-        alert("Failed to save profile. Please try again.");
-      }
+      alert("Failed to save profile. Please try again.");
     } finally {
       setLoading(false);
     }

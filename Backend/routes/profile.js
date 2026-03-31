@@ -4,6 +4,7 @@ const profileController = require('../controllers/profileController');
 const protect = require('../middleware/auth');
 
 router.get('/me', protect, profileController.getMe);
+router.get('/viewers', protect, profileController.getProfileViewers);
 router.get('/:id', protect, profileController.getProfileById);
 router.put('/basic', protect, profileController.updateBasic);
 router.put('/education', protect, profileController.updateEducation);

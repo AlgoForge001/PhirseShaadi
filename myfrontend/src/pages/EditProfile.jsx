@@ -5,12 +5,12 @@ import {
   Briefcase, GraduationCap, Users, Sun, CheckCircle
 } from "lucide-react";
 import api from "../utils/api";
-import { useAuth } from "../context/AuthContext";
+
 import "./EditProfile.css";
 
 const EditProfile = () => {
   const navigate = useNavigate();
-  const { token, logout } = useAuth();
+
   const [step, setStep] = useState(1); // 4 steps: Basic, Education, Family, Horoscope
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(true);
@@ -82,21 +82,13 @@ const EditProfile = () => {
       } catch (err) {
         console.error("Failed to load profile:", err);
         setApiError("Failed to load profile data.");
-        if (err.response?.status === 401) {
-          logout();
-          navigate("/login");
-        }
       } finally {
         setLoading(false);
       }
     };
 
-    if (token) {
-      fetchProfile();
-    } else {
-      navigate("/login");
-    }
-  }, [token, navigate, logout]);
+    fetchProfile();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
-  Heart, Home, UserPlus, LogIn, User, Search,
+  Heart, Home, User, Search,
   ChevronLeft, ChevronRight, MessageSquare, Bell, Settings
 } from "lucide-react";
 import { useSocket } from "../context/SocketContext";
@@ -12,20 +12,8 @@ const Sidebar = () => {
   const location = useLocation();
   const [open, setOpen] = useState(false);
   const { unreadNotifications } = useSocket();
-  
-  // Get token from localStorage to check if user is logged in
-  // const token = localStorage.getItem("token");
-  const isLoggedIn = true; // Hardcoded true for development
 
-  // PUBLIC PAGES (Before Login)
-  const publicPages = [
-    { label: "Home", path: "/", icon: <Home size={19} /> },
-    { label: "Register", path: "/register", icon: <UserPlus size={19} /> },
-    { label: "Login", path: "/login", icon: <LogIn size={19} /> },
-  ];
-
-  // PRIVATE PAGES (After Login)
-  const privatePages = [
+  const pages = [
     { label: "Dashboard", path: "/dashboard", icon: <Home size={19} /> },
     { label: "Search", path: "/search", icon: <Search size={19} /> },
     { label: "Chat", path: "/chat", icon: <MessageSquare size={19} /> },
@@ -45,9 +33,6 @@ const Sidebar = () => {
     { label: "My Profile", path: "/my-profile", icon: <User size={19} /> },
   ];
 
-  // Select pages based on login status
-  const pages = isLoggedIn ? privatePages : publicPages;
-
   return (
     <>
       {/* TOGGLE BUTTON */}
@@ -66,15 +51,13 @@ const Sidebar = () => {
       <div className={`app-sidebar ${open ? "open" : ""}`}>
 
         {/* LOGO */}
-        <div className="app-sidebar-logo" onClick={() => { navigate(isLoggedIn ? "/dashboard" : "/"); setOpen(false); }}>
+        <div className="app-sidebar-logo" onClick={() => { navigate("/dashboard"); setOpen(false); }}>
           <Heart size={20} fill="#6B3F69" color="#6B3F69" />
           <span>PhirseShaadi</span>
         </div>
 
         {/* LABEL */}
-        <div className="app-sidebar-label">
-          {isLoggedIn ? "NAVIGATION" : "PAGES"}
-        </div>
+        <div className="app-sidebar-label">NAVIGATION</div>
 
         {/* NAV LINKS */}
         <nav className="app-sidebar-nav">
