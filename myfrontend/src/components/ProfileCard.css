@@ -124,6 +124,22 @@
   overflow: hidden;
 }
 
+.pc-location-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
+  padding: 4px 10px;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .pc-real-actions {
   display: flex;
   gap: 12px;
@@ -160,4 +176,4 @@
   .pc-user-subtitle { font-size: 0.68rem; margin-bottom: 6px; }
   .pc-icon-action { width: 34px; height: 34px; }
   .pc-overlay-gradient { padding: 12px; }
-}
+}

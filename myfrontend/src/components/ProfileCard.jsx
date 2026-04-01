@@ -29,6 +29,11 @@ const ProfileCard = ({ profile, onInterest, onShortlist }) => {
     return age;
   };
 
+  const formatLocation = (city, state) => {
+    if (city && state) return `${city}, ${state}`;
+    return city || state || "Location not specified";
+  };
+
   // Send Interest
   const handleInterest = async (e) => {
     e.stopPropagation();
@@ -109,6 +114,10 @@ const ProfileCard = ({ profile, onInterest, onShortlist }) => {
               <p className="pc-user-subtitle">
                 {profile.occupation || "Member"} • {age}yrs
               </p>
+              <div className="pc-location-row">
+                <MapPin size={13} color="white" />
+                <span>{formatLocation(profile.city, profile.state)}</span>
+              </div>
             </div>
             
             <div className="pc-real-actions">

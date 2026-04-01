@@ -7,6 +7,7 @@ const protect = require('../middleware/auth');
 router.post('/', protect, shortlistController.addToShortlist);
 
 // Task 8: GET /api/shortlist & DELETE /api/shortlist/:profileId
+router.get('/all', protect, shortlistController.getAllShortlists);
 router.get('/', protect, shortlistController.getShortlist);
 router.delete('/:profileId', protect, shortlistController.removeFromShortlist);
 

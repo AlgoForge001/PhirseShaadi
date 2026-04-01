@@ -162,6 +162,19 @@
   margin-bottom: 24px;
 }
 
+.mp-location-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #6B3F69;
+  font-weight: 600;
+  background: #f7edf7;
+  border: 1px solid rgba(107, 63, 105, 0.14);
+  border-radius: 999px;
+  padding: 7px 14px;
+  margin-bottom: 22px;
+}
+
 .dot {
   width: 4px;
   height: 4px;
@@ -306,4 +319,5 @@
   .mp-title-row { align-items: center; }
   .mp-action-row { flex-direction: column; }
   .mp-quick-meta { justify-content: center; flex-wrap: wrap; }
+  .mp-location-row { margin-left: auto; margin-right: auto; }
 }

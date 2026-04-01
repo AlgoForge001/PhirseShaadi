@@ -12,8 +12,11 @@ import Chat from './pages/Chat'
 import Notifications from './pages/Notifications'
 import PrivacySettings from './pages/PrivacySettings'
 import ProfileViewers from './pages/ProfileViewers'
+import FamilyMembers from "./components/FamilyMembers";
+import FamilyShortlist from "./components/FamilyShortlist";
 import { AuthProvider } from './context/AuthContext'
 import { SocketProvider } from './context/SocketContext'
+
 
 function App() {
   return (
@@ -39,6 +42,10 @@ function App() {
                 <Route path="/notifications" element={<Notifications />} />
                 <Route path="/privacy" element={<PrivacySettings />} />
                 <Route path="/profile-viewers" element={<ProfileViewers />} />
+                
+                {/* FAMILY ROUTES */}
+                <Route path="/family-members" element={<FamilyMembers />} />
+                <Route path="/family-shortlist" element={<FamilyShortlist />} />
 
                 {/* FALLBACK */}
                 <Route path="*" element={<Navigate to="/" replace />} />

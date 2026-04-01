@@ -57,6 +57,7 @@ const profileRoutes = require('./routes/profile');
 const privacyRoutes = require('./routes/privacy');
 const userRoutes = require('./routes/user');
 const notificationRoutes = require('./routes/notification');
+const familyRoutes = require('./routes/family');
 const updateLastActive = require('./middleware/activity');
 
 app.use('/api/auth', authRoutes);
@@ -67,6 +68,7 @@ app.use('/api/search', updateLastActive, searchRoutes);
 app.use('/api/matches', updateLastActive, searchRoutes);
 app.use('/api/interest', updateLastActive, interestRoutes);
 app.use('/api/shortlist', updateLastActive, shortlistRoutes);
+app.use('/api/family', updateLastActive, familyRoutes);
 app.use('/api/chat', updateLastActive, chatRoutes);
 app.use('/api/notifications', updateLastActive, notificationRoutes);
 

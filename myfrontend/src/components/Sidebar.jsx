@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
-  Heart, Home, User, Search,
+  Heart, Home, User, Search, Users,
   ChevronLeft, ChevronRight, MessageSquare, Bell, Settings
 } from "lucide-react";
 import { useSocket } from "../context/SocketContext";
@@ -17,20 +17,22 @@ const Sidebar = () => {
     { label: "Dashboard", path: "/dashboard", icon: <Home size={19} /> },
     { label: "Search", path: "/search", icon: <Search size={19} /> },
     { label: "Chat", path: "/chat", icon: <MessageSquare size={19} /> },
-    { 
-      label: "Notifications", 
-      path: "/notifications", 
+    {
+      label: "Notifications",
+      path: "/notifications",
       icon: (
-        <div style={{ position: 'relative' }}>
+        <div style={{ position: "relative" }}>
           <Bell size={19} />
           {unreadNotifications > 0 && (
             <span className="sidebar-badge">{unreadNotifications}</span>
           )}
         </div>
-      ) 
+      )
     },
     { label: "Settings", path: "/privacy", icon: <Settings size={19} /> },
     { label: "My Profile", path: "/my-profile", icon: <User size={19} /> },
+    { label: "Family Members", path: "/family-members", icon: <Users size={19} /> },
+    { label: "Family Shortlist", path: "/family-shortlist", icon: <Heart size={19} /> }
   ];
 
   return (
@@ -49,7 +51,6 @@ const Sidebar = () => {
 
       {/* SIDEBAR */}
       <div className={`app-sidebar ${open ? "open" : ""}`}>
-
         {/* LOGO */}
         <div className="app-sidebar-logo" onClick={() => { navigate("/dashboard"); setOpen(false); }}>
           <Heart size={20} fill="#6B3F69" color="#6B3F69" />
@@ -78,7 +79,6 @@ const Sidebar = () => {
           <ChevronLeft size={16} />
           <span>Close</span>
         </button>
-
       </div>
     </>
   );

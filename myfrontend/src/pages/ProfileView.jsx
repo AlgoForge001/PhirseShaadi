@@ -68,6 +68,11 @@ const ProfileView = () => {
     </div>
   );
 
+  const formatLocation = (city, state) => {
+    if (city && state) return `${city}, ${state}`;
+    return city || state || "Location not specified";
+  };
+
   return (
     <div className="profile-view-premium">
       <Navbar />
@@ -124,7 +129,11 @@ const ProfileView = () => {
                     {profile.online ? "Online" : "Recently Active"}
                   </div>
                   <h1>{profile.fullName || profile.name}</h1>
-                  <p className="pv-sub-meta">{profile.age} Yrs • {profile.height} • {profile.religion} • {profile.city}</p>
+                  <p className="pv-sub-meta">{profile.age} Yrs • {profile.height} • {profile.religion}</p>
+                  <div className="pv-location-row">
+                    <MapPin size={16} />
+                    <span>{formatLocation(profile.city, profile.state)}</span>
+                  </div>
                 </div>
 
                 <div className="pv-tabs-nav">
@@ -206,4 +215,4 @@ const ProfileView = () => {
   );
 };
 
-export default ProfileView;
+export default ProfileView;

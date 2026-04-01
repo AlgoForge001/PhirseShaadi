@@ -44,6 +44,11 @@ const MyProfile = () => {
     </div>
   );
 
+  const formatLocation = (city, state) => {
+    if (city && state) return `${city}, ${state}`;
+    return city || state || "Location not specified";
+  };
+
   return (
     <div className="my-profile-premium">
       <Navbar />
@@ -92,7 +97,12 @@ const MyProfile = () => {
               <span className="dot" />
               <span>{profile.religion}</span>
               <span className="dot" />
-              <span>{profile.city}</span>
+              <span>{profile.city || profile.state ? formatLocation(profile.city, profile.state) : "Location not specified"}</span>
+            </div>
+
+            <div className="mp-location-row">
+              <MapPin size={16} />
+              <span>{formatLocation(profile.city, profile.state)}</span>
             </div>
 
             <p className="mp-biography">{profile.about || "Add a bio to let others know you better."}</p>
@@ -162,4 +172,4 @@ const MyProfile = () => {
   );
 };
 
-export default MyProfile;
+export default MyProfile;

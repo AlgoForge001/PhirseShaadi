@@ -11,13 +11,18 @@ const shortlistSchema = new mongoose.Schema({
     ref: 'User',
     required: [true, "Profile to shortlist is required"]
   },
+  addedByFamilyMember: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'FamilyMember',
+    default: null
+  },
   createdAt: {
     type: Date,
     default: Date.now
   }
 });
 
-// Add unique index: user can shortlist a profile only once
-shortlistSchema.index({ user: 1, profile: 1 }, { unique: true });
+// Keep shortlist unique per actor (owner or specific family member)
+shortlistSchema.index({ user: 1, profile: 1, addedByFamilyMember: 1 }, { unique: true });
 
 module.exports = mongoose.model('Shortlist', shortlistSchema);
