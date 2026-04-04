@@ -1,5 +1,12 @@
 const User = require('../models/User');
 
+const getOppositeGenderRegex = (genderValue) => {
+  const value = (genderValue || '').toString().trim().toLowerCase();
+  if (value === 'male') return /^female$/i;
+  if (value === 'female') return /^male$/i;
+  return null;
+};
+
 // GET /api/search
 // Logic for searching users with dynamic filters and pagination
 exports.searchUsers = async (req, res) => {
@@ -9,6 +16,11 @@ exports.searchUsers = async (req, res) => {
       education, jobType, income, gender, manglik,
       page = 1, limit = 10
     } = req.query;
+
+    const currentUser = await User.findById(req.user.userId).select('blockedUsers');
+    if (!currentUser) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
 
     const query = { _id: { $ne: req.user.userId } };
 
@@ -39,11 +51,10 @@ exports.searchUsers = async (req, res) => {
     if (education) query.education = education;
     if (jobType) query.jobType = jobType;
     if (income) query.income = income;
-    if (gender) query.gender = gender;
+    if (gender) query.gender = new RegExp(`^${gender}$`, 'i');
     if (manglik) query.manglik = manglik;
 
     // 3. Exclude blocked users
-    const currentUser = await User.findById(req.user.userId).select('blockedUsers');
     if (currentUser && currentUser.blockedUsers.length > 0) {
       query._id.$nin = currentUser.blockedUsers;
     }
@@ -118,12 +129,16 @@ exports.getRecommendedMatches = async (req, res) => {
     }
 
     const { partnerPreferences, blockedUsers, gender } = user;
+    const oppositeGenderRegex = getOppositeGenderRegex(gender);
     
     // Base Query: Opposite Gender & Not Blocked
     const query = { 
       _id: { $ne: req.user.userId },
-      gender: gender === 'male' ? 'female' : 'male' 
     };
+
+    if (oppositeGenderRegex) {
+      query.gender = oppositeGenderRegex;
+    }
 
     if (blockedUsers && blockedUsers.length > 0) {
       query._id = { ...query._id, $nin: blockedUsers };
@@ -164,15 +179,91 @@ exports.getRecommendedMatches = async (req, res) => {
   }
 };
 
+// GET /api/matches/same-city
+exports.getSameCityMatches = async (req, res) => {
+  try {
+    const { minAge, maxAge, religion, education, jobType, income, manglik } = req.query;
+    const user = await User.findById(req.user.userId).select('city gender blockedUsers');
+    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+
+    if (!user.city) {
+      return res.status(200).json({
+        success: true,
+        count: 0,
+        data: [],
+        message: 'Set your city in profile to use same city matching.'
+      });
+    }
+
+    const query = {
+      _id: { $ne: req.user.userId },
+      city: user.city
+    };
+
+    const oppositeGenderRegex = getOppositeGenderRegex(user.gender);
+    if (oppositeGenderRegex) {
+      query.gender = oppositeGenderRegex;
+    }
+
+    if (religion) query.religion = religion;
+    if (education) query.education = education;
+    if (jobType) query.jobType = jobType;
+    if (income) query.income = income;
+    if (manglik) query.manglik = manglik;
+
+    if (minAge || maxAge) {
+      const currentYear = new Date().getFullYear();
+      const birthQuery = {};
+
+      if (minAge) {
+        const maxBirthDate = new Date();
+        maxBirthDate.setFullYear(currentYear - parseInt(minAge));
+        birthQuery.$lte = maxBirthDate;
+      }
+
+      if (maxAge) {
+        const minBirthDate = new Date();
+        minBirthDate.setFullYear(currentYear - parseInt(maxAge) - 1);
+        birthQuery.$gte = minBirthDate;
+      }
+
+      query.dob = birthQuery;
+    }
+
+    if (user.blockedUsers && user.blockedUsers.length > 0) {
+      query._id.$nin = user.blockedUsers;
+    }
+
+    const matches = await User.find(query)
+      .select('-password -otp -otpExpiry')
+      .sort({ createdAt: -1 })
+      .limit(50);
+
+    res.status(200).json({
+      success: true,
+      count: matches.length,
+      city: user.city,
+      data: matches
+    });
+  } catch (error) {
+    console.error('Same City Matches Error:', error.message);
+    res.status(200).json({ success: true, count: 0, data: [] });
+  }
+};
+
 
 // GET /api/matches/near-you
 exports.getNearYouMatches = async (req, res) => {
   try {
-    const user = await User.findById(req.user.userId).select('city state blockedUsers');
+    const user = await User.findById(req.user.userId).select('city state gender blockedUsers');
     if (!user) return res.status(404).json({ success: false, message: "User not found" });
 
-    const { city, state, blockedUsers } = user;
+    const { city, state, gender, blockedUsers } = user;
+    const oppositeGenderRegex = getOppositeGenderRegex(gender);
     const baseQuery = { _id: { $ne: req.user.userId } };
+    if (oppositeGenderRegex) {
+      baseQuery.gender = oppositeGenderRegex;
+    }
     if (blockedUsers && blockedUsers.length > 0) baseQuery._id.$nin = blockedUsers;
 
     let query = { ...baseQuery, city };

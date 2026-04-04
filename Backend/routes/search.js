@@ -12,6 +12,9 @@ router.get('/recommended', protect, searchController.getRecommendedMatches);
 // Task 3: GET /api/matches/near-you
 router.get('/near-you', protect, searchController.getNearYouMatches);
 
+// Same-city opposite-gender matching
+router.get('/same-city', protect, searchController.getSameCityMatches);
+
 // Task 4: GET /api/matches/new-joins
 router.get('/new-joins', protect, searchController.getNewJoins);
 

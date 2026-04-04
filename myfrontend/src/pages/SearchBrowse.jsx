@@ -179,6 +179,7 @@ const SearchBrowse = () => {
   const [showFilter, setShowFilter] = useState(false);
   const [activeTab, setActiveTab] = useState("all");
   const [profiles, setProfiles] = useState([]);
+  const [sameCityMeta, setSameCityMeta] = useState({ city: "", message: "" });
   const [loading, setLoading] = useState(false);
   const [filters, setFilters] = useState({
     ageFrom: "18", ageTo: "40",
@@ -190,6 +191,7 @@ const SearchBrowse = () => {
 
   const tabs = [
     { key: "all", label: "All Members" },
+    { key: "sameCity", label: "Same City Match" },
     { key: "recommended", label: "Smart Matches" },
     { key: "new", label: "New Joins" },
     { key: "nearby", label: "Near You" },
@@ -204,6 +206,7 @@ const SearchBrowse = () => {
       // Map tabs to match endpoints
       if (activeTab === "new") endpoint = "/matches/new-joins";
       if (activeTab === "nearby") endpoint = "/matches/near-you";
+      if (activeTab === "sameCity") endpoint = "/matches/same-city";
       if (activeTab === "recommended") endpoint = "/matches/recommended";
       
       const params = {
@@ -221,9 +224,20 @@ const SearchBrowse = () => {
 
       if (res.data.success) {
         setProfiles(res.data.data || []);
+        if (activeTab === "sameCity") {
+          setSameCityMeta({
+            city: res.data.city || "",
+            message: res.data.message || "",
+          });
+        } else {
+          setSameCityMeta({ city: "", message: "" });
+        }
       }
     } catch (err) {
       console.error("Failed to fetch profiles:", err);
+      if (activeTab === "sameCity") {
+        setSameCityMeta({ city: "", message: "Unable to load same-city matches right now." });
+      }
     } finally {
       setLoading(false);
     }
@@ -297,6 +311,19 @@ const SearchBrowse = () => {
           ))}
         </div>
 
+        {/* SAME CITY CONTEXT */}
+        {activeTab === "sameCity" && (
+          <div className="same-city-meta">
+            <div className="same-city-pill">
+              <MapPin size={15} />
+              <span>
+                {sameCityMeta.city ? `Using your city: ${sameCityMeta.city}` : "Set your city in profile to enable same-city matches"}
+              </span>
+            </div>
+            {sameCityMeta.message && <p className="same-city-note">{sameCityMeta.message}</p>}
+          </div>
+        )}
+
         {/* RESULTS COUNT */}
         <div className="results-info">
           <span>{filteredProfiles.length} profiles found</span>
@@ -312,8 +339,12 @@ const SearchBrowse = () => {
         ) : (
           <div className="no-results">
             <Search size={48} color="#DDC3C3" />
-            <h3>No profiles found</h3>
-            <p>Try adjusting your filters or search query</p>
+            <h3>{activeTab === "sameCity" ? "No same-city matches found" : "No profiles found"}</h3>
+            <p>
+              {activeTab === "sameCity"
+                ? (sameCityMeta.message || "Try broadening your filters or check back later for new profiles in your city.")
+                : "Try adjusting your filters or search query"}
+            </p>
           </div>
         )}
 
@@ -324,4 +355,4 @@ const SearchBrowse = () => {
 
 };
 
-export default SearchBrowse;
+export default SearchBrowse;
