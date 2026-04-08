@@ -1,572 +1,322 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./LandingPage.css";
 import {
-  Heart, Search, CheckCircle, Shield,
-  ArrowRight, Users, MessageCircle, Star,
-  ChevronDown, ChevronUp, MapPin, Info,
-  HelpCircle, Headphones, Bell, Lock
+  Heart,
+  Search,
+  ShieldCheck,
+  Users,
+  Sparkles,
+  Star,
+  ArrowRight,
+  ChevronDown,
 } from "lucide-react";
+import "./LandingPage.css";
 
 const LandingPage = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
-  const [expandedFAQ, setExpandedFAQ] = useState(null);
+  const [expandedFaq, setExpandedFaq] = useState(null);
 
   const faqItems = [
     {
       id: 1,
-      icon: HelpCircle,
-      category: "Getting Started",
-      question: "How does PhirseShaadi work?",
-      answer: "PhirseShaadi is an AI-powered matrimonial platform that uses advanced matching algorithms to connect you with compatible partners. Simply create a detailed profile, set your preferences, and let our system suggest matches based on values, lifestyle, location, and interests."
+      question: "What makes PhirseShaadi different from other matrimonial sites?",
+      answer: "PhirseShaadi combines intelligent matchmaking with verified profiles and strong privacy controls. Our smart filters help you find partners based on location, values, and lifestyle preferences. We focus on meaningful connections for both individuals and families, with a transparent and secure environment.",
     },
     {
       id: 2,
-      icon: Shield,
-      category: "Safety & Security",
-      question: "Is my personal information safe on PhirseShaadi?",
-      answer: "Absolutely! We implement bank-level encryption (SSL 256-bit) for all data. Your personal details are never shared with third parties without consent. You have complete control over your visibility, and we employ 24/7 security monitoring to prevent fraud."
+      question: "How are profiles verified on PhirseShaadi?",
+      answer: "All profiles go through a verification process to ensure authenticity. Members can add photos, complete their profile information, and optional background checks are available. This helps build trust and ensures you're connecting with genuine people.",
     },
     {
       id: 3,
-      icon: Users,
-      category: "Membership",
-      question: "What is the difference between free and paid membership?",
-      answer: "Free members can create profiles and browse matches. Premium members get unlimited messaging, advanced filters (caste, subcaste, education), priority visibility in search results, and profile verification badges. Premium also includes AI-powered match recommendations."
+      question: "Can I control who sees my profile?",
+      answer: "Yes, we provide complete privacy controls. You can choose who views your profile, manage your visibility settings, and customize your privacy preferences. You also have the option to hide your profile at any time or make it visible only to specific users.",
     },
     {
       id: 4,
-      icon: Bell,
-      category: "Communication",
-      question: "How can I contact other members?",
-      answer: "Send an interest to profiles you like. If they accept, you unlock direct messaging. You can also use our video chat feature (Premium only) to get to know matches better before deciding to meet. All conversations are private and encrypted."
+      question: "How does the matching algorithm work?",
+      answer: "Our matching system considers multiple factors including location, age preferences, religion, lifestyle choices, and personal values. When you set your partner preferences and complete your profile, our system suggests relevant matches. You can also browse profiles using advanced filters.",
     },
     {
       id: 5,
-      icon: Lock,
-      category: "Account Management",
-      question: "Can I delete my profile anytime?",
-      answer: "Yes! You can deactivate your profile temporarily (keeps data for 3 months) or permanently delete it from account settings. Permanent deletion removes all your data within 30 days per GDPR compliance. You won't be visible to others immediately after deactivation."
+      question: "Is my personal information safe on PhirseShaadi?",
+      answer: "Your safety and privacy are our top priorities. We use secure encryption for all data, don't share information with third parties, and put you in control of what's visible. Messages are private, and you decide which contact details to share.",
     },
     {
       id: 6,
-      icon: Headphones,
-      category: "Mobile & Support",
-      question: "Is there a mobile app and customer support?",
-      answer: "Yes! PhirseShaadi is available on iOS and Android with the same features as the web version. Our customer support team is available 24/7 via chat, email, and phone. Premium members get priority support with response times under 2 hours."
-    }
+      question: "How do I get started?",
+      answer: "Simply register with your basic details, complete your profile with photos and preferences, and start exploring matches. You can browse profiles, send interests, and chat with matched profiles. The entire signup process takes just a few minutes.",
+    },
   ];
 
-  const communities = [
-    "All Communities", "Hindu", "Muslim", "Christian", "Sikh", 
-    "Jain", "Buddhist", "Brahmin", "Kshatriya", "Vaishya"
-  ];
-
-  const locations = [
-    "All Locations", "Mumbai", "Delhi", "Bangalore", "Hyderabad",
-    "Chennai", "Kolkata", "Pune", "Ahmedabad", "Chandigarh"
-  ];
-
-  const religions = [
-    "All Religions", "Hindu", "Muslim", "Christian", "Sikh",
-    "Jain", "Buddhist", "Parsi", "Jewish"
-  ];
-
-  const toggleFAQ = (id) => {
-    setExpandedFAQ(expandedFAQ === id ? null : id);
+  const toggleFaq = (id) => {
+    setExpandedFaq(expandedFaq === id ? null : id);
   };
 
   return (
-    <div className="landing-page">
-      {/* ══════════════════════════════════════════════════════════ */}
-      {/* NAVBAR */}
-      {/* ══════════════════════════════════════════════════════════ */}
-      <nav className="landing-navbar">
-        <div className="navbar-container">
-          <div className="navbar-logo" onClick={() => navigate("/")}>
-            <Heart size={24} />
+    <div className="lp">
+      <header className="lp-nav">
+        <div className="lp-wrap nav-inner">
+          <div className="brand" onClick={() => navigate("/")}>
+            <Heart size={18} />
             <span>PhirseShaadi</span>
           </div>
-          <div className="navbar-links">
-            <a 
-              href="/about" 
-              className="navbar-link"
-            >
-              <Info size={16} /> About
-            </a>
-            <a href="#help" className="navbar-link">
-              <HelpCircle size={16} /> Help
-            </a>
+
+          <div className="nav-links">
+            <button className="link-btn" onClick={() => navigate("/about")}>About</button>
+            <button className="link-btn" onClick={() => navigate("/login")}>Help</button>
           </div>
-          <div className="navbar-spacer"></div>
-        </div>
-      </nav>
 
-      {/* ══════════════════════════════════════════════════════════ */}
+          <div className="nav-actions">
+            <button className="btn ghost" onClick={() => navigate("/login")}>Login</button>
+            <button className="btn solid" onClick={() => navigate("/register")}>Register Free</button>
+          </div>
+        </div>
+      </header>
+
       {/* HERO SECTION */}
-      {/* ══════════════════════════════════════════════════════════ */}
-      <section className="hero-with-image">
-        <div className="hero-image-bg">
-          <img 
-            src="https://images.unsplash.com/photo-1519741497674-611481863552?w=1200&h=600&fit=crop" 
-            alt="Indian Wedding Couple"
-            className="hero-image"
-          />
-          <div className="hero-overlay"></div>
-        </div>
+      <section className="hero">
+        <div className="hero-bg" />
+        <div className="hero-overlay" />
 
-        <div className="hero-content-overlay">
-          <div className="hero-text-section">
-            <h1 className="hero-title">
-              "Love is not about finding a perfect person.<br />It's about finding someone perfect for you."
-            </h1>
-
-            <p className="hero-subtitle">
-              At PhirseShaadi, we believe in genuine connections built on trust, 
-              authenticity, and shared values. Start your matrimonial journey today.
+        <div className="lp-wrap hero-content-wrap">
+          <div className="hero-copy center">
+            <p className="hero-kicker">India's Trusted Matrimonial Platform</p>
+            <h1>Find Your Perfect Match with Confidence</h1>
+            <p className="hero-lead">
+              Meaningful connections for individuals and families. Verified profiles, smart filters, and complete privacy control.
             </p>
 
-            {token ? (
-              <div className="hero-buttons">
-                <button 
-                  className="btn btn-primary-large"
-                  onClick={() => navigate("/search")}
-                >
-                  <Search size={20} /> Browse Profiles
-                </button>
-                <button 
-                  className="btn btn-secondary-large"
-                  onClick={() => navigate("/dashboard")}
-                >
-                  <Heart size={20} /> My Dashboard
-                </button>
+            <div className="hero-badges">
+              <span><ShieldCheck size={15} /> Verified Profiles</span>
+              <span><Users size={15} /> Smart Matching</span>
+              <span><Sparkles size={15} /> Privacy Protected</span>
+            </div>
+          </div>
+
+          {/* SEARCH SECTION */}
+          <div className="search-strip-shell" role="region" aria-label="Partner search">
+            <div className="search-strip-header">
+              <div className="search-title-row">
+                <span className="search-title-chip">
+                  <Star size={14} /> Personalized Search
+                </span>
               </div>
-            ) : (
-              <button 
-                className="btn btn-primary-large"
-                onClick={() => navigate("/register")}
-              >
-                Get Started <ArrowRight size={20} />
+              <h3>Find Your Matches</h3>
+              <p>Set your preferences and discover perfect matches</p>
+              <div className="search-strip-meta" aria-label="Search highlights">
+                <span>Curated matches</span>
+                <span>Private & secure</span>
+                <span>Fast search</span>
+              </div>
+            </div>
+
+            <div className="search-strip">
+              <div className="field-group">
+                <label>Looking For</label>
+                <select defaultValue="Bride">
+                  <option>Bride</option>
+                  <option>Groom</option>
+                </select>
+              </div>
+
+              <div className="field-group">
+                <label>Age</label>
+                <select defaultValue="21 to 28">
+                  <option>21 to 28</option>
+                  <option>24 to 30</option>
+                  <option>28 to 35</option>
+                  <option>35 to 40</option>
+                </select>
+              </div>
+
+              <div className="field-group">
+                <label>Religion</label>
+                <select defaultValue="Any">
+                  <option>Any</option>
+                  <option>Hindu</option>
+                  <option>Muslim</option>
+                  <option>Christian</option>
+                  <option>Sikh</option>
+                </select>
+              </div>
+
+              <div className="field-group">
+                <label>City</label>
+                <input placeholder="Enter city" />
+              </div>
+
+              <button className="btn solid search-btn" onClick={() => navigate(token ? "/search" : "/register")}>
+                <Search size={16} /> Find Matches
               </button>
-            )}
-
-            <div className="hero-trust">
-              <Shield size={16} />
-              <span>100% Secure & Verified Profiles</span>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════════════════════ */}
-      {/* HOW IT WORKS */}
-      {/* ══════════════════════════════════════════════════════════ */}
-      <section className="how-it-works">
-        <div className="section-header">
-          <h2>How It Works</h2>
-          <p>Four Simple Steps to Find Your Match</p>
-        </div>
-
-        <div className="timeline-container">
-          <div className="timeline-item">
-            <div className="timeline-circle step-1">
-              <Heart size={32} />
-            </div>
-            <div className="timeline-content">
-              <h3>Create Your Profile</h3>
-              <p>Share your details, upload photos, and describe what you're looking for in a partner.</p>
-            </div>
+      {/* WHY CHOOSE SECTION */}
+      <section className="why-choose">
+        <div className="lp-wrap">
+          <div className="section-header">
+            <h2 className="section-title">Why Choose PhirseShaadi?</h2>
           </div>
-
-          <div className="timeline-item">
-            <div className="timeline-circle step-2">
-              <Search size={32} />
+          <div className="features-grid">
+            <div className="feature-card">
+              <ShieldCheck size={32} className="feature-icon" />
+              <h4>Verified & Safe</h4>
+              <p>All profiles are verified. Advanced privacy controls let you decide who sees your information.</p>
             </div>
-            <div className="timeline-content">
-              <h3>Explore Matches</h3>
-              <p>Use our smart filters to find profiles that match your preferences and values.</p>
+            <div className="feature-card">
+              <Users size={32} className="feature-icon" />
+              <h4>Smart Matching</h4>
+              <p>Our intelligent system matches you based on preferences, values, and lifestyle choices.</p>
             </div>
-          </div>
-
-          <div className="timeline-item">
-            <div className="timeline-circle step-3">
-              <Heart size={32} />
+            <div className="feature-card">
+              <Heart size={32} className="feature-icon" />
+              <h4>Meaningful Connections</h4>
+              <p>Designed for serious relationships. Connect with people looking for the same commitment.</p>
             </div>
-            <div className="timeline-content">
-              <h3>Send Interest</h3>
-              <p>Show interest to the profiles you like and wait for their response.</p>
-            </div>
-          </div>
-
-          <div className="timeline-item">
-            <div className="timeline-circle step-4">
-              <MessageCircle size={32} />
-            </div>
-            <div className="timeline-content">
-              <h3>Connect & Build</h3>
-              <p>Chat with matched profiles and build meaningful connections.</p>
+            <div className="feature-card">
+              <Sparkles size={32} className="feature-icon" />
+              <h4>Easy To Use</h4>
+              <p>Simple profile creation, intuitive browse, and secure messaging. All in one place.</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════════════════════ */}
-      {/* FEATURES - WHY CHOOSE US */}
-      {/* ══════════════════════════════════════════════════════════ */}
-      <section className="features">
-        <div className="features-background">
-          <div className="features-blob features-blob-1"></div>
-          <div className="features-blob features-blob-2"></div>
-        </div>
-
-        <div className="section-header">
-          <h2>Why Choose PhirseShaadi?</h2>
-          <p>Built on trust, authenticity, and genuine connections</p>
-        </div>
-
-        <div className="features-grid">
-          <div className="feature-box">
-            <div className="feature-top">
-              <div className="feature-number">01</div>
-              <div className="feature-icon icon-verified">
-                <CheckCircle size={32} />
-              </div>
-            </div>
-            <h3>Verified Profiles</h3>
-            <p>All members are verified for authenticity and safety. We ensure genuine, trustworthy connections.</p>
+      {/* HOW IT WORKS SECTION */}
+      <section className="steps">
+        <div className="lp-wrap">
+          <div className="section-header">
+            <h2 className="section-title">How PhirseShaadi Works</h2>
           </div>
-
-          <div className="feature-box">
-            <div className="feature-top">
-              <div className="feature-number">02</div>
-              <div className="feature-icon icon-secure">
-                <Shield size={32} />
-              </div>
+          <div className="steps-grid">
+            <div className="step-card">
+              <span>1</span>
+              <h4>Create Your Profile</h4>
+              <p>Sign up and tell us about yourself. Add photos, preferences, and partner criteria in just minutes.</p>
             </div>
-            <h3>Privacy First</h3>
-            <p>Your information is encrypted and protected. You have complete control over your visibility and data.</p>
-          </div>
-
-          <div className="feature-box">
-            <div className="feature-top">
-              <div className="feature-number">03</div>
-              <div className="feature-icon icon-chat">
-                <MessageCircle size={32} />
-              </div>
+            <div className="step-card">
+              <span>2</span>
+              <h4>Get Smart Matches</h4>
+              <p>Our system suggests relevant profiles. Use filters to refine your search by location, age, values.</p>
             </div>
-            <h3>Easy Communication</h3>
-            <p>Connect directly with matches through our secure messaging platform. Build relationships at your pace.</p>
-          </div>
-
-          <div className="feature-box">
-            <div className="feature-top">
-              <div className="feature-number">04</div>
-              <div className="feature-icon icon-search">
-                <Search size={32} />
-              </div>
-            </div>
-            <h3>Smart Filters</h3>
-            <p>Find matches based on values, lifestyle, and preferences that truly matter to you.</p>
-          </div>
-
-          <div className="feature-box">
-            <div className="feature-top">
-              <div className="feature-number">05</div>
-              <div className="feature-icon icon-mobile">
-                <Heart size={32} />
-              </div>
-            </div>
-            <h3>Mobile App</h3>
-            <p>Browse and connect on the go. Available on iOS and Android for your convenience.</p>
-          </div>
-
-          <div className="feature-box">
-            <div className="feature-top">
-              <div className="feature-number">06</div>
-              <div className="feature-icon icon-support">
-                <Headphones size={32} />
-              </div>
-            </div>
-            <h3>24/7 Support</h3>
-            <p>Get help anytime. Our dedicated support team is here to assist you throughout your journey.</p>
-          </div>
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════════════════════════ */}
-      {/* BROWSE BY CATEGORY */}
-      {/* ══════════════════════════════════════════════════════════ */}
-      <section className="browse-section">
-        <div className="section-header">
-          <h2>Browse by Category</h2>
-          <p>Find matches within your community and preferences</p>
-        </div>
-
-        <div className="browse-grid">
-          <div className="browse-category">
-            <div className="browse-header">
-              <Heart className="browse-icon" />
-              <h3>By Community</h3>
-            </div>
-            <div className="browse-items">
-              {communities.map((comm, i) => (
-                <button 
-                  key={i} 
-                  className="browse-item"
-                >
-                  <span className="item-text">{comm}</span>
-                  <ArrowRight className="item-icon" />
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="browse-category">
-            <div className="browse-header">
-              <MapPin className="browse-icon" />
-              <h3>By City</h3>
-            </div>
-            <div className="browse-items">
-              {locations.map((loc, i) => (
-                <button 
-                  key={i} 
-                  className="browse-item"
-                >
-                  <span className="item-text">{loc}</span>
-                  <ArrowRight className="item-icon" />
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="browse-category">
-            <div className="browse-header">
-              <Users className="browse-icon" />
-              <h3>By Religion</h3>
-            </div>
-            <div className="browse-items">
-              {religions.map((rel, i) => (
-                <button 
-                  key={i} 
-                  className="browse-item"
-                >
-                  <span className="item-text">{rel}</span>
-                  <ArrowRight className="item-icon" />
-                </button>
-              ))}
+            <div className="step-card">
+              <span>3</span>
+              <h4>Connect & Chat</h4>
+              <p>Send interest to profiles you like. Chat securely and get to know your matches better.</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════════════════════ */}
-      {/* FAQ */}
-      {/* ══════════════════════════════════════════════════════════ */}
+      {/* TRUST METRICS SECTION */}
+      <section className="trust-strip">
+        <div className="lp-wrap trust-grid">
+          <div>
+            <strong>50L+</strong>
+            <p>Active Members</p>
+          </div>
+          <div>
+            <strong>10L+</strong>
+            <p>Success Stories</p>
+          </div>
+          <div>
+            <strong>4.8 ★</strong>
+            <p>Member Rating</p>
+          </div>
+          <div>
+            <strong>100%</strong>
+            <p>Privacy Control</p>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ SECTION */}
       <section className="faq-section">
-        <div className="faq-background">
-          <div className="faq-blob faq-blob-1"></div>
-          <div className="faq-blob faq-blob-2"></div>
-          <div className="faq-blob faq-blob-3"></div>
-        </div>
-
-        <div className="section-header">
-          <h2>Frequently Asked Questions</h2>
-          <p>Everything you need to know about PhirseShaadi</p>
-        </div>
-
-        <div className="faq-container">
-          <div className="faq-items-wrapper">
+        <div className="lp-wrap">
+          <div className="section-header">
+            <h2 className="section-title">Frequently Asked Questions</h2>
+          </div>
+          <div className="faq-container">
             {faqItems.map((item) => (
-              <div 
-                key={item.id} 
-                className={`faq-item ${expandedFAQ === item.id ? "expanded" : ""}`}
+              <div
+                key={item.id}
+                className={`faq-item ${expandedFaq === item.id ? "expanded" : ""}`}
               >
                 <button
                   className="faq-question"
-                  onClick={() => toggleFAQ(item.id)}
+                  onClick={() => toggleFaq(item.id)}
+                  aria-expanded={expandedFaq === item.id}
                 >
-                  <div className="faq-question-content">
-                    <div className="faq-icon-badge">
-                      <item.icon size={20} />
-                    </div>
-                    <div className="faq-question-text">
-                      <span className="faq-category">{item.category}</span>
-                      <span className="faq-number">{String(item.id).padStart(2, '0')}</span>
-                      <p>{item.question}</p>
-                    </div>
-                  </div>
-                  
-                  <div className="faq-toggle-icon">
-                    {expandedFAQ === item.id ? (
-                      <ChevronUp size={20} />
-                    ) : (
-                      <ChevronDown size={20} />
-                    )}
-                  </div>
+                  <span className="faq-number">{item.id}</span>
+                  <span className="faq-text">{item.question}</span>
+                  <ChevronDown size={18} className="faq-toggle-icon" />
                 </button>
-
-                {expandedFAQ === item.id && (
+                {expandedFaq === item.id && (
                   <div className="faq-answer">
-                    <div className="faq-answer-content">
-                      <div className="answer-icon">
-                        <CheckCircle size={16} />
-                      </div>
-                      <p>{item.answer}</p>
-                    </div>
+                    <p>{item.answer}</p>
                   </div>
                 )}
               </div>
             ))}
           </div>
         </div>
+      </section>
 
-        <div className="faq-contact">
-          <h3>Still have questions?</h3>
-          <p>Our support team is here to help 24/7</p>
-          <div className="faq-contact-buttons">
-            <button className="faq-btn faq-btn-primary">
-              <Headphones size={20} /> Contact Support
-            </button>
-            <button className="faq-btn faq-btn-secondary">
-              <HelpCircle size={20} /> Browse Help Center
-            </button>
+      {/* FINAL CTA SECTION */}
+      <section className="final-cta">
+        <div className="lp-wrap final-cta-inner">
+          <div className="cta-content">
+            <h3>Ready to Start Your Journey?</h3>
+            <p>Join thousands of members finding their perfect match on PhirseShaadi.</p>
           </div>
+          <button className="btn solid cta-button" onClick={() => navigate(token ? "/dashboard" : "/register")}>
+            {token ? "Go to Dashboard" : "Create Free Profile"} <ArrowRight size={16} />
+          </button>
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════════════════════ */}
-      {/* FINAL CTA */}
-      {/* ══════════════════════════════════════════════════════════ */}
-      {!token && (
-        <section className="final-cta">
-          <h2>Ready to Find Your Match?</h2>
-          <p>Join thousands who are building meaningful connections on PhirseShaadi</p>
-          <button 
-            className="btn btn-large"
-            onClick={() => navigate("/register")}
-          >
-            Create Free Profile <ArrowRight size={20} />
-          </button>
-        </section>
-      )}
-
-      {/* ══════════════════════════════════════════════════════════ */}
       {/* FOOTER */}
-      {/* ══════════════════════════════════════════════════════════ */}
-      <footer className="landing-footer">
+      <footer className="lp-footer">
         <div className="footer-content">
-          {/* Footer Top */}
-          <div className="footer-top">
-            <div className="footer-column footer-brand">
-              <div className="footer-logo">
-                <Heart size={24} style={{ color: '#A376A2' }} />
-                <span>PhirseShaadi</span>
-              </div>
-              <p className="footer-description">
-                A matrimonial platform dedicated to helping you find your perfect life partner with trust, authenticity, and genuine connections.
-              </p>
-              <div className="footer-social">
-                <a href="#" className="social-icon" title="Facebook">
-                  <Heart size={18} />
-                </a>
-                <a href="#" className="social-icon" title="Instagram">
-                  <Heart size={18} />
-                </a>
-                <a href="#" className="social-icon" title="Twitter">
-                  <Heart size={18} />
-                </a>
-                <a href="#" className="social-icon" title="LinkedIn">
-                  <Heart size={18} />
-                </a>
-              </div>
-            </div>
-
-            {/* Platform Links */}
-            <div className="footer-column">
-              <h4>Platform</h4>
-              <ul>
-                <li><a href="/about">About Us</a></li>
-                <li><a href="#how">How It Works</a></li>
-                <li><a href="#success">Success Stories</a></li>
-                <li><a href="#blog">Blog & Articles</a></li>
-                <li><a href="#careers">Careers</a></li>
-                <li><a href="#press">Press Kit</a></li>
-              </ul>
-            </div>
-
-            {/* Support Links */}
-            <div className="footer-column">
-              <h4>Support & Help</h4>
-              <ul>
-                <li><a href="#faq">FAQ</a></li>
-                <li><a href="#contact">Contact Us</a></li>
-                <li><a href="#safety">Safety Tips</a></li>
-                <li><a href="#help">Help Center</a></li>
-                <li><a href="#community">Community Guidelines</a></li>
-                <li><a href="#report">Report Abuse</a></li>
-              </ul>
-            </div>
-
-            {/* Legal Links */}
-            <div className="footer-column">
-              <h4>Legal & Privacy</h4>
-              <ul>
-                <li><a href="#privacy">Privacy Policy</a></li>
-                <li><a href="#terms">Terms of Service</a></li>
-                <li><a href="#cookies">Cookie Policy</a></li>
-                <li><a href="#security">Security</a></li>
-                <li><a href="#compliance">Compliance</a></li>
-                <li><a href="#gdpr">GDPR</a></li>
-              </ul>
-            </div>
-
-            {/* Download App */}
-            <div className="footer-column footer-app">
-              <h4>Download App</h4>
-              <div className="app-download-buttons">
-                <a href="#" className="app-download-btn ios-btn">
-                  <Heart size={20} />
-                  <div>
-                    <div className="app-label">Download on</div>
-                    <div className="app-name">App Store</div>
-                  </div>
-                </a>
-                <a href="#" className="app-download-btn android-btn">
-                  <Heart size={20} />
-                  <div>
-                    <div className="app-label">Get it on</div>
-                    <div className="app-name">Google Play</div>
-                  </div>
-                </a>
-              </div>
-            </div>
+          <div className="footer-column">
+            <h4>PhirseShaadi</h4>
+            <p>Making matrimony accessible and authentic for everyone.</p>
           </div>
-
-          {/* Footer Divider */}
-          <div className="footer-divider"></div>
-
-          {/* Footer Bottom */}
-          <div className="footer-bottom">
-            <div className="footer-bottom-left">
-              <p>&copy; 2026 PhirseShaadi. All rights reserved.</p>
-              <p className="footer-tagline">Building meaningful connections across India with trust and authenticity.</p>
-            </div>
-
-            <div className="footer-bottom-right">
-              <div className="footer-languages">
-                <span className="language-label">Available in:</span>
-                <a href="#" className="language-badge">English</a>
-                <a href="#" className="language-badge">हिंदी</a>
-                <a href="#" className="language-badge">मराठी</a>
-              </div>
+          <div className="footer-column">
+            <h4>Quick Links</h4>
+            <ul>
+              <li><a href="/">Home</a></li>
+              <li><a href="/about">About</a></li>
+              <li><a href="#">Privacy Policy</a></li>
+              <li><a href="#">Terms of Service</a></li>
+            </ul>
+          </div>
+          <div className="footer-column">
+            <h4>Support</h4>
+            <ul>
+              <li><a href="#">Help Center</a></li>
+              <li><a href="#">Safety Tips</a></li>
+              <li><a href="#">FAQ</a></li>
+              <li><a href="#">Report Abuse</a></li>
+            </ul>
+          </div>
+          <div className="footer-column">
+            <h4>Follow Us</h4>
+            <div className="social-links">
+              <a href="#">Facebook</a>
+              <a href="#">Instagram</a>
+              <a href="#">Twitter</a>
+              <a href="#">LinkedIn</a>
             </div>
           </div>
         </div>
-
-        {/* Floating decoration */}
-        <div className="footer-decoration footer-deco-1"></div>
-        <div className="footer-decoration footer-deco-2"></div>
+        <div className="footer-bottom">
+          <p>&copy; 2026 PhirseShaadi. All rights reserved.</p>
+        </div>
       </footer>
     </div>
   );
