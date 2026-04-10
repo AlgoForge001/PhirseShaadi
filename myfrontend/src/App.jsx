@@ -19,7 +19,7 @@ import PrivacySettings from './pages/PrivacySettings'
 import ProfileViewers from './pages/ProfileViewers'
 import FamilyMembers from "./components/FamilyMembers";
 import FamilyShortlist from "./components/FamilyShortlist";
-import { AuthProvider } from './context/AuthContext'
+import { AuthProvider, useAuth } from './context/AuthContext'
 import { SocketProvider } from './context/SocketContext'
 
 const PublicLayout = () => (
@@ -60,11 +60,20 @@ const PrivateLayout = () => (
 )
 
 const AppRouter = () => {
+  const { isLoggedIn, loading } = useAuth()
   const location = useLocation()
+  
+  if (loading) return null // Or a loading spinner
+
   const publicPaths = ['/', '/about']
   const isPublicRoute = publicPaths.includes(location.pathname) || 
                        location.pathname.startsWith('/login') || 
                        location.pathname.startsWith('/register')
+
+  // If logged in and trying to access a public route (except /about), go to dashboard
+  if (isLoggedIn && isPublicRoute && location.pathname !== '/about') {
+    return <Navigate to="/dashboard" replace />
+  }
 
   return isPublicRoute ? <PublicLayout /> : <PrivateLayout />
 }

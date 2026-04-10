@@ -9,9 +9,14 @@ const http = require('http');
 const server = http.createServer(app);
 const { Server } = require('socket.io');
 
+const allowedOrigins = [
+  "https://phirse-shaadi.vercel.app",
+  /\.vercel\.app$/ // Allow all Vercel preview deployments
+];
+
 const io = new Server(server, {
   cors: {
-    origin: "https://phirse-shaadi.vercel.app",
+    origin: allowedOrigins,
     methods: ["GET", "POST"]
   }
 });
@@ -24,7 +29,8 @@ app.set('onlineUsers', onlineUsers);
 
 // Middleware
 app.use(cors({
-  origin: "https://phirse-shaadi.vercel.app"
+  origin: allowedOrigins,
+  credentials: true
 }));
 app.use(express.json());
 

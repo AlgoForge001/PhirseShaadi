@@ -40,8 +40,10 @@ const Dashboard = () => {
         if (err.response?.status === 404) {
           // Profile not found in MongoDB
           navigate("/profile-creation");
+        } else if (err.response?.status === 401) {
+          setError("Session expired or authentication failed. Please re-login.");
         } else {
-          setError("Failed to sync your dashboard.");
+          setError(`Failed to sync your dashboard: ${err.message || "Unknown error"}`);
         }
       } finally {
         setLoading(false);

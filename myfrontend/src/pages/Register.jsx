@@ -6,7 +6,7 @@ const Register = () => {
   return (
     <div className="register-page">
       <div className="register-container">
-        <SignUp
+        <SignUp 
           appearance={{
             elements: {
               rootBox: "clerk-root",
@@ -16,6 +16,7 @@ const Register = () => {
           routing="path"
           path="/register"
           signInUrl="/login"
+          forceRedirectUrl="/dashboard"
         />
       </div>
     </div>
