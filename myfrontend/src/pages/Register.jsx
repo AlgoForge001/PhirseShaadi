@@ -6,7 +6,7 @@ const Register = () => {
   return (
     <div className="register-page">
       <div className="register-container">
-        <SignUp 
+        <SignUp
           appearance={{
             elements: {
               rootBox: "clerk-root",
@@ -19,11 +19,6 @@ const Register = () => {
         />
       </div>
     </div>
-  );
-};
-
-export default Register;
-v>
   );
 };
 

@@ -180,7 +180,7 @@ io.on('connection', (socket) => {
 
 
 // Server Start
-const PORT = process.env.PORT || "https://phirseshaadi.onrender.com";
+const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
-  console.log(`Server port ${PORT} pe chal raha hai!`);
+  console.log(`Server is running on port ${PORT}`);
 });
