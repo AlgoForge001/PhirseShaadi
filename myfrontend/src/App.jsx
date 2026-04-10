@@ -61,8 +61,10 @@ const PrivateLayout = () => (
 
 const AppRouter = () => {
   const location = useLocation()
-  const publicPaths = ['/', '/login', '/register', '/about']
-  const isPublicRoute = publicPaths.includes(location.pathname)
+  const publicPaths = ['/', '/about']
+  const isPublicRoute = publicPaths.includes(location.pathname) || 
+                       location.pathname.startsWith('/login') || 
+                       location.pathname.startsWith('/register')
 
   return isPublicRoute ? <PublicLayout /> : <PrivateLayout />
 }
