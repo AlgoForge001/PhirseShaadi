@@ -20,7 +20,9 @@ import ProfileViewers from './pages/ProfileViewers'
 import FamilyMembers from "./components/FamilyMembers";
 import FamilyShortlist from "./components/FamilyShortlist";
 import { AuthProvider, useAuth } from './context/AuthContext'
+import { useUser } from "@clerk/clerk-react";
 import { SocketProvider } from './context/SocketContext'
+import { ClerkProvider } from '@clerk/clerk-react'
 
 const PublicLayout = () => (
   <Routes>
@@ -60,34 +62,39 @@ const PrivateLayout = () => (
 )
 
 const AppRouter = () => {
-  const { isLoggedIn, loading } = useAuth()
-  const location = useLocation()
-  
-  if (loading) return null // Or a loading spinner
+  const { isSignedIn, isLoaded } = useUser();
+  const location = useLocation();
+
+  // ⬇️ YE LINE YAHA ADD KARO
+  if (!isLoaded) return null;
 
   const publicPaths = ['/', '/about']
-  const isPublicRoute = publicPaths.includes(location.pathname) || 
-                       location.pathname.startsWith('/login') || 
-                       location.pathname.startsWith('/register')
+  const isPublicRoute = publicPaths.includes(location.pathname) ||
+    location.pathname.startsWith('/login') ||
+    location.pathname.startsWith('/register')
 
-  // If logged in and trying to access a public route (except /about), go to dashboard
-  if (isLoggedIn && isPublicRoute && location.pathname !== '/about') {
+  // ⬇️ YE LOGIC YAHA ADD KARO
+  if (isSignedIn && isPublicRoute && location.pathname !== '/about') {
     return <Navigate to="/dashboard" replace />
   }
 
   return isPublicRoute ? <PublicLayout /> : <PrivateLayout />
 }
 
+const { isSignedIn, isLoaded } = useUser();
+
 
 function App() {
   return (
-    <AuthProvider>
-      <SocketProvider>
-        <BrowserRouter>
-          <AppRouter />
-        </BrowserRouter>
-      </SocketProvider>
-    </AuthProvider>
+    <ClerkProvider publishableKey={import.meta.env.VITE_CLERK_PUBLISHABLE_KEY}>
+      <AuthProvider>
+        <SocketProvider>
+          <BrowserRouter>
+            <AppRouter />
+          </BrowserRouter>
+        </SocketProvider>
+      </AuthProvider>
+    </ClerkProvider>
   )
 }
 
