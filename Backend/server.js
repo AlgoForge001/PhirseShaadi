@@ -127,15 +127,15 @@ io.on('connection', (socket) => {
 
       conversation.lastMessage = text;
       conversation.lastMessageTime = new Date();
-      
+
       // Update unread count for the receiver
       if (!conversation.unreadCount) conversation.unreadCount = {};
       const currentUnread = conversation.unreadCount[to] || 0;
       conversation.unreadCount[to] = currentUnread + 1;
-      
+
       // Since it's an Object/Schema.Types.Mixed, we must mark it as modified
       conversation.markModified('unreadCount');
-      
+
       await conversation.save();
 
       // 3. Emit to receiver if online
@@ -180,7 +180,7 @@ io.on('connection', (socket) => {
 
 
 // Server Start
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || "https://phirseshaadi.onrender.com";
 server.listen(PORT, () => {
   console.log(`Server port ${PORT} pe chal raha hai!`);
 });
