@@ -33,7 +33,7 @@ router.get('/google/callback',
     );
 
     // Redirect to frontend with token
-    res.redirect(`http://localhost:5173/google-success?token=${token}`);
+    res.redirect(`https://phirse-shaadi.vercel.app/google-success?token=${token}`);
   }
 );
 

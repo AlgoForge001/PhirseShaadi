@@ -3,33 +3,14 @@ const User = require('../models/User');
 // GET /api/profile/me
 exports.getMe = async (req, res) => {
   try {
-    const user = await User.findById(req.user.userId).select('-password -otp -otpExpiry');
+    const user = await User.findOne({ clerkId: req.user.clerkId }).select('-password -otp -otpExpiry');
     if (!user) {
-      // Fallback for development if DB is empty or user doesn't exist
-      console.log("Profile not found in DB, using mock data for dev.");
-      return res.status(200).json({ 
-        success: true, 
-        profile: { 
-          name: "Guest User", 
-          email: "guest@example.com", 
-          isPremium: true,
-          photos: [{ url: "https://i.pravatar.cc/150?u=guest" }]
-        } 
-      });
+      return res.status(404).json({ success: false, message: "Profile not found" });
     }
     res.status(200).json({ success: true, profile: user });
   } catch (error) {
-    console.error("Get Profile Error (using mock fallback):", error.message);
-    // Return mock data instead of 500 to keep the UI running
-    res.status(200).json({ 
-      success: true, 
-      profile: { 
-        name: "Guest User (Offline)", 
-        email: "none@example.com", 
-        isPremium: false,
-        photos: [{ url: "" }]
-      } 
-    });
+    console.error("Get Profile Error:", error.message);
+    res.status(500).json({ success: false, message: "Server Error" });
   }
 };
 
@@ -149,17 +130,26 @@ exports.updateHoroscope = async (req, res) => {
 exports.updateFullProfile = async (req, res) => {
   try {
     const updates = req.body;
+    const clerkId = req.user.clerkId;
+
     // Remove sensitive fields if present
     delete updates.password;
     delete updates.otp;
     delete updates.otpExpiry;
-    delete updates.email; // Don't allow email/phone change here for safety
-    delete updates.phone;
 
-    const user = await User.findByIdAndUpdate(
-      req.user.userId,
-      { $set: updates },
-      { new: true, runValidators: true }
+    // Use findOneAndUpdate with upsert: true to create the user if they don't exist
+    // This handles the transition from Clerk SignUp -> Profile Creation
+    const user = await User.findOneAndUpdate(
+      { clerkId: clerkId },
+      { 
+        $set: {
+          ...updates,
+          clerkId: clerkId,
+          // Only set email if it's a new document or not provided in updates
+          ...(req.user.email ? { email: req.user.email } : {})
+        } 
+      },
+      { new: true, upsert: true, runValidators: true }
     ).select('-password');
 
     res.status(200).json({ success: true, message: "Profile updated successfully", profile: user });

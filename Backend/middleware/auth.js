@@ -1,49 +1,52 @@
-const jwt = require('jsonwebtoken');
+const { createClerkClient } = require('@clerk/clerk-sdk-node');
 const User = require('../models/User');
+
+const clerk = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY });
 
 const auth = async (req, res, next) => {
   try {
-    // 1. Try to get token from header
     const authHeader = req.header('Authorization');
     
-    if (authHeader && authHeader.startsWith('Bearer ')) {
-      const token = authHeader.split(' ')[1];
-      try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded;
-        return next();
-      } catch (error) {
-        console.log("Auth Bypass: Token verification failed, using fallback.");
-      }
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ success: false, message: "No token, authorization denied" });
     }
 
-    // 2. Bypass: Auto-login as the first user in the database for testing
-    const defaultUser = await User.findOne();
-    if (defaultUser) {
-      req.user = { 
-        userId: defaultUser._id.toString(), 
-        email: defaultUser.email, 
-        role: 'user' 
-      };
-    } else {
-      console.warn("Auth Bypass: No users found in DB. Setting dummy user object.");
-      req.user = { 
-        userId: "000000000000000000000000", // Placeholder ID
-        email: "none@example.com", 
-        role: "user" 
-      };
+    const token = authHeader.split(' ')[1];
+
+    try {
+      // 1. Verify Clerk token
+      const decoded = await clerk.verifyToken(token);
+      const clerkId = decoded.sub;
+
+      // 2. Find user in MongoDB by clerkId
+      let user = await User.findOne({ clerkId });
+
+      if (!user) {
+        // Option: If user doesn't exist in DB, we still pass clerkId
+        // This allows the "Complete Profile" flow to pick it up
+        req.user = { 
+          userId: null, 
+          clerkId: clerkId,
+          needsProfileCompletion: true
+        };
+      } else {
+        req.user = { 
+          userId: user._id.toString(), 
+          clerkId: clerkId,
+          email: user.email, 
+          role: user.role,
+          needsProfileCompletion: false
+        };
+      }
+      
+      return next();
+    } catch (error) {
+      console.error("Clerk Token Verification Failed:", error.message);
+      return res.status(401).json({ success: false, message: "Token is not valid" });
     }
-    
-    next();
   } catch (error) {
-    console.error("Auth Middleware Error (Connectivity?):", error.message);
-    // Even on error, provide a dummy user to prevent controller crashes (500)
-    req.user = { 
-      userId: "000000000000000000000000", 
-      email: "error@example.com", 
-      role: "user" 
-    };
-    next(); 
+    console.error("Auth Middleware Global Error:", error.message);
+    res.status(500).json({ success: false, message: "Server Error" });
   }
 };
 

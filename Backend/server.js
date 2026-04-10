@@ -2,9 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const passport = require('passport');
-const session = require('express-session');
-require('./config/passport'); // Import passport config
+require('./config/passport'); // Will be removed later if not used anywhere else
 
 const app = express();
 const http = require('http');
@@ -13,7 +11,7 @@ const { Server } = require('socket.io');
 
 const io = new Server(server, {
   cors: {
-    origin: "*",
+    origin: "https://phirse-shaadi.vercel.app",
     methods: ["GET", "POST"]
   }
 });
@@ -25,18 +23,12 @@ app.set('io', io);
 app.set('onlineUsers', onlineUsers);
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: "https://phirse-shaadi.vercel.app"
+}));
 app.use(express.json());
 
-// Session for Passport (Required for OAuth even if we use JWT)
-app.use(session({
-  secret: process.env.SESSION_SECRET || 'phirseshadi_session_secret',
-  resave: false,
-  saveUninitialized: false
-}));
-
-app.use(passport.initialize());
-app.use(passport.session());
+// Session and Passport middleware removed (Moved to Clerk)
 
 
 // MongoDB Connection (family: 4 forces IPv4 — fixes Node.js 18+ DNS issues)

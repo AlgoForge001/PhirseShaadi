@@ -27,8 +27,6 @@ const PublicLayout = () => (
     <Route path="/" element={<LandingPage />} />
     <Route path="/login" element={<Login />} />
     <Route path="/register" element={<Register />} />
-    <Route path="/otp-verify" element={<OtpVerify />} />
-    <Route path="/google-success" element={<GoogleSuccess />} />
     <Route path="/about" element={<About />} />
     <Route path="*" element={<Navigate to="/" replace />} />
   </Routes>
@@ -63,7 +61,7 @@ const PrivateLayout = () => (
 
 const AppRouter = () => {
   const location = useLocation()
-  const publicPaths = ['/', '/login', '/register', '/about', '/otp-verify', '/google-success']
+  const publicPaths = ['/', '/login', '/register', '/about']
   const isPublicRoute = publicPaths.includes(location.pathname)
 
   return isPublicRoute ? <PublicLayout /> : <PrivateLayout />

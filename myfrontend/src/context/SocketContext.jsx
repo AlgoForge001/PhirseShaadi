@@ -21,7 +21,7 @@ export const SocketProvider = ({ children }) => {
   useEffect(() => {
     if (isLoggedIn && user) {
       // Connect to socket
-      const newSocket = io('http://localhost:5000');
+      const newSocket = io('https://phirseshaadi.onrender.com');
       setSocket(newSocket);
 
       // Join room

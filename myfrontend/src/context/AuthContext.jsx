@@ -1,35 +1,53 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
+import { useUser, useAuth as useClerkAuth, useClerk } from "@clerk/clerk-react";
 
-// ─────────────────────────────────────────────
-// CREATE CONTEXT
-// ─────────────────────────────────────────────
 const AuthContext = createContext();
 
-// ─────────────────────────────────────────────
-// AUTH PROVIDER (DEVELOPMENT MODE — No login required)
-// ─────────────────────────────────────────────
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState({
-    _id: "dev-user-001",
-    userId: "dev-user-001",
-    name: "Guest Developer",
-    email: "guest@example.com",
-    role: "user",
-    isPremium: true,
-  });
+  const { user: clerkUser, isLoaded: isUserLoaded } = useUser();
+  const { isSignedIn, getToken, isLoaded: isAuthLoaded } = useClerkAuth();
+  const { signOut } = useClerk();
+  
+  const [user, setUser] = useState(null);
+  const [token, setToken] = useState(null);
 
-  // Always "logged in" for dev
-  const token = "dev-token-bypass";
-  const isLoggedIn = true;
-  const isPremium = true;
-  const loading = false;
+  useEffect(() => {
+    if (isUserLoaded && clerkUser) {
+      // Map Clerk user to our app's user structure
+      setUser({
+        _id: clerkUser.id, // We'll use Clerk ID as the primary ID
+        userId: clerkUser.id,
+        name: clerkUser.fullName || clerkUser.username || "User",
+        email: clerkUser.primaryEmailAddress?.emailAddress,
+        role: clerkUser.publicMetadata?.role || "user",
+        isPremium: clerkUser.publicMetadata?.isPremium || false,
+      });
+      
+      // Update the local token state
+      const fetchToken = async () => {
+        const t = await getToken();
+        setToken(t);
+      };
+      fetchToken();
+    } else if (isUserLoaded && !clerkUser) {
+      setUser(null);
+      setToken(null);
+    }
+  }, [clerkUser, isUserLoaded, getToken]);
 
-  // No-op functions (kept so components don't crash)
-  const login = () => {};
-  const logout = () => {};
+  const login = () => {
+    // Redundant with Clerk pre-built components, but kept for compatibility
+  };
+
+  const logout = async () => {
+    await signOut();
+  };
+
   const updateUser = (updatedData) => {
     setUser(prev => ({ ...prev, ...updatedData }));
   };
+
+  const loading = !isUserLoaded || !isAuthLoaded;
 
   return (
     <AuthContext.Provider
@@ -37,8 +55,8 @@ export const AuthProvider = ({ children }) => {
         user,
         token,
         loading,
-        isLoggedIn,
-        isPremium,
+        isLoggedIn: !!isSignedIn,
+        isPremium: user?.isPremium || false,
         login,
         logout,
         updateUser,
@@ -49,9 +67,6 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-// ─────────────────────────────────────────────
-// CUSTOM HOOK
-// ─────────────────────────────────────────────
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {

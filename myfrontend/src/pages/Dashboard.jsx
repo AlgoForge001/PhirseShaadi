@@ -25,13 +25,24 @@ const Dashboard = () => {
         setLoading(true);
         const [profileRes, matchRes] = await Promise.all([
           api.get("/profile/me"),
-          api.get("/matches/recommended") // or just /search if special endpoint not available
+          api.get("/matches/recommended").catch(() => ({ data: { data: [] } }))
         ]);
-        setUserData(profileRes.data.profile);
-        setRecommendations(matchRes.data.data?.slice(0, 4) || []);
+        
+        if (profileRes.data.profile) {
+          setUserData(profileRes.data.profile);
+          setRecommendations(matchRes.data.data?.slice(0, 4) || []);
+        } else {
+          // If no profile data, it's a new Clerk user
+          navigate("/profile-creation");
+        }
       } catch (err) {
         console.error("Dashboard fetch failed:", err);
-        setError("Failed to sync your dashboard.");
+        if (err.response?.status === 404) {
+          // Profile not found in MongoDB
+          navigate("/profile-creation");
+        } else {
+          setError("Failed to sync your dashboard.");
+        }
       } finally {
         setLoading(false);
       }
