@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSignIn } from "@clerk/clerk-react";
 import {
   Heart, Mail, Lock, Eye, EyeOff, ChevronRight, Phone
 } from "lucide-react";
@@ -13,6 +14,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [apiError, setApiError] = useState("");
+  const { signIn, isLoaded } = useSignIn();
 
   const [formData, setFormData] = useState({
     email: "",
@@ -90,10 +92,18 @@ const Login = () => {
     }
   };
 
-  const handleGoogleLogin = () => {
-    // TODO [BACKEND]: GET /api/auth/google
-    // Redirect to Google OAuth
-    window.location.href = "http://localhost:5000/api/auth/google";
+  const handleGoogleLogin = async () => {
+    if (!isLoaded) return;
+    try {
+      await signIn.authenticateWithRedirect({
+        strategy: "oauth_google",
+        redirectUrl: "/sso-callback",
+        redirectUrlComplete: "/google-success",
+      });
+    } catch (error) {
+      console.error("Clerk Google login failed:", error);
+      setApiError("Google sign-in failed. Please try again.");
+    }
   };
 
   const handleForgotPassword = () => {

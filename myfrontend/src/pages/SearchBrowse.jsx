@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   Heart, Search, Filter, MapPin, Briefcase,
   GraduationCap, ChevronDown, ChevronUp, X,
@@ -33,7 +33,7 @@ const FilterPanel = ({ filters, setFilters, onClose }) => {
       heightFrom: "", heightTo: "",
       religion: "Any", education: "Any",
       occupation: "Any", income: "Any",
-      city: "", onlyVerified: false, onlyPremium: false,
+      city: "", state: "", onlyVerified: false, onlyPremium: false,
     });
   };
 
@@ -135,6 +135,17 @@ const FilterPanel = ({ filters, setFilters, onClose }) => {
           />
         </div>
 
+        <div className="filter-group">
+          <label>State</label>
+          <input
+            type="text"
+            placeholder="Enter state name"
+            value={filters.state}
+            onChange={(e) => handleChange("state", e.target.value)}
+            className="filter-input"
+          />
+        </div>
+
         {/* TOGGLES */}
         <div className="filter-group">
           <label>Other Filters</label>
@@ -175,6 +186,7 @@ const FilterPanel = ({ filters, setFilters, onClose }) => {
 const SearchBrowse = () => {
 
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
   const [showFilter, setShowFilter] = useState(false);
   const [activeTab, setActiveTab] = useState("all");
@@ -186,7 +198,7 @@ const SearchBrowse = () => {
     heightFrom: "", heightTo: "",
     religion: "Any", education: "Any",
     occupation: "Any", income: "Any",
-    city: "", onlyVerified: false, onlyPremium: false,
+    city: "", state: "", onlyVerified: false, onlyPremium: false,
   });
 
   const tabs = [
@@ -198,7 +210,7 @@ const SearchBrowse = () => {
   ];
 
   // ── FETCH PROFILES FROM BACKEND ──
-  const fetchProfiles = async () => {
+  const fetchProfiles = async (activeFilters = filters, activeSearchQuery = searchQuery) => {
     try {
       setLoading(true);
       let endpoint = "/search";
@@ -210,14 +222,15 @@ const SearchBrowse = () => {
       if (activeTab === "recommended") endpoint = "/matches/recommended";
       
       const params = {
-        minAge: filters.ageFrom,
-        maxAge: filters.ageTo,
-        religion: filters.religion !== "Any" ? filters.religion : undefined,
-        city: filters.city || undefined,
-        education: filters.education !== "Any" ? filters.education : undefined,
-        jobType: filters.occupation !== "Any" ? filters.occupation : undefined,
-        income: filters.income !== "Any" ? filters.income : undefined,
-        search: searchQuery || undefined
+        minAge: activeFilters.ageFrom,
+        maxAge: activeFilters.ageTo,
+        religion: activeFilters.religion !== "Any" ? activeFilters.religion : undefined,
+        city: activeFilters.city || undefined,
+        state: activeFilters.state || undefined,
+        education: activeFilters.education !== "Any" ? activeFilters.education : undefined,
+        jobType: activeFilters.occupation !== "Any" ? activeFilters.occupation : undefined,
+        income: activeFilters.income !== "Any" ? activeFilters.income : undefined,
+        search: activeSearchQuery || undefined
       };
 
       const res = await api.get(endpoint, { params });
@@ -246,6 +259,32 @@ const SearchBrowse = () => {
   useEffect(() => {
     fetchProfiles();
   }, [activeTab]); // Re-fetch on tab change
+
+  useEffect(() => {
+    const qs = new URLSearchParams(location.search);
+    if (!location.search) return;
+
+    const parsedFilters = {
+      ageFrom: qs.get("minAge") || "18",
+      ageTo: qs.get("maxAge") || "40",
+      religion: qs.get("religion") || "Any",
+      city: qs.get("city") || "",
+      state: qs.get("state") || "",
+      education: qs.get("education") || "Any",
+      occupation: qs.get("jobType") || "Any",
+      income: qs.get("income") || "Any",
+      heightFrom: "",
+      heightTo: "",
+      onlyVerified: false,
+      onlyPremium: false,
+    };
+
+    const parsedSearch = qs.get("search") || "";
+
+    setFilters((prev) => ({ ...prev, ...parsedFilters }));
+    setSearchQuery(parsedSearch);
+    fetchProfiles(parsedFilters, parsedSearch);
+  }, [location.search]);
 
   const handleApplyFilters = () => {
     fetchProfiles();

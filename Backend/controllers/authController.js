@@ -2,6 +2,7 @@ const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
+const { verifyToken, createClerkClient } = require('@clerk/backend');
 
 
 
@@ -228,6 +229,90 @@ exports.verifyOTP = async (req, res) => {
 
   } catch (error) {
     res.status(500).json({ message: "Server error during OTP verification", error: error.message });
+  }
+};
+
+// Clerk OAuth -> App JWT bridge
+exports.clerkLogin = async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization || '';
+    const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null;
+
+    if (!token) {
+      return res.status(401).json({ success: false, message: 'Missing Clerk token' });
+    }
+
+    if (!process.env.CLERK_SECRET_KEY) {
+      return res.status(500).json({ success: false, message: 'CLERK_SECRET_KEY is not configured' });
+    }
+
+    const verified = await verifyToken(token, {
+      secretKey: process.env.CLERK_SECRET_KEY,
+    });
+
+    const clerkUserId = verified?.sub;
+    if (!clerkUserId) {
+      return res.status(401).json({ success: false, message: 'Invalid Clerk token' });
+    }
+
+    const clerkClient = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY });
+    const clerkUser = await clerkClient.users.getUser(clerkUserId);
+
+    const primaryEmailObj = clerkUser.emailAddresses.find(
+      (item) => item.id === clerkUser.primaryEmailAddressId
+    );
+    const email = primaryEmailObj?.emailAddress;
+
+    if (!email) {
+      return res.status(400).json({ success: false, message: 'No primary email found on Clerk account' });
+    }
+
+    const first = (clerkUser.firstName || '').trim();
+    const last = (clerkUser.lastName || '').trim();
+    const fullName = `${first} ${last}`.trim() || email.split('@')[0];
+    const fallbackPhone = `clerk-${clerkUser.id}`;
+
+    let user = await User.findOne({
+      $or: [{ clerkId: clerkUser.id }, { email }],
+    });
+
+    if (!user) {
+      const generatedPassword = await bcrypt.hash(`clerk-${clerkUser.id}-${Date.now()}`, 10);
+      user = await User.create({
+        name: fullName,
+        fullName,
+        email,
+        clerkId: clerkUser.id,
+        phone: fallbackPhone,
+        password: generatedPassword,
+        isVerified: true,
+      });
+    } else if (!user.clerkId) {
+      user.clerkId = clerkUser.id;
+      if (!user.name) user.name = fullName;
+      if (!user.fullName) user.fullName = fullName;
+      await user.save();
+    }
+
+    const appToken = jwt.sign(
+      { userId: user._id, email: user.email, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    return res.status(200).json({
+      success: true,
+      token: appToken,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+    });
+  } catch (error) {
+    console.error('Clerk login bridge error:', error.message);
+    return res.status(500).json({ success: false, message: 'Clerk login failed' });
   }
 };
 
