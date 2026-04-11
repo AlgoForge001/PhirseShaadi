@@ -8,7 +8,10 @@ import "./Register.css";
 
 const Register = () => {
   const navigate = useNavigate();
-  const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+  const defaultBackendUrl = import.meta.env.PROD
+    ? "https://phirseshaadi-2.onrender.com"
+    : "http://localhost:5000";
+  const backendUrl = import.meta.env.VITE_BACKEND_URL || defaultBackendUrl;
   const { login } = useAuth();
   const [step, setStep] = useState(1);
   const [showPassword, setShowPassword] = useState(false);

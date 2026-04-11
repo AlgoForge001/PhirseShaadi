@@ -9,7 +9,10 @@ import "./Login.css";
 
 const Login = () => {
   const navigate = useNavigate();
-  const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+  const defaultBackendUrl = import.meta.env.PROD
+    ? "https://phirseshaadi-2.onrender.com"
+    : "http://localhost:5000";
+  const backendUrl = import.meta.env.VITE_BACKEND_URL || defaultBackendUrl;
   const [loginType, setLoginType] = useState("email"); // email | phone
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
