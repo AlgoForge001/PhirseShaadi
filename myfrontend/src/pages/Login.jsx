@@ -9,6 +9,7 @@ import "./Login.css";
 
 const Login = () => {
   const navigate = useNavigate();
+  const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
   const [loginType, setLoginType] = useState("email"); // email | phone
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -95,14 +96,16 @@ const Login = () => {
   const handleGoogleLogin = async () => {
     if (!isLoaded) return;
     try {
+      const origin = window.location.origin;
       await signIn.authenticateWithRedirect({
         strategy: "oauth_google",
-        redirectUrl: "/sso-callback",
-        redirectUrlComplete: "/google-success",
+        redirectUrl: `${origin}/sso-callback`,
+        redirectUrlComplete: `${origin}/google-success`,
       });
     } catch (error) {
       console.error("Clerk Google login failed:", error);
-      setApiError("Google sign-in failed. Please try again.");
+      // Fallback to existing backend Google OAuth if Clerk fails due to dashboard config.
+      window.location.href = `${backendUrl}/api/auth/google`;
     }
   };
 

@@ -17,11 +17,12 @@ export const SocketProvider = ({ children }) => {
   const { user, isLoggedIn } = useAuth();
   const [notifications, setNotifications] = useState([]);
   const [unreadNotifications, setUnreadNotifications] = useState(0);
+  const socketUrl = import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000';
 
   useEffect(() => {
     if (isLoggedIn && user) {
       // Connect to socket
-      const newSocket = io('http://localhost:5000');
+      const newSocket = io(socketUrl);
       setSocket(newSocket);
 
       // Join room
@@ -47,7 +48,7 @@ export const SocketProvider = ({ children }) => {
         setSocket(null);
       }
     }
-  }, [isLoggedIn, user]);
+  }, [isLoggedIn, user, socketUrl]);
 
   return (
     <SocketContext.Provider value={{ socket, notifications, setNotifications, unreadNotifications, setUnreadNotifications }}>
