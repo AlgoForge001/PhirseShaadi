@@ -45,7 +45,6 @@ const FamilyShortlist = () => {
     setSelectedFamily(familyShortlist);
     // Calculate common profiles
     const myIds = myShortlist.map(p => p._id);
-    const familyIds = familyShortlist.profiles.map(p => p._id);
     const common = familyShortlist.profiles.filter(p => myIds.includes(p._id));
     setCommonProfiles(common);
   };

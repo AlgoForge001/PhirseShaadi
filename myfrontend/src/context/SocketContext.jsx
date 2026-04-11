@@ -4,6 +4,7 @@ import { useAuth } from './AuthContext';
 
 const SocketContext = createContext();
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useSocket = () => {
   const context = useContext(SocketContext);
   if (!context) {
@@ -26,6 +27,7 @@ export const SocketProvider = ({ children }) => {
     if (isLoggedIn && user) {
       // Connect to socket
       const newSocket = io(socketUrl);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSocket(newSocket);
 
       // Join room

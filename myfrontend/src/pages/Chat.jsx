@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
   Send, Search, Info, MoreVertical, 
@@ -20,9 +20,59 @@ const Chat = () => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [_loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const messagesEndRef = useRef(null);
+
+  const scrollToBottom = useCallback(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, []);
+
+  const fetchConversations = async () => {
+    try {
+      const res = await getConversations();
+      if (res.data.success) setConversations(res.data.data);
+    } catch (err) { console.error(err); }
+  };
+
+  const fetchMessages = async (userId) => {
+    try {
+      const res = await getChatHistory(userId);
+      if (res.data.success) setMessages(res.data.data);
+    } catch (err) { console.error(err); }
+  };
+
+  const startNewChat = async (userId) => {
+    try {
+      const res = await api.get(`/profile/${userId}`);
+      if (res.data.success) {
+        const profile = res.data.profile;
+        setActiveConversation({
+          _id: 'new',
+          recipient: profile,
+          participants: [user._id, userId],
+          lastMessage: '',
+          lastMessageTime: new Date()
+        });
+      }
+    } catch (err) { console.error("Failed to load recipient profile", err); }
+  };
+
+  const handleSendMessage = (e) => {
+    e.preventDefault();
+    if (!newMessage.trim() || !activeConversation) return;
+
+    const msgData = {
+      from: user._id,
+      to: activeConversation.recipient._id,
+      text: newMessage
+    };
+
+    socket.emit('message:send', msgData);
+    setNewMessage('');
+  };
+
+  // ── HOOKS ──
 
   // 1. Initial Load of Conversations
   useEffect(() => {
@@ -43,9 +93,9 @@ const Chat = () => {
 
       if (existing) {
         const recipient = existing.participants.find(p => p._id === id);
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setActiveConversation({ ...existing, recipient });
       } else {
-        // Start a brand new potential conversation object
         startNewChat(id);
       }
     }
@@ -54,6 +104,7 @@ const Chat = () => {
   // 3. Fetch Messages when active conversation changes
   useEffect(() => {
     if (activeConversation?.recipient?._id) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       fetchMessages(activeConversation.recipient._id);
     }
   }, [activeConversation]);
@@ -88,55 +139,7 @@ const Chat = () => {
     };
   }, [socket, activeConversation]);
 
-  useEffect(() => scrollToBottom(), [messages]);
-
-  const fetchConversations = async () => {
-    try {
-      const res = await getConversations();
-      if (res.data.success) setConversations(res.data.data);
-    } catch (err) { console.error(err); }
-  };
-
-  const fetchMessages = async (userId) => {
-    try {
-      const res = await getChatHistory(userId);
-      if (res.data.success) setMessages(res.data.data); // Fixed mapping
-    } catch (err) { console.error(err); }
-  };
-
-  const startNewChat = async (userId) => {
-    try {
-      const res = await api.get(`/profile/${userId}`);
-      if (res.data.success) {
-        const profile = res.data.profile;
-        setActiveConversation({
-          _id: 'new',
-          recipient: profile,
-          participants: [user._id, userId],
-          lastMessage: '',
-          lastMessageTime: new Date()
-        });
-      }
-    } catch (err) { console.error("Failed to load recipient profile", err); }
-  };
-
-  const handleSendMessage = (e) => {
-    e.preventDefault();
-    if (!newMessage.trim() || !activeConversation) return;
-
-    const msgData = {
-      from: user._id,
-      to: activeConversation.recipient._id,
-      text: newMessage
-    };
-
-    socket.emit('message:send', msgData);
-    setNewMessage('');
-  };
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
+  useEffect(() => scrollToBottom(), [messages, scrollToBottom]);
 
   const filteredConversations = conversations.filter(c => {
     const recipient = c.participants.find(p => p._id !== user._id);

@@ -15,7 +15,7 @@ const MyProfile = () => {
 
   const [activeTab, setActiveTab] = useState("basic");
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [_error, setError] = useState("");
   const [activePhoto, setActivePhoto] = useState(0);
   const [profile, setProfile] = useState(null);
 

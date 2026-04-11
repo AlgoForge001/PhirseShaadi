@@ -10,10 +10,6 @@ const Notifications = () => {
   const { setUnreadNotifications } = useSocket();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchNotifications();
-  }, []);
-
   const fetchNotifications = async () => {
     try {
       const res = await getNotifications();
@@ -26,6 +22,11 @@ const Notifications = () => {
       console.error(err);
     }
   };
+
+  useEffect(() => {
+    fetchNotifications();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleMarkAllRead = async () => {
     try {

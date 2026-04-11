@@ -47,7 +47,7 @@ const ProfileCard = ({ profile, onInterest, onShortlist }) => {
       );
       setInterested(true);
       if (onInterest) onInterest();
-    } catch (err) {
+    } catch {
       console.error("Failed to send interest");
     } finally {
       setInterestLoading(false);
@@ -67,7 +67,7 @@ const ProfileCard = ({ profile, onInterest, onShortlist }) => {
       );
       setShortlisted(!shortlisted);
       if (onShortlist) onShortlist();
-    } catch (err) {
+    } catch {
       console.error("Failed to shortlist");
     } finally {
       setShortlistLoading(false);

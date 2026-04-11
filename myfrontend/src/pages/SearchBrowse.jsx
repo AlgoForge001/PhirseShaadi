@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import {
   Heart, Search, Filter, MapPin, Briefcase,
   GraduationCap, ChevronDown, ChevronUp, X,
@@ -185,14 +185,13 @@ const FilterPanel = ({ filters, setFilters, onClose }) => {
 // ─────────────────────────────────────────────
 const SearchBrowse = () => {
 
-  const navigate = useNavigate();
   const location = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
   const [showFilter, setShowFilter] = useState(false);
   const [activeTab, setActiveTab] = useState("all");
   const [profiles, setProfiles] = useState([]);
   const [sameCityMeta, setSameCityMeta] = useState({ city: "", message: "" });
-  const [loading, setLoading] = useState(false);
+  const [_loading, setLoading] = useState(false);
   const [filters, setFilters] = useState({
     ageFrom: "18", ageTo: "40",
     heightFrom: "", heightTo: "",
@@ -258,6 +257,7 @@ const SearchBrowse = () => {
 
   useEffect(() => {
     fetchProfiles();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab]); // Re-fetch on tab change
 
   useEffect(() => {
@@ -284,6 +284,7 @@ const SearchBrowse = () => {
     setFilters((prev) => ({ ...prev, ...parsedFilters }));
     setSearchQuery(parsedSearch);
     fetchProfiles(parsedFilters, parsedSearch);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.search]);
 
   const handleApplyFilters = () => {
