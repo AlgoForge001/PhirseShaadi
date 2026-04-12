@@ -6,6 +6,7 @@ import Login from './pages/Login'
 import Register from './pages/Register'
 import OtpVerify from './pages/OtpVerify'
 import GoogleSuccess from './pages/GoogleSuccess'
+import SsoCallback from './pages/SsoCallback'
 import ProfileCreation from './pages/ProfileCreation'
 import SearchBrowse from './pages/SearchBrowse'
 import UploadPhotos from './pages/UploadPhotos'
@@ -26,8 +27,12 @@ import { ClerkProvider } from '@clerk/clerk-react'
 const PublicLayout = () => (
   <Routes>
     <Route path="/" element={<LandingPage />} />
+    <Route path="/home" element={<LandingPage />} />
     <Route path="/login" element={<Login />} />
     <Route path="/register" element={<Register />} />
+    <Route path="/otp-verify" element={<OtpVerify />} />
+    <Route path="/google-success" element={<GoogleSuccess />} />
+    <Route path="/sso-callback" element={<SsoCallback />} />
     <Route path="/about" element={<About />} />
     <Route path="*" element={<Navigate to="/" replace />} />
   </Routes>
@@ -63,18 +68,8 @@ const PrivateLayout = () => (
 const AppRouter = () => {
   const { isLoggedIn, loading } = useAuth()
   const location = useLocation()
-
-  if (loading) return null // Or a loading spinner
-
-  const publicPaths = ['/', '/about']
-  const isPublicRoute = publicPaths.includes(location.pathname) ||
-    location.pathname.startsWith('/login') ||
-    location.pathname.startsWith('/register')
-
-  // If logged in and trying to access a public route (except /about), go to dashboard
-  if (isLoggedIn && isPublicRoute && location.pathname !== '/about') {
-    return <Navigate to="/dashboard" replace />
-  }
+  const publicPaths = ['/', '/home', '/login', '/register', '/about', '/otp-verify', '/google-success', '/sso-callback']
+  const isPublicRoute = publicPaths.includes(location.pathname)
 
   return isPublicRoute ? <PublicLayout /> : <PrivateLayout />
 }

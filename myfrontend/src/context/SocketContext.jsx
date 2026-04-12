@@ -4,6 +4,7 @@ import { useAuth } from './AuthContext';
 
 const SocketContext = createContext();
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useSocket = () => {
   const context = useContext(SocketContext);
   if (!context) {
@@ -17,11 +18,16 @@ export const SocketProvider = ({ children }) => {
   const { user, isLoggedIn } = useAuth();
   const [notifications, setNotifications] = useState([]);
   const [unreadNotifications, setUnreadNotifications] = useState(0);
+  const defaultSocketUrl = import.meta.env.PROD
+    ? 'https://phirseshaadi-2.onrender.com'
+    : 'http://localhost:5000';
+  const socketUrl = import.meta.env.VITE_SOCKET_URL || defaultSocketUrl;
 
   useEffect(() => {
     if (isLoggedIn && user) {
       // Connect to socket
-      const newSocket = io('https://phirseshaadi.onrender.com');
+      const newSocket = io(socketUrl);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSocket(newSocket);
 
       // Join room
@@ -47,7 +53,7 @@ export const SocketProvider = ({ children }) => {
         setSocket(null);
       }
     }
-  }, [isLoggedIn, user]);
+  }, [isLoggedIn, user, socketUrl]);
 
   return (
     <SocketContext.Provider value={{ socket, notifications, setNotifications, unreadNotifications, setUnreadNotifications }}>

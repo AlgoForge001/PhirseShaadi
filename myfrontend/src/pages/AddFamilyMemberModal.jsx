@@ -1,27 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { X } from "lucide-react";
 import "./AddFamilyMemberModal.css";
 
 const AddFamilyMemberModal = ({ onClose, onSubmit, initialData }) => {
   const [formData, setFormData] = useState({
-    name: "",
-    relationship: "mother",
-    contactInfo: "",
-    accessLevel: "view-only",
+    name: initialData?.name || "",
+    relationship: initialData?.relationship || "mother",
+    contactInfo: initialData?.contactInfo || "",
+    accessLevel: initialData?.accessLevel || "view-only",
   });
 
   const [errors, setErrors] = useState({});
-
-  useEffect(() => {
-    if (initialData) {
-      setFormData({
-        name: initialData.name || "",
-        relationship: initialData.relationship || "mother",
-        contactInfo: initialData.contactInfo || "",
-        accessLevel: initialData.accessLevel || "view-only",
-      });
-    }
-  }, [initialData]);
 
   const relationships = [
     { value: "mother", label: "Mother" },

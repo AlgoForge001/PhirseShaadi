@@ -2,11 +2,9 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Heart,
-  Search,
   ShieldCheck,
   Users,
   Sparkles,
-  Star,
   ArrowRight,
   ChevronDown,
 } from "lucide-react";
@@ -95,62 +93,10 @@ const LandingPage = () => {
             </div>
           </div>
 
-          {/* SEARCH SECTION */}
-          <div className="search-strip-shell" role="region" aria-label="Partner search">
-            <div className="search-strip-header">
-              <div className="search-title-row">
-                <span className="search-title-chip">
-                  <Star size={14} /> Personalized Search
-                </span>
-              </div>
-              <h3>Find Your Matches</h3>
-              <p>Set your preferences and discover perfect matches</p>
-              <div className="search-strip-meta" aria-label="Search highlights">
-                <span>Curated matches</span>
-                <span>Private & secure</span>
-                <span>Fast search</span>
-              </div>
-            </div>
-
-            <div className="search-strip">
-              <div className="field-group">
-                <label>Looking For</label>
-                <select defaultValue="Bride">
-                  <option>Bride</option>
-                  <option>Groom</option>
-                </select>
-              </div>
-
-              <div className="field-group">
-                <label>Age</label>
-                <select defaultValue="21 to 28">
-                  <option>21 to 28</option>
-                  <option>24 to 30</option>
-                  <option>28 to 35</option>
-                  <option>35 to 40</option>
-                </select>
-              </div>
-
-              <div className="field-group">
-                <label>Religion</label>
-                <select defaultValue="Any">
-                  <option>Any</option>
-                  <option>Hindu</option>
-                  <option>Muslim</option>
-                  <option>Christian</option>
-                  <option>Sikh</option>
-                </select>
-              </div>
-
-              <div className="field-group">
-                <label>City</label>
-                <input placeholder="Enter city" />
-              </div>
-
-              <button className="btn solid search-btn" onClick={() => navigate(token ? "/search" : "/register")}>
-                <Search size={16} /> Find Matches
-              </button>
-            </div>
+          <div className="hero-login-wrap">
+            <button className="btn solid hero-login-btn" onClick={() => navigate("/login")}>
+              Start Today <ArrowRight size={16} />
+            </button>
           </div>
         </div>
       </section>

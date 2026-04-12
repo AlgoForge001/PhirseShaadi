@@ -85,7 +85,7 @@ const UploadPhotos = () => {
           `/profile/photo/${photo.publicId}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
-      } catch (err) {
+      } catch {
         setError("Failed to delete photo. Please try again.");
         return;
       }
@@ -138,7 +138,7 @@ const UploadPhotos = () => {
         url: res.data.url,
         uploaded: true,
       };
-    } catch (err) {
+    } catch {
       throw new Error(`Failed to upload photo ${index + 1}`);
     } finally {
       setUploadingIndex(null);

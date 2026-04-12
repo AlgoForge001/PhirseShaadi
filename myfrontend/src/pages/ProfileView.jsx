@@ -25,7 +25,7 @@ const ProfileView = () => {
   const [interested, setInterested] = useState(false);
   const [shortlisted, setShortlisted] = useState(false);
   const [interestLoading, setInterestLoading] = useState(false);
-  const [shortlistLoading, setShortlistLoading] = useState(false);
+  const [_shortlistLoading, _setShortlistLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("about");
 
   useEffect(() => {

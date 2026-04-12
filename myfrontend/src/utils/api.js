@@ -1,7 +1,13 @@
 import axios from 'axios'
 
+const defaultApiBaseUrl = import.meta.env.PROD
+  ? 'https://phirseshaadi-2.onrender.com/api'
+  : 'http://localhost:5000/api'
+
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || defaultApiBaseUrl
+
 const api = axios.create({
-  baseURL: 'https://phirseshaadi.onrender.com/api',
+  baseURL: apiBaseUrl,
   headers: {
     'Content-Type': 'application/json'
   }
