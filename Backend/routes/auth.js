@@ -17,8 +17,7 @@ router.post('/resend-otp', authController.sendOTP);
 // Task 5: Verify OTP
 router.post('/verify-otp', authController.verifyOTP);
 
-// Clerk token exchange -> app JWT
-router.post('/clerk-login', authController.clerkLogin);
+
 
 // Task 7: Google OAuth Routes
 // 1. Redirect to Google
