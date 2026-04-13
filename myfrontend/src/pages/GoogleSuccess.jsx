@@ -1,15 +1,12 @@
 import React, { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { useAuth as useClerkAuth, useUser } from '@clerk/clerk-react';
 import api from '../utils/api';
 
 const GoogleSuccess = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { login } = useAuth();
-  const { isLoaded: clerkLoaded, isSignedIn, getToken } = useClerkAuth();
-  const { isLoaded: userLoaded } = useUser();
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -17,8 +14,7 @@ const GoogleSuccess = () => {
 
     const fetchAndLogin = async (tokenValue) => {
       try {
-        // Simple hack to set token for the immediate API call 
-        // (the interceptor will pick it up from localStorage if we save it first)
+        // Save token so the API interceptor can use it
         localStorage.setItem('token', tokenValue);
         
         const res = await api.get('/profile/me');
@@ -30,51 +26,13 @@ const GoogleSuccess = () => {
       }
     };
 
-    const bridgeClerkLogin = async () => {
-      try {
-        const clerkToken = await getToken();
-        if (!clerkToken) {
-          navigate('/login');
-          return;
-        }
-
-        const res = await api.post(
-          '/auth/clerk-login',
-          {},
-          { headers: { Authorization: `Bearer ${clerkToken}` } }
-        );
-
-        if (res.data?.token) {
-          localStorage.setItem('token', res.data.token);
-          if (res.data.user) {
-            localStorage.setItem('user', JSON.stringify(res.data.user));
-          }
-          login(res.data.token, res.data.user);
-          navigate('/dashboard');
-        } else {
-          navigate('/login');
-        }
-      } catch (err) {
-        console.error('Clerk bridge login error:', err);
-        navigate('/login');
-      }
-    };
-
     if (token) {
       fetchAndLogin(token);
-      return;
-    }
-
-    if (!clerkLoaded || !userLoaded) {
-      return;
-    }
-
-    if (isSignedIn) {
-      bridgeClerkLogin();
     } else {
+      // No token in URL, redirect to login
       navigate('/login');
     }
-  }, [location, navigate, login, clerkLoaded, userLoaded, isSignedIn, getToken]);
+  }, [location, navigate, login]);
 
   return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', flexDirection: 'column' }}>

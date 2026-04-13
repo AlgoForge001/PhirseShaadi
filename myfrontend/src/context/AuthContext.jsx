@@ -1,53 +1,47 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import { useUser, useAuth as useClerkAuth, useClerk } from "@clerk/clerk-react";
+import { createContext, useContext, useState, useEffect } from "react";
 
+// ─────────────────────────────────────────────
+// CREATE CONTEXT
+// ─────────────────────────────────────────────
 const AuthContext = createContext();
 
+// ─────────────────────────────────────────────
+// AUTH PROVIDER (JWT + localStorage)
+// ─────────────────────────────────────────────
 export const AuthProvider = ({ children }) => {
-  const { user: clerkUser, isLoaded: isUserLoaded } = useUser();
-  const { isSignedIn, getToken, isLoaded: isAuthLoaded } = useClerkAuth();
-  const { signOut } = useClerk();
-  
-  const [user, setUser] = useState(null);
-  const [token, setToken] = useState(null);
+  const [user, setUser] = useState(() => {
+    const storedUser = localStorage.getItem("user");
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
+  const [token, setToken] = useState(() => localStorage.getItem("token") || null);
+  const [loading, setLoading] = useState(false);
+
+  const isLoggedIn = !!token && !!user;
+  const isPremium = user?.isPremium || false;
 
   useEffect(() => {
-    if (isUserLoaded && clerkUser) {
-      // Map Clerk user to our app's user structure
-      setUser({
-        _id: clerkUser.id, // We'll use Clerk ID as the primary ID
-        userId: clerkUser.id,
-        name: clerkUser.fullName || clerkUser.username || "User",
-        email: clerkUser.primaryEmailAddress?.emailAddress,
-        role: clerkUser.publicMetadata?.role || "user",
-        isPremium: clerkUser.publicMetadata?.isPremium || false,
-      });
-      
-      // Update the local token state
-      const fetchToken = async () => {
-        const t = await getToken();
-        setToken(t);
-      };
-      fetchToken();
-    } else if (isUserLoaded && !clerkUser) {
-      setUser(null);
-      setToken(null);
-    }
-  }, [clerkUser, isUserLoaded, getToken]);
+    // Keep localStorage in sync if user or token changes
+    if (user) localStorage.setItem("user", JSON.stringify(user));
+    else localStorage.removeItem("user");
+    if (token) localStorage.setItem("token", token);
+    else localStorage.removeItem("token");
+  }, [user, token]);
 
-  const login = () => {
-    // Redundant with Clerk pre-built components, but kept for compatibility
+  const login = (newToken, newUser) => {
+    setToken(newToken);
+    setUser(newUser);
   };
 
-  const logout = async () => {
-    await signOut();
+  const logout = () => {
+    setToken(null);
+    setUser(null);
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
   };
 
   const updateUser = (updatedData) => {
     setUser(prev => ({ ...prev, ...updatedData }));
   };
-
-  const loading = !isUserLoaded || !isAuthLoaded;
 
   return (
     <AuthContext.Provider
@@ -55,8 +49,8 @@ export const AuthProvider = ({ children }) => {
         user,
         token,
         loading,
-        isLoggedIn: !!isSignedIn,
-        isPremium: user?.isPremium || false,
+        isLoggedIn,
+        isPremium,
         login,
         logout,
         updateUser,

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useSignIn, SignUp } from "@clerk/clerk-react";
 import { User, Mail, Phone, Lock, Eye, EyeOff, Heart, ChevronRight, CheckCircle, Users, Calendar, AlertCircle } from "lucide-react";
 import api from "../utils/api";
 import { useAuth } from "../context/AuthContext";
@@ -19,7 +18,6 @@ const Register = () => {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [apiError, setApiError] = useState("");
-  const { signIn, isLoaded } = useSignIn();
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -139,20 +137,8 @@ const Register = () => {
     }
   };
 
-  const handleGoogleLogin = async () => {
-    if (!isLoaded) return;
-    try {
-      const origin = window.location.origin;
-      await signIn.authenticateWithRedirect({
-        strategy: "oauth_google",
-        redirectUrl: `${origin}/sso-callback`,
-        redirectUrlComplete: `${origin}/google-success`,
-      });
-    } catch (error) {
-      console.error("Clerk Google sign-up failed:", error);
-      // Fallback to existing backend Google OAuth if Clerk fails due to dashboard config.
-      window.location.href = `${backendUrl}/api/auth/google`;
-    }
+  const handleGoogleLogin = () => {
+    window.location.href = `${backendUrl}/api/auth/google`;
   };
 
   const profileForOptions = [
@@ -175,18 +161,10 @@ const Register = () => {
   return (
     <div className="register-page">
       <div className="register-container">
-        <SignUp 
-          appearance={{
-            elements: {
-              rootBox: "clerk-root",
-              card: "clerk-card"
-            }
-          }}
-          routing="path"
-          path="/register"
-          signInUrl="/login"
-          forceRedirectUrl="/dashboard"
-        />
+        <h2>Register</h2>
+        <p>Registration form - please use the multi-step form or Google sign-up.</p>
+        <button onClick={handleGoogleLogin}>Sign up with Google</button>
+        <p onClick={() => navigate('/login')} style={{cursor:'pointer', color:'#7c3aed', marginTop:'1rem'}}>Already have an account? Login</p>
       </div>
     </div>
   );

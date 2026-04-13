@@ -6,7 +6,6 @@ import Login from './pages/Login'
 import Register from './pages/Register'
 import OtpVerify from './pages/OtpVerify'
 import GoogleSuccess from './pages/GoogleSuccess'
-import SsoCallback from './pages/SsoCallback'
 import ProfileCreation from './pages/ProfileCreation'
 import SearchBrowse from './pages/SearchBrowse'
 import UploadPhotos from './pages/UploadPhotos'
@@ -22,7 +21,6 @@ import FamilyMembers from "./components/FamilyMembers";
 import FamilyShortlist from "./components/FamilyShortlist";
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { SocketProvider } from './context/SocketContext'
-import { ClerkProvider } from '@clerk/clerk-react'
 
 const PublicLayout = () => (
   <Routes>
@@ -32,7 +30,6 @@ const PublicLayout = () => (
     <Route path="/register" element={<Register />} />
     <Route path="/otp-verify" element={<OtpVerify />} />
     <Route path="/google-success" element={<GoogleSuccess />} />
-    <Route path="/sso-callback" element={<SsoCallback />} />
     <Route path="/about" element={<About />} />
     <Route path="*" element={<Navigate to="/" replace />} />
   </Routes>
@@ -68,7 +65,7 @@ const PrivateLayout = () => (
 const AppRouter = () => {
   const { isLoggedIn, loading } = useAuth()
   const location = useLocation()
-  const publicPaths = ['/', '/home', '/login', '/register', '/about', '/otp-verify', '/google-success', '/sso-callback']
+  const publicPaths = ['/', '/home', '/login', '/register', '/about', '/otp-verify', '/google-success']
   const isPublicRoute = publicPaths.includes(location.pathname)
 
   return isPublicRoute ? <PublicLayout /> : <PrivateLayout />
@@ -77,15 +74,13 @@ const AppRouter = () => {
 
 function App() {
   return (
-    <ClerkProvider publishableKey={import.meta.env.VITE_CLERK_PUBLISHABLE_KEY}>
-      <AuthProvider>
-        <SocketProvider>
-          <BrowserRouter>
-            <AppRouter />
-          </BrowserRouter>
-        </SocketProvider>
-      </AuthProvider>
-    </ClerkProvider>
+    <AuthProvider>
+      <SocketProvider>
+        <BrowserRouter>
+          <AppRouter />
+        </BrowserRouter>
+      </SocketProvider>
+    </AuthProvider>
   )
 }
 
