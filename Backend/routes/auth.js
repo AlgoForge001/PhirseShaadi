@@ -33,7 +33,8 @@ router.get('/google/callback',
     );
 
     // Redirect to frontend with token
-    res.redirect(`http://localhost:5173/google-success?token=${token}`);
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    res.redirect(`${frontendUrl}/google-success?token=${token}`);
   }
 );
 

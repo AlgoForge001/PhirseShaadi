@@ -135,7 +135,8 @@ const Register = () => {
   };
 
   const handleGoogleLogin = () => {
-    window.location.href = "http://localhost:5000/api/auth/google";
+    const socketUrl = import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000';
+    window.location.href = `${socketUrl}/api/auth/google`;
   };
 
   const profileForOptions = [

@@ -13,7 +13,7 @@ const { Server } = require('socket.io');
 
 const io = new Server(server, {
   cors: {
-    origin: "*",
+    origin: process.env.FRONTEND_URL || "http://localhost:5173",
     methods: ["GET", "POST"]
   }
 });
@@ -25,7 +25,10 @@ app.set('io', io);
 app.set('onlineUsers', onlineUsers);
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: process.env.FRONTEND_URL || "http://localhost:5173",
+  credentials: true
+}));
 app.use(express.json());
 
 // Session for Passport (Required for OAuth even if we use JWT)
