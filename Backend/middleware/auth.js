@@ -1,7 +1,5 @@
-const { createClerkClient } = require('@clerk/clerk-sdk-node');
+const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-
-const clerk = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY });
 
 const auth = async (req, res, next) => {
   try {
@@ -14,34 +12,25 @@ const auth = async (req, res, next) => {
     const token = authHeader.split(' ')[1];
 
     try {
-      // 1. Verify Clerk token
-      const decoded = await clerk.verifyToken(token);
-      const clerkId = decoded.sub;
+      // Verify JWT token
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-      // 2. Find user in MongoDB by clerkId
-      let user = await User.findOne({ clerkId });
+      // Find user in MongoDB
+      let user = await User.findById(decoded.userId);
 
       if (!user) {
-        // Option: If user doesn't exist in DB, we still pass clerkId
-        // This allows the "Complete Profile" flow to pick it up
-        req.user = { 
-          userId: null, 
-          clerkId: clerkId,
-          needsProfileCompletion: true
-        };
-      } else {
-        req.user = { 
-          userId: user._id.toString(), 
-          clerkId: clerkId,
-          email: user.email, 
-          role: user.role,
-          needsProfileCompletion: false
-        };
+        return res.status(401).json({ success: false, message: "User not found" });
       }
+
+      req.user = { 
+        userId: user._id.toString(), 
+        email: user.email, 
+        role: user.role
+      };
       
       return next();
     } catch (error) {
-      console.error("Clerk Token Verification Failed:", error.message);
+      console.error("Token Verification Failed:", error.message);
       return res.status(401).json({ success: false, message: "Token is not valid" });
     }
   } catch (error) {
@@ -51,4 +40,3 @@ const auth = async (req, res, next) => {
 };
 
 module.exports = auth;
-
