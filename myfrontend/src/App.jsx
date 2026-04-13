@@ -1,5 +1,4 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
-import { AuthenticateWithRedirectCallback } from '@clerk/clerk-react'
 import Sidebar from './components/Sidebar'
 import About from './pages/About'
 import LandingPage from './pages/LandingPage'
@@ -31,7 +30,6 @@ const PublicLayout = () => (
     <Route path="/otp-verify" element={<OtpVerify />} />
     <Route path="/google-success" element={<GoogleSuccess />} />
     <Route path="/about" element={<About />} />
-    <Route path="/sso-callback" element={<AuthenticateWithRedirectCallback />} />
     <Route path="*" element={<Navigate to="/" replace />} />
   </Routes>
 )
@@ -63,7 +61,7 @@ const PrivateLayout = () => (
 
 const AppRouter = () => {
   const location = useLocation();
-  const publicPaths = ['/', '/login', '/register', '/about', '/otp-verify', '/google-success', '/sso-callback'];
+  const publicPaths = ['/', '/login', '/register', '/about', '/otp-verify', '/google-success'];
   const isPublicRoute = publicPaths.includes(location.pathname);
   return isPublicRoute ? <PublicLayout /> : <PrivateLayout />;
 }

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import { useSignIn } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
 import {
   Heart, Mail, Lock, Eye, EyeOff, ChevronRight, Phone
@@ -11,7 +10,6 @@ import "./Login.css";
 const Login = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
-  const { signIn } = useSignIn();
   const [loginType, setLoginType] = useState("email");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -81,12 +79,9 @@ const Login = () => {
     }
   };
 
-  const handleGoogleLogin = async () => {
-    await signIn.authenticateWithRedirect({
-      strategy: "oauth_google",
-      redirectUrl: "/sso-callback",
-      redirectUrlComplete: "/dashboard",
-    });
+  const handleGoogleLogin = () => {
+    const socketUrl = import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000';
+    window.location.href = `${socketUrl}/api/auth/google`;
   };
 
   const handleForgotPassword = () => {
