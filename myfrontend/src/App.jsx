@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { AuthenticateWithRedirectCallback } from '@clerk/clerk-react'
 import Sidebar from './components/Sidebar'
 import About from './pages/About'
 import LandingPage from './pages/LandingPage'
@@ -17,8 +18,8 @@ import Chat from './pages/Chat'
 import Notifications from './pages/Notifications'
 import PrivacySettings from './pages/PrivacySettings'
 import ProfileViewers from './pages/ProfileViewers'
-import FamilyMembers from "./components/FamilyMembers";
-import FamilyShortlist from "./components/FamilyShortlist";
+import FamilyMembers from "./components/FamilyMembers"
+import FamilyShortlist from "./components/FamilyShortlist"
 import { AuthProvider } from './context/AuthContext'
 import { SocketProvider } from './context/SocketContext'
 
@@ -30,6 +31,7 @@ const PublicLayout = () => (
     <Route path="/otp-verify" element={<OtpVerify />} />
     <Route path="/google-success" element={<GoogleSuccess />} />
     <Route path="/about" element={<About />} />
+    <Route path="/sso-callback" element={<AuthenticateWithRedirectCallback />} />
     <Route path="*" element={<Navigate to="/" replace />} />
   </Routes>
 )
@@ -51,10 +53,8 @@ const PrivateLayout = () => (
         <Route path="/notifications" element={<Notifications />} />
         <Route path="/privacy" element={<PrivacySettings />} />
         <Route path="/profile-viewers" element={<ProfileViewers />} />
-
         <Route path="/family-members" element={<FamilyMembers />} />
         <Route path="/family-shortlist" element={<FamilyShortlist />} />
-
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </div>
@@ -62,13 +62,11 @@ const PrivateLayout = () => (
 )
 
 const AppRouter = () => {
-  const location = useLocation()
-  const publicPaths = ['/', '/login', '/register', '/about', '/otp-verify', '/google-success']
-  const isPublicRoute = publicPaths.includes(location.pathname)
-
-  return isPublicRoute ? <PublicLayout /> : <PrivateLayout />
+  const location = useLocation();
+  const publicPaths = ['/', '/login', '/register', '/about', '/otp-verify', '/google-success', '/sso-callback'];
+  const isPublicRoute = publicPaths.includes(location.pathname);
+  return isPublicRoute ? <PublicLayout /> : <PrivateLayout />;
 }
-
 
 function App() {
   return (

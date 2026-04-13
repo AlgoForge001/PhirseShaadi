@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 
 // ─────────────────────────────────────────────
 // CREATE CONTEXT
@@ -6,27 +6,39 @@ import { createContext, useContext, useState } from "react";
 const AuthContext = createContext();
 
 // ─────────────────────────────────────────────
-// AUTH PROVIDER (DEVELOPMENT MODE — No login required)
+// AUTH PROVIDER (REAL LOGIN STATE)
 // ─────────────────────────────────────────────
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState({
-    _id: "dev-user-001",
-    userId: "dev-user-001",
-    name: "Guest Developer",
-    email: "guest@example.com",
-    role: "user",
-    isPremium: true,
+  const [user, setUser] = useState(() => {
+    const storedUser = localStorage.getItem("user");
+    return storedUser ? JSON.parse(storedUser) : null;
   });
+  const [token, setToken] = useState(() => localStorage.getItem("token") || null);
+  const [loading, setLoading] = useState(false);
 
-  // Always "logged in" for dev
-  const token = "dev-token-bypass";
-  const isLoggedIn = true;
-  const isPremium = true;
-  const loading = false;
+  const isLoggedIn = !!token && !!user;
+  const isPremium = user?.isPremium || false;
 
-  // No-op functions (kept so components don't crash)
-  const login = () => {};
-  const logout = () => {};
+  useEffect(() => {
+    // Keep localStorage in sync if user or token changes
+    if (user) localStorage.setItem("user", JSON.stringify(user));
+    else localStorage.removeItem("user");
+    if (token) localStorage.setItem("token", token);
+    else localStorage.removeItem("token");
+  }, [user, token]);
+
+  const login = (newToken, newUser) => {
+    setToken(newToken);
+    setUser(newUser);
+  };
+
+  const logout = () => {
+    setToken(null);
+    setUser(null);
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+  };
+
   const updateUser = (updatedData) => {
     setUser(prev => ({ ...prev, ...updatedData }));
   };

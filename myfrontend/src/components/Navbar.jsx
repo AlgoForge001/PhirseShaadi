@@ -1,13 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link, NavLink } from "react-router-dom";
-
 import {
   Heart, Bell, MessageCircle, User,
   Search, Menu, X, Settings
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import { UserButton, useClerk } from "@clerk/clerk-react";
 import { useSocket } from "../context/SocketContext";
 import "./Navbar.css";
+
+function ClerkSignOutButton() {
+  const { signOut } = useClerk();
+  return (
+    <button onClick={() => signOut()}>Sign Out</button>
+  );
+}
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -43,12 +50,11 @@ const Navbar = () => {
           <NavLink to="/chat" className="nav-link">Messages</NavLink>
         </div>
 
-
         {/* ACTIONS */}
         <div className="navbar-actions">
           {/* Notifications */}
-          <button 
-            className="action-btn circle-btn" 
+          <button
+            className="action-btn circle-btn"
             onClick={() => navigate("/notifications")}
             title="Notifications"
           >
@@ -60,7 +66,8 @@ const Navbar = () => {
 
           {/* User Profile */}
           <div className="user-profile-wrap">
-            <button 
+            <UserButton afterSignOutUrl="/login" />
+            <button
               className="user-profile-btn"
               onClick={() => setShowUserDropdown(!showUserDropdown)}
             >
@@ -73,7 +80,6 @@ const Navbar = () => {
               </div>
               <span className="user-name-text">{user?.name?.split(" ")[0] || "User"}</span>
             </button>
-
             {showUserDropdown && (
               <div className="user-dropdown">
                 <button onClick={() => { navigate("/my-profile"); setShowUserDropdown(false); }}>
@@ -82,12 +88,13 @@ const Navbar = () => {
                 <button onClick={() => { navigate("/privacy"); setShowUserDropdown(false); }}>
                   <Settings size={16} /> Privacy Settings
                 </button>
+                <ClerkSignOutButton />
               </div>
             )}
           </div>
 
           {/* MOBILE TOGGLE */}
-          <button 
+          <button
             className="mobile-menu-toggle"
             onClick={() => setShowMobileMenu(!showMobileMenu)}
           >

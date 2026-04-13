@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useAuth } from "../context/AuthContext";
+import { useSignIn } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
 import {
   Heart, Mail, Lock, Eye, EyeOff, ChevronRight, Phone
@@ -8,7 +10,9 @@ import "./Login.css";
 
 const Login = () => {
   const navigate = useNavigate();
-  const [loginType, setLoginType] = useState("email"); // email | phone
+  const { login } = useAuth();
+  const { signIn } = useSignIn();
+  const [loginType, setLoginType] = useState("email");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
@@ -47,32 +51,20 @@ const Login = () => {
       setErrors(errs);
       return;
     }
-
     setLoading(true);
     setApiError("");
-
     try {
       const res = await api.post("/auth/login", {
         identifier: loginType === "email" ? formData.email : formData.phone,
         password: formData.password,
       });
-
       if (res.data.success) {
-        // Save token to localStorage
-        localStorage.setItem("token", res.data.token);
-        
-        // Save user data if needed
-        if (res.data.user) {
-          localStorage.setItem("user", JSON.stringify(res.data.user));
-        }
-        
-        // Navigate to dashboard
+        login(res.data.token, res.data.user);
         navigate("/dashboard");
       } else {
         setApiError(res.data.message || "Login failed. Please try again.");
       }
     } catch (error) {
-      // Handle different error types
       if (error.response?.data?.message) {
         setApiError(error.response.data.message);
       } else if (error.response?.status === 401) {
@@ -84,27 +76,25 @@ const Login = () => {
       } else {
         setApiError("Something went wrong. Please try again later.");
       }
-      console.error("Login error:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleGoogleLogin = () => {
-    // TODO [BACKEND]: GET /api/auth/google
-    // Redirect to Google OAuth
-    window.location.href = "http://localhost:5000/api/auth/google";
+  const handleGoogleLogin = async () => {
+    await signIn.authenticateWithRedirect({
+      strategy: "oauth_google",
+      redirectUrl: "/sso-callback",
+      redirectUrlComplete: "/dashboard",
+    });
   };
 
   const handleForgotPassword = () => {
-    // TODO [BACKEND]: POST /api/auth/forgot-password
     navigate("/forgot-password");
   };
 
   return (
     <div className="login-page">
-
-      {/* LEFT PANEL */}
       <div className="login-left">
         <div className="login-left-content">
           <div className="login-logo" onClick={() => navigate("/")}>
@@ -130,14 +120,11 @@ const Login = () => {
         </div>
       </div>
 
-      {/* RIGHT PANEL */}
       <div className="login-right">
         <div className="login-form-wrap">
-
           <h2 className="login-title">Sign In</h2>
           <p className="login-subtitle">Enter your details to access your account</p>
 
-          {/* LOGIN TYPE TOGGLE */}
           <div className="login-toggle">
             <button
               className={loginType === "email" ? "active" : ""}
@@ -153,14 +140,8 @@ const Login = () => {
             </button>
           </div>
 
-          {/* API ERROR MESSAGE */}
-          {apiError && (
-            <div className="api-error-msg">
-              {apiError}
-            </div>
-          )}
+          {apiError && <div className="api-error-msg">{apiError}</div>}
 
-          {/* EMAIL INPUT */}
           {loginType === "email" && (
             <div className="form-group">
               <label>Email Address <span className="req">*</span></label>
@@ -178,7 +159,6 @@ const Login = () => {
             </div>
           )}
 
-          {/* PHONE INPUT */}
           {loginType === "phone" && (
             <div className="form-group">
               <label>Mobile Number <span className="req">*</span></label>
@@ -198,13 +178,10 @@ const Login = () => {
             </div>
           )}
 
-          {/* PASSWORD INPUT */}
           <div className="form-group">
             <div className="label-row">
               <label>Password <span className="req">*</span></label>
-              <span className="forgot-link" onClick={handleForgotPassword}>
-                Forgot Password?
-              </span>
+              <span className="forgot-link" onClick={handleForgotPassword}>Forgot Password?</span>
             </div>
             <div className={`input-wrap ${errors.password ? "error" : ""}`}>
               <Lock size={17} className="input-icon" />
@@ -215,31 +192,19 @@ const Login = () => {
                 value={formData.password}
                 onChange={handleChange}
               />
-              <button
-                type="button"
-                className="eye-btn"
-                onClick={() => setShowPassword(!showPassword)}
-              >
+              <button type="button" className="eye-btn" onClick={() => setShowPassword(!showPassword)}>
                 {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
               </button>
             </div>
             {errors.password && <span className="err-msg">{errors.password}</span>}
           </div>
 
-          {/* SUBMIT */}
-          <button
-            className="btn-login-submit"
-            onClick={handleSubmit}
-            disabled={loading}
-          >
+          <button className="btn-login-submit" onClick={handleSubmit} disabled={loading}>
             {loading ? <span className="spinner" /> : <>Sign In <ChevronRight size={17} /></>}
           </button>
 
-          {/* DIVIDER */}
           <div className="divider"><span>or continue with</span></div>
 
-          {/* GOOGLE LOGIN */}
-          {/* TODO [BACKEND]: GET /api/auth/google */}
           <button className="btn-google" onClick={handleGoogleLogin}>
             <svg width="18" height="18" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -250,19 +215,16 @@ const Login = () => {
             Continue with Google
           </button>
 
-          {/* REGISTER LINK */}
           <p className="register-link">
             Don't have an account?{" "}
             <span onClick={() => navigate("/register")}>Create Free Profile</span>
           </p>
-
         </div>
       </div>
     </div>
   );
 };
 
-// Small inline icon component
 const MessageIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#DDC3C3" strokeWidth="2">
     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
