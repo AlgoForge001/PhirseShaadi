@@ -6,7 +6,7 @@ import { createContext, useContext, useState, useEffect } from "react";
 const AuthContext = createContext();
 
 // ─────────────────────────────────────────────
-// AUTH PROVIDER (REAL LOGIN STATE)
+// AUTH PROVIDER (JWT + localStorage)
 // ─────────────────────────────────────────────
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
@@ -64,6 +64,7 @@ export const AuthProvider = ({ children }) => {
 // ─────────────────────────────────────────────
 // CUSTOM HOOK
 // ─────────────────────────────────────────────
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {

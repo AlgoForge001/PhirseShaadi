@@ -16,9 +16,14 @@ const userSchema = new mongoose.Schema({
     required: [true, "Email is required"],
     unique: true
   },
+  clerkId: {
+    type: String,
+    unique: true,
+    sparse: true
+  },
   password: {
     type: String,
-    required: [true, "Password is required"]
+    required: false
   },
   gender: {
     type: String

@@ -14,8 +14,7 @@ const GoogleSuccess = () => {
 
     const fetchAndLogin = async (tokenValue) => {
       try {
-        // Simple hack to set token for the immediate API call 
-        // (the interceptor will pick it up from localStorage if we save it first)
+        // Save token so the API interceptor can use it
         localStorage.setItem('token', tokenValue);
         
         const res = await api.get('/profile/me');
@@ -30,6 +29,7 @@ const GoogleSuccess = () => {
     if (token) {
       fetchAndLogin(token);
     } else {
+      // No token in URL, redirect to login
       navigate('/login');
     }
   }, [location, navigate, login]);

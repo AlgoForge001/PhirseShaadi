@@ -3,49 +3,40 @@ const User = require('../models/User');
 
 const auth = async (req, res, next) => {
   try {
-    // 1. Try to get token from header
     const authHeader = req.header('Authorization');
     
-    if (authHeader && authHeader.startsWith('Bearer ')) {
-      const token = authHeader.split(' ')[1];
-      try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded;
-        return next();
-      } catch (error) {
-        console.log("Auth Bypass: Token verification failed, using fallback.");
-      }
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ success: false, message: "No token, authorization denied" });
     }
 
-    // 2. Bypass: Auto-login as the first user in the database for testing
-    const defaultUser = await User.findOne();
-    if (defaultUser) {
+    const token = authHeader.split(' ')[1];
+
+    try {
+      // Verify JWT token
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+      // Find user in MongoDB
+      let user = await User.findById(decoded.userId);
+
+      if (!user) {
+        return res.status(401).json({ success: false, message: "User not found" });
+      }
+
       req.user = { 
-        userId: defaultUser._id.toString(), 
-        email: defaultUser.email, 
-        role: 'user' 
+        userId: user._id.toString(), 
+        email: user.email, 
+        role: user.role
       };
-    } else {
-      console.warn("Auth Bypass: No users found in DB. Setting dummy user object.");
-      req.user = { 
-        userId: "000000000000000000000000", // Placeholder ID
-        email: "none@example.com", 
-        role: "user" 
-      };
+      
+      return next();
+    } catch (error) {
+      console.error("Token Verification Failed:", error.message);
+      return res.status(401).json({ success: false, message: "Token is not valid" });
     }
-    
-    next();
   } catch (error) {
-    console.error("Auth Middleware Error (Connectivity?):", error.message);
-    // Even on error, provide a dummy user to prevent controller crashes (500)
-    req.user = { 
-      userId: "000000000000000000000000", 
-      email: "error@example.com", 
-      role: "user" 
-    };
-    next(); 
+    console.error("Auth Middleware Global Error:", error.message);
+    res.status(500).json({ success: false, message: "Server Error" });
   }
 };
 
 module.exports = auth;
-

@@ -2,15 +2,14 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const passport = require('passport');
-const session = require('express-session');
-require('./config/passport'); // Import passport config
+require('./config/passport'); // Will be removed later if not used anywhere else
 
 const app = express();
 const http = require('http');
 const server = http.createServer(app);
 const { Server } = require('socket.io');
 
+<<<<<<< HEAD
 const frontendOrigins = [
   "http://localhost:5173",
   process.env.FRONTEND_URL,
@@ -24,6 +23,17 @@ const io = new Server(server, {
     origin: frontendOrigins,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true
+=======
+const allowedOrigins = [
+  "https://phirse-shaadi.vercel.app",
+  /\.vercel\.app$/ // Allow all Vercel preview deployments
+];
+
+const io = new Server(server, {
+  cors: {
+    origin: allowedOrigins,
+    methods: ["GET", "POST"]
+>>>>>>> 13735f5c9c5a10f24f7dcf90b7320c2a3b9d3aef
   }
 });
 
@@ -35,20 +45,16 @@ app.set('onlineUsers', onlineUsers);
 
 // Middleware
 app.use(cors({
+<<<<<<< HEAD
   origin: frontendOrigins,
+=======
+  origin: allowedOrigins,
+>>>>>>> 13735f5c9c5a10f24f7dcf90b7320c2a3b9d3aef
   credentials: true
 }));
 app.use(express.json());
 
-// Session for Passport (Required for OAuth even if we use JWT)
-app.use(session({
-  secret: process.env.SESSION_SECRET || 'phirseshadi_session_secret',
-  resave: false,
-  saveUninitialized: false
-}));
-
-app.use(passport.initialize());
-app.use(passport.session());
+// Session and Passport middleware removed (Moved to Clerk)
 
 
 // MongoDB Connection (family: 4 forces IPv4 — fixes Node.js 18+ DNS issues)
@@ -147,15 +153,15 @@ io.on('connection', (socket) => {
 
       conversation.lastMessage = text;
       conversation.lastMessageTime = new Date();
-      
+
       // Update unread count for the receiver
       if (!conversation.unreadCount) conversation.unreadCount = {};
       const currentUnread = conversation.unreadCount[to] || 0;
       conversation.unreadCount[to] = currentUnread + 1;
-      
+
       // Since it's an Object/Schema.Types.Mixed, we must mark it as modified
       conversation.markModified('unreadCount');
-      
+
       await conversation.save();
 
       // 3. Emit to receiver if online
@@ -202,5 +208,5 @@ io.on('connection', (socket) => {
 // Server Start
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
-  console.log(`Server port ${PORT} pe chal raha hai!`);
+  console.log(`Server is running on port ${PORT}`);
 });

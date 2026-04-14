@@ -15,7 +15,7 @@ const EditProfile = () => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [apiError, setApiError] = useState(null);
+  const [_apiError, setApiError] = useState(null);
 
   const [formData, setFormData] = useState({
     // Basic

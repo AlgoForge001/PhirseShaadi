@@ -17,14 +17,15 @@ import Chat from './pages/Chat'
 import Notifications from './pages/Notifications'
 import PrivacySettings from './pages/PrivacySettings'
 import ProfileViewers from './pages/ProfileViewers'
-import FamilyMembers from "./components/FamilyMembers"
-import FamilyShortlist from "./components/FamilyShortlist"
-import { AuthProvider } from './context/AuthContext'
+import FamilyMembers from "./components/FamilyMembers";
+import FamilyShortlist from "./components/FamilyShortlist";
+import { AuthProvider, useAuth } from './context/AuthContext'
 import { SocketProvider } from './context/SocketContext'
 
 const PublicLayout = () => (
   <Routes>
     <Route path="/" element={<LandingPage />} />
+    <Route path="/home" element={<LandingPage />} />
     <Route path="/login" element={<Login />} />
     <Route path="/register" element={<Register />} />
     <Route path="/otp-verify" element={<OtpVerify />} />
@@ -51,8 +52,10 @@ const PrivateLayout = () => (
         <Route path="/notifications" element={<Notifications />} />
         <Route path="/privacy" element={<PrivacySettings />} />
         <Route path="/profile-viewers" element={<ProfileViewers />} />
+
         <Route path="/family-members" element={<FamilyMembers />} />
         <Route path="/family-shortlist" element={<FamilyShortlist />} />
+
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </div>
@@ -60,11 +63,14 @@ const PrivateLayout = () => (
 )
 
 const AppRouter = () => {
-  const location = useLocation();
-  const publicPaths = ['/', '/login', '/register', '/about', '/otp-verify', '/google-success'];
-  const isPublicRoute = publicPaths.includes(location.pathname);
-  return isPublicRoute ? <PublicLayout /> : <PrivateLayout />;
+  const { isLoggedIn, loading } = useAuth()
+  const location = useLocation()
+  const publicPaths = ['/', '/home', '/login', '/register', '/about', '/otp-verify', '/google-success']
+  const isPublicRoute = publicPaths.includes(location.pathname)
+
+  return isPublicRoute ? <PublicLayout /> : <PrivateLayout />
 }
+
 
 function App() {
   return (
