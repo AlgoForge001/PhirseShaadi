@@ -19,7 +19,7 @@ export const SocketProvider = ({ children }) => {
   const [notifications, setNotifications] = useState([]);
   const [unreadNotifications, setUnreadNotifications] = useState(0);
   const defaultSocketUrl = import.meta.env.PROD
-    ? 'https://phirseshaadi-2.onrender.com'
+    ? 'https://phirseshaadi.onrender.com'
     : 'http://localhost:5000';
   const socketUrl = import.meta.env.VITE_SOCKET_URL || defaultSocketUrl;
 

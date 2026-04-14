@@ -8,7 +8,7 @@ import "./Register.css";
 const Register = () => {
   const navigate = useNavigate();
   const defaultBackendUrl = import.meta.env.PROD
-    ? "https://phirseshaadi-2.onrender.com"
+    ? "https://phirseshaadi.onrender.com"
     : "http://localhost:5000";
   const backendUrl = import.meta.env.VITE_BACKEND_URL || defaultBackendUrl;
   const { login } = useAuth();
