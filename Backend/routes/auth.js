@@ -38,11 +38,7 @@ router.get('/google/callback',
     );
 
     // Redirect to frontend with token
-<<<<<<< HEAD
-    const frontendUrl = process.env.FRONTEND_URL ? process.env.FRONTEND_URL.replace(/\/$/, '') : 'http://localhost:5173';
-=======
     const frontendUrl = (process.env.FRONTEND_URL || 'http://localhost:5173').replace(/\/$/, '');
->>>>>>> 13735f5c9c5a10f24f7dcf90b7320c2a3b9d3aef
     res.redirect(`${frontendUrl}/google-success?token=${token}`);
   }
 );
