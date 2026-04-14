@@ -3,26 +3,23 @@ import { useNavigate, Link, NavLink } from "react-router-dom";
 import {
   Heart, Bell, MessageCircle, User,
   Search, Menu, X, Settings
-} from "lucide-react";
 import { useAuth } from "../context/AuthContext";
-import { UserButton, useClerk } from "@clerk/clerk-react";
 import { useSocket } from "../context/SocketContext";
 import "./Navbar.css";
 
-function ClerkSignOutButton() {
-  const { signOut } = useClerk();
-  return (
-    <button onClick={() => signOut()}>Sign Out</button>
-  );
-}
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const { unreadNotifications } = useSocket();
   const [isScrolled, setIsScrolled] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -66,7 +63,6 @@ const Navbar = () => {
 
           {/* User Profile */}
           <div className="user-profile-wrap">
-            <UserButton afterSignOutUrl="/login" />
             <button
               className="user-profile-btn"
               onClick={() => setShowUserDropdown(!showUserDropdown)}
@@ -88,7 +84,9 @@ const Navbar = () => {
                 <button onClick={() => { navigate("/privacy"); setShowUserDropdown(false); }}>
                   <Settings size={16} /> Privacy Settings
                 </button>
-                <ClerkSignOutButton />
+                <button onClick={handleLogout}>
+                  Sign Out
+                </button>
               </div>
             )}
           </div>
