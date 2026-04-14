@@ -8,12 +8,8 @@ const backendBaseUrl = (process.env.BACKEND_URL || 'http://localhost:5000').repl
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-<<<<<<< HEAD
-    callbackURL: process.env.BACKEND_URL ? `${process.env.BACKEND_URL}/api/auth/google/callback` : "/api/auth/google/callback",
+    callbackURL: `${backendBaseUrl}/api/auth/google/callback`,
     proxy: true
-=======
-    callbackURL: `${backendBaseUrl}/api/auth/google/callback`
->>>>>>> 13735f5c9c5a10f24f7dcf90b7320c2a3b9d3aef
   },
   async (accessToken, refreshToken, profile, done) => {
     try {
