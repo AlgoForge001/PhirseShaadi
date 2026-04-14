@@ -3,6 +3,7 @@ import { useNavigate, Link, NavLink } from "react-router-dom";
 import {
   Heart, Bell, MessageCircle, User,
   Search, Menu, X, Settings
+} from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useSocket } from "../context/SocketContext";
 import "./Navbar.css";
