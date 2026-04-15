@@ -11,7 +11,7 @@ const Login = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
   const defaultBackendUrl = import.meta.env.PROD
-    ? "https://phirseshaadi-2.onrender.com"
+    ? "https://phirseshaadi.onrender.com"
     : "http://localhost:5000";
   const backendUrl = import.meta.env.VITE_BACKEND_URL || defaultBackendUrl;
   const [loginType, setLoginType] = useState("email"); // email | phone
