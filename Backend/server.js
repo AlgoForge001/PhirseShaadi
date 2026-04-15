@@ -9,15 +9,20 @@ const http = require('http');
 const server = http.createServer(app);
 const { Server } = require('socket.io');
 
-const allowedOrigins = [
+const frontendOrigins = [
+  "http://localhost:5173",
+  process.env.FRONTEND_URL,
+  process.env.FRONTEND_URL ? process.env.FRONTEND_URL.replace(/\/$/, "") : null,
   "https://phirse-shaadi.vercel.app",
-  /\.vercel\.app$/ // Allow all Vercel preview deployments
-];
+  "https://phirse-shaadi-acrc.vercel.app",
+  /\.vercel\.app$/
+].filter(Boolean);
 
 const io = new Server(server, {
   cors: {
-    origin: allowedOrigins,
-    methods: ["GET", "POST"]
+    origin: frontendOrigins,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    credentials: true
   }
 });
 
@@ -29,7 +34,7 @@ app.set('onlineUsers', onlineUsers);
 
 // Middleware
 app.use(cors({
-  origin: allowedOrigins,
+  origin: frontendOrigins,
   credentials: true
 }));
 app.use(express.json());
