@@ -3,7 +3,7 @@ const User = require('../models/User');
 // GET /api/profile/me
 exports.getMe = async (req, res) => {
   try {
-    const user = await User.findOne({ clerkId: req.user.clerkId }).select('-password -otp -otpExpiry');
+    const user = await User.findById(req.user.userId).select('-password -otp -otpExpiry');
     if (!user) {
       return res.status(404).json({ success: false, message: "Profile not found" });
     }
@@ -130,27 +130,22 @@ exports.updateHoroscope = async (req, res) => {
 exports.updateFullProfile = async (req, res) => {
   try {
     const updates = req.body;
-    const clerkId = req.user.clerkId;
+    const userId = req.user.userId;
 
     // Remove sensitive fields if present
     delete updates.password;
     delete updates.otp;
     delete updates.otpExpiry;
 
-    // Use findOneAndUpdate with upsert: true to create the user if they don't exist
-    // This handles the transition from Clerk SignUp -> Profile Creation
-    const user = await User.findOneAndUpdate(
-      { clerkId: clerkId },
-      { 
-        $set: {
-          ...updates,
-          clerkId: clerkId,
-          // Only set email if it's a new document or not provided in updates
-          ...(req.user.email ? { email: req.user.email } : {})
-        } 
-      },
-      { new: true, upsert: true, runValidators: true }
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { $set: updates },
+      { new: true, runValidators: true }
     ).select('-password');
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
 
     res.status(200).json({ success: true, message: "Profile updated successfully", profile: user });
   } catch (error) {
