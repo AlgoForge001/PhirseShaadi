@@ -39,8 +39,9 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// Session and Passport middleware removed (Moved to Clerk)
-
+// Passport middleware for Google OAuth (no sessions needed, JWT only)
+const passport = require('passport');
+app.use(passport.initialize());
 
 // MongoDB Connection (family: 4 forces IPv4 — fixes Node.js 18+ DNS issues)
 mongoose.connect(process.env.MONGO_URI, {
