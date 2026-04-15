@@ -54,7 +54,7 @@ exports.register = async (req, res) => {
 
     await newUser.save();
 
-    // 5. Send Email using Nodemailer
+    // 5. Send Email using Nodemailer (Non-blocking for speed)
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
@@ -70,8 +70,11 @@ exports.register = async (req, res) => {
       text: `Your OTP for email verification is: ${otp}. This OTP is valid for 10 minutes.`
     };
 
-    // We don't await here to avoid slowing down registration, or we can await for reliability
-    await transporter.sendMail(mailOptions);
+    // Fire and forget - don't await so registration is instant
+    transporter.sendMail(mailOptions).catch(err => {
+      console.error("Background Email Error (Register):", err.message);
+    });
+    
     console.log(`[DEV] OTP for ${email}: ${otp}`);
 
     // 4. Generate Token (Optional, but frontend expects it for immediate context login)
@@ -162,7 +165,7 @@ exports.sendOTP = async (req, res) => {
     user.otpExpiry = otpExpiry;
     await user.save();
 
-    // 4. Send Email using Nodemailer
+    // 4. Send Email using Nodemailer (Non-blocking)
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
@@ -178,7 +181,11 @@ exports.sendOTP = async (req, res) => {
       text: `Your OTP for email verification is: ${otp}. This OTP is valid for 10 minutes.`
     };
 
-    await transporter.sendMail(mailOptions);
+    // Fire and forget
+    transporter.sendMail(mailOptions).catch(err => {
+      console.error("Background Email Error (sendOTP):", err.message);
+    });
+
     console.log(`[DEV] OTP for ${identifier}: ${otp}`);
 
     res.status(200).json({ message: "OTP sent successfully" });
