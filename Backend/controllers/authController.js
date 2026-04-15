@@ -86,7 +86,7 @@ exports.register = async (req, res) => {
 
     // 4. Generate Token (Optional, but frontend expects it for immediate context login)
     const token = jwt.sign(
-      { userId: newUser._id, email: newUser.email, role: 'user' },
+      { userId: newUser._id.toString(), email: newUser.email, role: 'user' },
       process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
@@ -129,7 +129,7 @@ exports.login = async (req, res) => {
 
     // 3. Generate JWT Token
     const token = jwt.sign(
-      { userId: user._id, email: user.email, role: user.role },
+      { userId: user._id.toString(), email: user.email, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
@@ -236,7 +236,7 @@ exports.verifyOTP = async (req, res) => {
       success: true, 
       message: "Verified successfully",
       token: jwt.sign(
-        { userId: user._id, email: user.email, role: user.role },
+        { userId: user._id.toString(), email: user.email, role: user.role },
         process.env.JWT_SECRET,
         { expiresIn: '7d' }
       ),
