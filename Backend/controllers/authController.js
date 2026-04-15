@@ -55,11 +55,18 @@ exports.register = async (req, res) => {
     await newUser.save();
 
     // 5. Send Email using Nodemailer (Non-blocking for speed)
+    // Send Email using Nodemailer (Optimized for Render/IPv4)
     const transporter = nodemailer.createTransport({
-      service: 'gmail',
+      host: 'smtp.gmail.com',
+      port: 465,
+      secure: true, // use SSL
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
+      },
+      tls: {
+        // This helps avoid issues with Render's network configuration
+        rejectUnauthorized: false
       }
     });
 
@@ -166,11 +173,18 @@ exports.sendOTP = async (req, res) => {
     await user.save();
 
     // 4. Send Email using Nodemailer (Non-blocking)
+    // Send Email using Nodemailer (Optimized for Render/IPv4)
     const transporter = nodemailer.createTransport({
-      service: 'gmail',
+      host: 'smtp.gmail.com',
+      port: 465,
+      secure: true, // use SSL
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
+      },
+      tls: {
+        // This helps avoid issues with Render's network configuration
+        rejectUnauthorized: false
       }
     });
 

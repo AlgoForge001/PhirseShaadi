@@ -9,11 +9,19 @@ import "./Login.css";
 
 const Login = () => {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, isLoggedIn } = useAuth();
   const defaultBackendUrl = import.meta.env.PROD
     ? "https://phirseshaadi.onrender.com"
     : "http://localhost:5000";
   const backendUrl = import.meta.env.VITE_BACKEND_URL || defaultBackendUrl;
+  
+  // REDIRECT IF ALREADY LOGGED IN
+  React.useEffect(() => {
+    if (isLoggedIn) {
+      navigate("/dashboard");
+    }
+  }, [isLoggedIn, navigate]);
+
   const [loginType, setLoginType] = useState("email"); // email | phone
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);

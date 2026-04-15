@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { User, Mail, Phone, Lock, Eye, EyeOff, Heart, ChevronRight, CheckCircle, Users, Calendar, AlertCircle } from "lucide-react";
 import api from "../utils/api";
@@ -7,11 +7,18 @@ import "./Register.css";
 
 const Register = () => {
   const navigate = useNavigate();
+  const { login, isLoggedIn } = useAuth();
   const defaultBackendUrl = import.meta.env.PROD
     ? "https://phirseshaadi.onrender.com"
     : "http://localhost:5000";
   const backendUrl = import.meta.env.VITE_BACKEND_URL || defaultBackendUrl;
-  const { login } = useAuth();
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate("/dashboard");
+    }
+  }, [isLoggedIn, navigate]);
+
   const [step, setStep] = useState(1);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -123,7 +130,7 @@ const Register = () => {
 
       if (res.data.success) {
         login(res.data.token, res.data.user);
-        navigate("/otp-verify", { state: { phone: formData.phone } });
+        navigate("/otp-verify", { state: { phone: formData.phone, email: formData.email } });
       }
 
     } catch (error) {
