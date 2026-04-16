@@ -81,6 +81,7 @@ const OtpVerify = () => {
     try {
       const res = await api.post("/auth/verify-otp", {
         phone: phone,
+        email: email,
         otp: otpValue,
       });
 
@@ -131,6 +132,7 @@ const OtpVerify = () => {
 
     try {
       const res = await api.post("/auth/resend-otp", {
+        email: email,
         phone: phone,
       });
 
