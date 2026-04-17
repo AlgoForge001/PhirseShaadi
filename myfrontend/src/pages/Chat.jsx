@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
   Send, Search, Info, MoreVertical, 
-  ChevronLeft, MessageCircle, AlertCircle 
+  ChevronLeft, MessageCircle, AlertCircle, Heart 
 } from 'lucide-react';
 import { useSocket } from '../context/SocketContext';
 import { useAuth } from '../context/AuthContext';
@@ -30,29 +30,68 @@ const Chat = () => {
 
   const fetchConversations = async () => {
     try {
-      const res = await getConversations();
-      if (res.data.success) setConversations(res.data.data);
+      const [convRes, intRes] = await Promise.all([
+        getConversations(),
+        api.get('/interest/accepted')
+      ]);
+      
+      let allConvs = [];
+      if (convRes.data.success) {
+        allConvs = convRes.data.data;
+      }
+      
+      // Merge accepted interests that don't have conversations yet
+      if (intRes.data.success) {
+        const acceptedUsers = intRes.data.data.map(i => i.user);
+        acceptedUsers.forEach(accUser => {
+          const exists = allConvs.find(c => c.participants.some(p => p._id === accUser._id));
+          if (!exists) {
+            allConvs.push({
+              _id: `new_${accUser._id}`,
+              participants: [user, accUser],
+              lastMessage: 'Acceptance is the beginning...',
+              lastMessageTime: new Date()
+            });
+          }
+        });
+      }
+      setConversations(allConvs);
     } catch (err) { console.error(err); }
   };
 
   const fetchMessages = async (userId) => {
     try {
+      const accessRes = await api.get(`/chat/access/${userId}`);
+      if (accessRes.data.success && !accessRes.data.canChat) {
+         setMessages([]);
+         setActiveConversation(prev => ({ ...prev, accessDenied: true }));
+         return;
+      }
+
       const res = await getChatHistory(userId);
-      if (res.data.success) setMessages(res.data.data);
+      if (res.data.success) {
+        setMessages(res.data.data);
+        setActiveConversation(prev => ({ ...prev, accessDenied: false }));
+      }
     } catch (err) { console.error(err); }
   };
 
   const startNewChat = async (userId) => {
     try {
-      const res = await api.get(`/profile/${userId}`);
-      if (res.data.success) {
-        const profile = res.data.profile;
+      const [profileRes, accessRes] = await Promise.all([
+        api.get(`/profile/${userId}`),
+        api.get(`/chat/access/${userId}`)
+      ]);
+      
+      if (profileRes.data.success) {
+        const profile = profileRes.data.profile;
         setActiveConversation({
-          _id: 'new',
+          _id: 'new_' + userId,
           recipient: profile,
           participants: [user._id, userId],
           lastMessage: '',
-          lastMessageTime: new Date()
+          lastMessageTime: new Date(),
+          accessDenied: accessRes.data.success ? !accessRes.data.canChat : true
         });
       }
     } catch (err) { console.error("Failed to load recipient profile", err); }
@@ -226,38 +265,53 @@ const Chat = () => {
                 </div>
               )}
 
-              <div className="messages-scroll">
-                {messages.length > 0 ? (
-                  messages.map((m, i) => (
-                    <div key={i} className={`msg-bubble-wrapper ${m.from === user._id ? 'sent' : 'received'}`}>
-                      <div className="msg-bubble">
-                        <p>{m.text}</p>
-                        <span className="msg-time-stamp">
-                          {new Date(m.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                        </span>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <div className="start-convo">
-                    <div className="sparkle-icon">✨</div>
-                    <p>Start your beautiful journey with a message</p>
+              {activeConversation.accessDenied ? (
+                <div className="chat-empty-state access-denied">
+                  <div className="empty-box">
+                    <Heart size={60} opacity={0.3} color="#6B3F69" />
+                    <h2>Connection Required</h2>
+                    <p>You can only send messages to users who have accepted your interest. Express interest first!</p>
+                    <button className="search-trigger" onClick={() => navigate(`/profile/${activeConversation.recipient._id}`)}>
+                      View Profile
+                    </button>
                   </div>
-                )}
-                <div ref={messagesEndRef} />
-              </div>
+                </div>
+              ) : (
+                <>
+                  <div className="messages-scroll">
+                    {messages.length > 0 ? (
+                      messages.map((m, i) => (
+                        <div key={i} className={`msg-bubble-wrapper ${m.from === user._id ? 'sent' : 'received'}`}>
+                          <div className="msg-bubble">
+                            <p>{m.text}</p>
+                            <span className="msg-time-stamp">
+                              {new Date(m.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            </span>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="start-convo">
+                        <div className="sparkle-icon">✨</div>
+                        <p>Start your beautiful journey with a message</p>
+                      </div>
+                    )}
+                    <div ref={messagesEndRef} />
+                  </div>
 
-              <form className="chat-input-area" onSubmit={handleSendMessage}>
-                <input 
-                  type="text" 
-                  placeholder="Type a thoughtful message..." 
-                  value={newMessage}
-                  onChange={(e) => setNewMessage(e.target.value)}
-                />
-                <button type="submit" disabled={!newMessage.trim()}>
-                  <Send size={20} />
-                </button>
-              </form>
+                  <form className="chat-input-area" onSubmit={handleSendMessage}>
+                    <input 
+                      type="text" 
+                      placeholder="Type a thoughtful message..." 
+                      value={newMessage}
+                      onChange={(e) => setNewMessage(e.target.value)}
+                    />
+                    <button type="submit" disabled={!newMessage.trim()}>
+                      <Send size={20} />
+                    </button>
+                  </form>
+                </>
+              )}
             </>
           ) : (
             <div className="chat-empty-state">

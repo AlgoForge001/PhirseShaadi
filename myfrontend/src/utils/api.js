@@ -57,6 +57,9 @@ export const sendInterest = (data) => api.post('/interest/send', data);
 export const respondInterest = (data) => api.put('/interest/respond', data);
 export const getReceivedInterests = () => api.get('/interest/received');
 export const getSentInterests = () => api.get('/interest/sent');
+export const getAcceptedInterests = () => api.get('/interest/accepted');
+export const getInterestStatus = (userId) => api.get(`/interest/status/${userId}`);
+export const checkChatAccess = (userId) => api.get(`/chat/access/${userId}`);
 
 export default api
 

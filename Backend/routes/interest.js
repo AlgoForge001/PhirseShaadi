@@ -15,4 +15,10 @@ router.get('/sent', protect, interestController.getSentInterests);
 // Task 5: PUT /api/interest/respond
 router.put('/respond', protect, interestController.respondInterest);
 
+// GET /api/interest/accepted
+router.get('/accepted', protect, interestController.getAcceptedInterests);
+
+// GET /api/interest/status/:userId
+router.get('/status/:userId', protect, interestController.getInterestStatus);
+
 module.exports = router;

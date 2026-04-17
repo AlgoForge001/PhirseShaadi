@@ -1,0 +1,206 @@
+.interests-premium-page {
+  padding-top: 80px;
+  background: #fdfafd;
+  min-height: 100vh;
+}
+
+.interests-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 30px 20px;
+}
+
+.interests-header {
+  margin-bottom: 30px;
+}
+
+.interests-header h1 {
+  font-family: 'Playfair Display', serif;
+  color: #2d1f2d;
+  font-size: 2.2rem;
+  margin-bottom: 20px;
+}
+
+.interests-tabs {
+  display: flex;
+  gap: 30px;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 30px;
+}
+
+.tab-btn {
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #8a7b8a;
+  padding: 10px 0;
+  cursor: pointer;
+  position: relative;
+}
+
+.tab-btn.active {
+  color: #6B3F69;
+}
+
+.tab-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: #6B3F69;
+  border-radius: 3px 3px 0 0;
+}
+
+.badge {
+  background: #6B3F69;
+  color: white;
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+.interests-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.interest-card {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(107, 63, 105, 0.05);
+  border: 1px solid rgba(107, 63, 105, 0.05);
+  display: flex;
+  flex-direction: column;
+}
+
+.ic-header {
+  display: flex;
+  padding: 20px;
+  gap: 15px;
+  cursor: pointer;
+}
+
+.ic-img {
+  width: 70px;
+  height: 70px;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.ic-info {
+  flex: 1;
+}
+
+.ic-info h3 {
+  font-size: 1.1rem;
+  margin: 0 0 5px 0;
+  color: #2d1f2d;
+}
+
+.ic-meta {
+  font-size: 0.85rem;
+  color: #8a7b8a;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.ic-location {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ic-message {
+  padding: 0 20px 15px;
+  font-size: 0.9rem;
+  color: #6b5b6b;
+  font-style: italic;
+}
+
+.ic-actions {
+  display: flex;
+  border-top: 1px solid #f0f0f0;
+}
+
+.ic-btn {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background 0.2s;
+}
+
+.ic-btn.accept {
+  background: #fdfafd;
+  color: #6B3F69;
+}
+
+.ic-btn.accept:hover {
+  background: #f5eaf5;
+}
+
+.ic-btn.reject {
+  background: white;
+  color: #d32f2f;
+  border-left: 1px solid #f0f0f0;
+}
+
+.ic-btn.reject:hover {
+  background: #fff5f7;
+}
+
+.ic-status-bar {
+  padding: 12px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border-top: 1px solid #f0f0f0;
+}
+
+.ic-status-bar.pending {
+  background: #fff9e6;
+  color: #b58500;
+}
+
+.ic-status-bar.accepted {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.ic-status-bar.rejected {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #8a7b8a;
+}
+
+.empty-state h3 {
+  color: #2d1f2d;
+  font-size: 1.4rem;
+  margin: 15px 0 10px;
+  font-family: 'Playfair Display', serif;
+}
+
+@media (max-width: 600px) {
+  .interests-tabs {
+    flex-direction: column;
+    gap: 10px;
+  }
+}

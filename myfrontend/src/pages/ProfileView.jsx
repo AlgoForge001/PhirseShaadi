@@ -4,7 +4,7 @@ import {
   Heart, MapPin, Briefcase, GraduationCap,
   Users, ChevronLeft, ChevronRight, Star,
   CheckCircle, Flag, X, Send, Bookmark,
-  Phone, MessageCircle, Shield, Share2
+  Phone, MessageCircle, Shield, Share2, Clock
 } from "lucide-react";
 import api from "../utils/api";
 
@@ -22,7 +22,7 @@ const ProfileView = () => {
   const [activePhoto, setActivePhoto] = useState(0);
 
   // States
-  const [interested, setInterested] = useState(false);
+  const [interestStatus, setInterestStatus] = useState({ sent: false, received: false, status: null });
   const [shortlisted, setShortlisted] = useState(false);
   const [interestLoading, setInterestLoading] = useState(false);
   const [_shortlistLoading, _setShortlistLoading] = useState(false);
@@ -34,7 +34,9 @@ const ProfileView = () => {
         setLoading(true);
         const res = await api.get(`/profile/${id}`);
         setProfile(res.data.profile);
-        setInterested(res.data.profile.isInterested || false);
+        if (res.data.interestStatus) {
+            setInterestStatus(res.data.interestStatus);
+        }
         setShortlisted(res.data.profile.isShortlisted || false);
       } catch (err) {
         console.error("Profile view failed:", err);
@@ -56,7 +58,17 @@ const ProfileView = () => {
     setInterestLoading(true);
     try {
       await api.post("/interest/send", { toUserId: id });
-      setInterested(true);
+      setInterestStatus({ sent: true, received: false, status: 'pending', interestId: null });
+    } catch (err) { console.error(err); }
+    finally { setInterestLoading(false); }
+  };
+
+  const handleRespond = async (status) => {
+    if (!interestStatus.interestId) return;
+    setInterestLoading(true);
+    try {
+      await api.put('/interest/respond', { interestId: interestStatus.interestId, status });
+      setInterestStatus(prev => ({ ...prev, status }));
     } catch (err) { console.error(err); }
     finally { setInterestLoading(false); }
   };
@@ -191,23 +203,49 @@ const ProfileView = () => {
             <Bookmark size={20} fill={shortlisted ? "currentColor" : "none"} />
           </button>
           
-          <button 
-            className={`pv-btn-main-action ${interested ? "sent" : ""}`}
-            onClick={interested ? null : handleInterest}
-            disabled={interestLoading}
-          >
+          <div className="pv-interest-actions">
             {interestLoading ? (
-              <span className="spinner" />
+              <button className="pv-btn-main-action disabled" disabled>
+                <span className="spinner" />
+              </button>
+            ) : interestStatus.status === 'accepted' ? (
+              <button 
+                className="pv-btn-main-action accepted"
+                onClick={() => navigate(`/chat/${id}`)}
+              >
+                <MessageCircle size={20} /> Chat Now
+              </button>
+            ) : interestStatus.received && interestStatus.status === 'pending' ? (
+              <div className="pv-received-actions">
+                <button className="pv-btn-main-action accept" onClick={() => handleRespond('accepted')}>
+                  <CheckCircle size={20} /> Accept
+                </button>
+                <button className="pv-btn-circle-secondary reject" onClick={() => handleRespond('rejected')}>
+                  <X size={20} />
+                </button>
+              </div>
+            ) : interestStatus.sent && interestStatus.status === 'pending' ? (
+              <button className="pv-btn-main-action sent" disabled>
+                <Clock size={20} /> Interest Sent
+              </button>
+            ) : interestStatus.status === 'rejected' ? (
+              <button className="pv-btn-main-action disabled" disabled>
+                <X size={20} /> Interest Declined
+              </button>
             ) : (
-              <>
-                <Heart size={20} fill={interested ? "white" : "none"} />
-                {interested ? "Interest Sent" : "Express Interest"}
-              </>
+              <button className="pv-btn-main-action" onClick={handleInterest}>
+                <Heart size={20} /> Express Interest
+              </button>
             )}
-          </button>
+          </div>
 
-          <button className="pv-btn-circle-secondary" onClick={() => navigate(`/chat/${id}`)}>
-            <MessageCircle size={20} />
+          <button 
+            className="pv-btn-circle-secondary" 
+            onClick={() => navigate(`/chat/${id}`)}
+            disabled={interestStatus.status !== 'accepted'}
+            title={interestStatus.status === 'accepted' ? 'Message' : 'Accept interest to message'}
+          >
+            <MessageCircle size={20} opacity={interestStatus.status === 'accepted' ? 1 : 0.5} />
           </button>
         </div>
       </footer>

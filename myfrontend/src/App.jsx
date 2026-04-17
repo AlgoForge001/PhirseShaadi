@@ -17,6 +17,7 @@ import Chat from './pages/Chat'
 import Notifications from './pages/Notifications'
 import PrivacySettings from './pages/PrivacySettings'
 import ProfileViewers from './pages/ProfileViewers'
+import Interests from './pages/Interests'
 import FamilyMembers from "./components/FamilyMembers";
 import FamilyShortlist from "./components/FamilyShortlist";
 import { AuthProvider, useAuth } from './context/AuthContext'
@@ -49,6 +50,7 @@ const PrivateLayout = () => (
         <Route path="/profile/:id" element={<ProfileView />} />
         <Route path="/chat" element={<Chat />} />
         <Route path="/chat/:id" element={<Chat />} />
+        <Route path="/interests" element={<Interests />} />
         <Route path="/notifications" element={<Notifications />} />
         <Route path="/privacy" element={<PrivacySettings />} />
         <Route path="/profile-viewers" element={<ProfileViewers />} />
