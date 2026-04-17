@@ -3,12 +3,10 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { Resend } = require('resend');
 
-// Initialize Resend with API key
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 // Helper function to send OTP email via Resend
 const sendOtpEmail = async (toEmail, otp) => {
   try {
+    const resend = new Resend(process.env.RESEND_API_KEY);
     const { data, error } = await resend.emails.send({
       from: 'PhirseShaadi <onboarding@resend.dev>',
       to: [toEmail],
@@ -96,7 +94,7 @@ exports.register = async (req, res) => {
     }
     console.log(`[DEV] OTP for ${email}: ${otp}`);
 
-    // 4. Generate Token (Optional, but frontend expects it for immediate context login)
+    // 6. Generate Token
     const token = jwt.sign(
       { userId: newUser._id.toString(), email: newUser.email, role: 'user' },
       process.env.JWT_SECRET,
@@ -241,4 +239,3 @@ exports.verifyOTP = async (req, res) => {
     res.status(500).json({ message: "Server error during OTP verification", error: error.message });
   }
 };
-
