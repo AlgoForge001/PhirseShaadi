@@ -62,6 +62,7 @@ const PrivateLayout = () => (
   </div>
 )
 
+
 const AppRouter = () => {
   const { isLoggedIn, loading } = useAuth()
   const location = useLocation()

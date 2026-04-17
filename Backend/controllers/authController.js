@@ -8,7 +8,7 @@ const nodemailer = require('nodemailer');
 // Register User
 exports.register = async (req, res) => {
   try {
-    const { fullName, email, phone, password, gender, profileFor, dob, religion, community, motherTongue, maritalStatus, height, city, state, education, profession } = req.body;
+    const { fullName, email, phone, password, gender, profileFor, dob, religion, community, motherTongue, maritalStatus, height, country, city, state, education, profession } = req.body;
     const name = fullName;
     
     // 1. Check if email or phone already exists
@@ -44,6 +44,7 @@ exports.register = async (req, res) => {
       motherTongue,
       maritalStatus,
       height,
+      country,
       city,
       state,
       education,

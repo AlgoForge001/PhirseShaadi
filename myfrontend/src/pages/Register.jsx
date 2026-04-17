@@ -33,6 +33,7 @@ const Register = () => {
     motherTongue: "",
     maritalStatus: "",
     height: "",
+    country: "India",
     city: "",
     state: "",
     education: "",
@@ -74,6 +75,7 @@ const Register = () => {
     const errs = {};
     if (!formData.maritalStatus) errs.maritalStatus = "Please select marital status";
     if (!formData.height) errs.height = "Please select height";
+    if (!formData.country) errs.country = "Country is required";
     if (!formData.city.trim()) errs.city = "City is required";
     if (!formData.education) errs.education = "Please select education";
     return errs;
@@ -115,6 +117,7 @@ const Register = () => {
         motherTongue: formData.motherTongue,
         maritalStatus: formData.maritalStatus,
         height: formData.height,
+        country: formData.country,
         city: formData.city,
         state: formData.state,
         education: formData.education,
@@ -157,6 +160,9 @@ const Register = () => {
   const professions = ["Software Engineer", "Doctor", "Engineer", "Teacher", "Business Owner", "Government Employee", "Lawyer", "Accountant", "Architect", "Other"];
   const maritalStatuses = ["Never Married", "Divorced", "Widowed", "Awaiting Divorce"];
   const indianStates = ["Andhra Pradesh", "Delhi", "Gujarat", "Karnataka", "Kerala", "Madhya Pradesh", "Maharashtra", "Punjab", "Rajasthan", "Tamil Nadu", "Telangana", "Uttar Pradesh", "West Bengal", "Other"];
+  const countries = [
+    "India", "United States", "United Kingdom", "Canada", "Australia", "Singapore", "UAE", "Saudi Arabia", "Kuwait", "Qatar", "South Africa", "New Zealand", "Other"
+  ];
 
   return (
     <div className="register-page">
@@ -453,6 +459,25 @@ const Register = () => {
 
               <div className="form-row">
                 <div className="form-group">
+                  <label>Country <span className="req">*</span></label>
+                  <div className={`input-wrap ${errors.country ? 'error' : ''}`}>
+                    <select name="country" value={formData.country} onChange={handleChange}>
+                      <option value="">Select Country</option>
+                      {countries.map(c => <option key={c} value={c}>{c}</option>)}
+                    </select>
+                  </div>
+                  {errors.country && <span className="err-msg">{errors.country}</span>}
+                </div>
+                <div className="form-group">
+                  <label>State <span className="req">*</span></label>
+                  <div className={`input-wrap`}>
+                    <select name="state" value={formData.state} onChange={handleChange}>
+                      <option value="">Select</option>
+                      {indianStates.map(s => <option key={s} value={s}>{s}</option>)}
+                    </select>
+                  </div>
+                </div>
+                <div className="form-group">
                   <label>City <span className="req">*</span></label>
                   <div className={`input-wrap ${errors.city ? 'error' : ''}`}>
                     <input 
@@ -464,15 +489,6 @@ const Register = () => {
                     />
                   </div>
                   {errors.city && <span className="err-msg">{errors.city}</span>}
-                </div>
-                <div className="form-group">
-                  <label>State <span className="req">*</span></label>
-                  <div className={`input-wrap`}>
-                    <select name="state" value={formData.state} onChange={handleChange}>
-                      <option value="">Select</option>
-                      {indianStates.map(s => <option key={s} value={s}>{s}</option>)}
-                    </select>
-                  </div>
                 </div>
               </div>
 

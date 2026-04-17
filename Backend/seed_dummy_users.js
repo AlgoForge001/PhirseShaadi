@@ -28,6 +28,9 @@ const dummyUsers = [
     photos: [{ url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=aditi-sharma', isPrimary: true }],
     bio: 'Software engineer who enjoys music, reading, and weekend getaways.'
   },
+
+
+  
   {
     name: 'Priya Patel',
     fullName: 'Priya Patel',
