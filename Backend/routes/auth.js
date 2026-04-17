@@ -31,8 +31,9 @@ router.get('/google/callback',
   },
   (req, res) => {
     // Generate JWT for the logged in user
+    console.log("DEBUG: Signing token for UserID:", req.user._id);
     const token = jwt.sign(
-      { userId: req.user._id, email: req.user.email, role: req.user.role },
+      { userId: req.user._id.toString(), email: req.user.email, role: req.user.role },
       process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );

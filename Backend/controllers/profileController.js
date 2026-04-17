@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const Interest = require('../models/Interest');
 
 // GET /api/profile/me
 exports.getMe = async (req, res) => {
@@ -51,7 +52,20 @@ exports.getProfileById = async (req, res) => {
       });
     }
 
-    res.status(200).json({ success: true, profile: user });
+    // Interest status between viewer and this profile
+    let interestStatus = { sent: false, received: false, status: null, interestId: null };
+    if (viewerId !== req.params.id) {
+      const sentInterest = await Interest.findOne({ from: viewerId, to: req.params.id });
+      const receivedInterest = await Interest.findOne({ from: req.params.id, to: viewerId });
+
+      if (sentInterest) {
+        interestStatus = { sent: true, received: false, status: sentInterest.status, interestId: sentInterest._id };
+      } else if (receivedInterest) {
+        interestStatus = { sent: false, received: true, status: receivedInterest.status, interestId: receivedInterest._id };
+      }
+    }
+
+    res.status(200).json({ success: true, profile: user, interestStatus });
   } catch (error) {
     console.error("Get Profile By ID Error:", error);
     res.status(500).json({ success: false, message: "Server Error", error: error.message });

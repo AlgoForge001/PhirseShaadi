@@ -13,12 +13,15 @@ const auth = async (req, res, next) => {
 
     try {
       // Verify JWT token
+      console.log("DEBUG: Verifying token with secret length:", process.env.JWT_SECRET?.length);
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      console.log("DEBUG: Token decoded successfully. UserId:", decoded.userId);
 
       // Find user in MongoDB
       let user = await User.findById(decoded.userId);
 
       if (!user) {
+        console.warn("DEBUG: User not found in database for ID:", decoded.userId);
         return res.status(401).json({ success: false, message: "User not found" });
       }
 
@@ -30,7 +33,7 @@ const auth = async (req, res, next) => {
       
       return next();
     } catch (error) {
-      console.error("Token Verification Failed:", error.message);
+      console.error("DEBUG: Token Verification Failed:", error.message);
       return res.status(401).json({ success: false, message: "Token is not valid" });
     }
   } catch (error) {

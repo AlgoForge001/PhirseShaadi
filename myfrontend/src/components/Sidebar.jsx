@@ -17,6 +17,7 @@ const Sidebar = () => {
     { label: "Dashboard", path: "/dashboard", icon: <Home size={19} /> },
     { label: "Search", path: "/search", icon: <Search size={19} /> },
     { label: "Chat", path: "/chat", icon: <MessageSquare size={19} /> },
+    { label: "Interests", path: "/interests", icon: <Heart size={19} /> },
     {
       label: "Notifications",
       path: "/notifications",

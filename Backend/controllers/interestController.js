@@ -139,3 +139,56 @@ exports.respondInterest = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal Server Error", error: error.message });
   }
 };
+
+// GET /api/interest/accepted
+exports.getAcceptedInterests = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+
+    const acceptedReceived = await Interest.find({ to: userId, status: 'accepted' })
+      .populate('from', 'name fullName city state education profession photos online')
+      .sort({ updatedAt: -1 });
+
+    const acceptedSent = await Interest.find({ from: userId, status: 'accepted' })
+      .populate('to', 'name fullName city state education profession photos online')
+      .sort({ updatedAt: -1 });
+
+    const combined = [
+      ...acceptedReceived.map(interest => ({ ...interest.toObject(), user: interest.from })),
+      ...acceptedSent.map(interest => ({ ...interest.toObject(), user: interest.to }))
+    ].sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+
+    res.status(200).json({
+      success: true,
+      count: combined.length,
+      data: combined
+    });
+  } catch (error) {
+    console.error("Get Accepted Interests Error:", error);
+    res.status(500).json({ success: false, message: "Internal Server Error", error: error.message });
+  }
+};
+
+// GET /api/interest/status/:userId
+exports.getInterestStatus = async (req, res) => {
+  try {
+    const fromId = req.user.userId;
+    const toId = req.params.userId;
+
+    const sentInterest = await Interest.findOne({ from: fromId, to: toId });
+    const receivedInterest = await Interest.findOne({ from: toId, to: fromId });
+
+    let interestStatus = { sent: false, received: false, status: null, interestId: null };
+
+    if (sentInterest) {
+      interestStatus = { sent: true, received: false, status: sentInterest.status, interestId: sentInterest._id };
+    } else if (receivedInterest) {
+      interestStatus = { sent: false, received: true, status: receivedInterest.status, interestId: receivedInterest._id };
+    }
+
+    res.status(200).json({ success: true, interestStatus });
+  } catch (error) {
+    console.error("Get Interest Status Error:", error);
+    res.status(500).json({ success: false, message: "Internal Server Error", error: error.message });
+  }
+};

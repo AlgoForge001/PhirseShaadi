@@ -17,12 +17,33 @@ const GoogleSuccess = () => {
         // Save token so the API interceptor can use it
         localStorage.setItem('token', tokenValue);
         
+        // Try to fetch profile
         const res = await api.get('/profile/me');
-        login(tokenValue, res.data.profile);
-        navigate('/dashboard');
+        
+        if (res.data.profile) {
+          // Existing user with profile — go to dashboard
+          login(tokenValue, res.data.profile);
+          navigate('/dashboard');
+        } else {
+          // User exists but no profile data — go to profile creation
+          login(tokenValue, { name: 'User' });
+          navigate('/profile-creation');
+        }
       } catch (err) {
         console.error("Google login fetch error:", err);
-        navigate('/login');
+        
+        if (err.response?.status === 404) {
+          // Profile not found — new Google user, needs to create profile
+          // Still save the token so they're authenticated
+          login(tokenValue, { name: 'Google User' });
+          navigate('/profile-creation');
+        } else {
+          // Actual error — but still try to proceed with just the token
+          // Don't send back to login, that creates a loop
+          console.warn("Profile fetch failed, proceeding with token only");
+          login(tokenValue, { name: 'User' });
+          navigate('/dashboard');
+        }
       }
     };
 

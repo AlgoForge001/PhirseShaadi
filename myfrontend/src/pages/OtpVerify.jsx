@@ -16,8 +16,9 @@ const OtpVerify = () => {
   const [apiError, setApiError] = useState("");
   const inputRefs = useRef([]);
 
-  // Get phone number from location state (passed from Register page)
+  // Get info from location state (passed from Register page)
   const phone = location.state?.phone || "XXXXXXXXXX";
+  const email = location.state?.email || "your email";
 
   // ── COUNTDOWN TIMER ──
   useEffect(() => {
@@ -80,6 +81,7 @@ const OtpVerify = () => {
     try {
       const res = await api.post("/auth/verify-otp", {
         phone: phone,
+        email: email,
         otp: otpValue,
       });
 
@@ -130,6 +132,7 @@ const OtpVerify = () => {
 
     try {
       const res = await api.post("/auth/resend-otp", {
+        email: email,
         phone: phone,
       });
 
@@ -203,7 +206,7 @@ const OtpVerify = () => {
 
               <h2 className="otp-title">Verify Your Number</h2>
               <p className="otp-subtitle">
-                We sent a 6-digit OTP to <strong>+91 {phone}</strong>
+                We sent a 6-digit OTP to <strong>{email}</strong>
                 <span className="change-number" onClick={() => navigate("/register")}>
                   Change
                 </span>

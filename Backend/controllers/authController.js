@@ -1,7 +1,41 @@
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
+
+// Initialize Resend with API key
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+// Helper function to send OTP email via Resend
+const sendOtpEmail = async (toEmail, otp) => {
+  try {
+    const { data, error } = await resend.emails.send({
+      from: 'PhirseShaadi <onboarding@resend.dev>',
+      to: [toEmail],
+      subject: 'PhirseShaadi - Email Verification OTP',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 480px; margin: 0 auto; padding: 30px; background: linear-gradient(135deg, #6B3F69 0%, #4A2848 100%); border-radius: 16px;">
+          <h2 style="color: #fff; text-align: center; margin-bottom: 10px;">PhirseShaadi</h2>
+          <p style="color: rgba(255,255,255,0.85); text-align: center;">Your verification code is:</p>
+          <div style="background: rgba(255,255,255,0.15); border-radius: 12px; padding: 20px; text-align: center; margin: 20px 0;">
+            <span style="font-size: 36px; font-weight: bold; letter-spacing: 8px; color: #fff;">${otp}</span>
+          </div>
+          <p style="color: rgba(255,255,255,0.7); text-align: center; font-size: 13px;">This code is valid for 10 minutes. Do not share it with anyone.</p>
+        </div>
+      `
+    });
+
+    if (error) {
+      console.error('Resend Email Error:', error);
+      return false;
+    }
+    console.log('Email sent successfully via Resend. ID:', data?.id);
+    return true;
+  } catch (err) {
+    console.error('Resend Email Exception:', err.message);
+    return false;
+  }
+};
 
 
 
@@ -55,32 +89,16 @@ exports.register = async (req, res) => {
 
     await newUser.save();
 
-    // 5. Send Email using Nodemailer (Non-blocking for speed)
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-      }
-    });
-
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: email,
-      subject: 'PhirseShadi - Email Verification OTP',
-      text: `Your OTP for email verification is: ${otp}. This OTP is valid for 10 minutes.`
-    };
-
-    // Fire and forget - don't await so registration is instant
-    transporter.sendMail(mailOptions).catch(err => {
-      console.error("Background Email Error (Register):", err.message);
-    });
-    
+    // 5. Send OTP Email via Resend
+    const emailSent = await sendOtpEmail(email, otp);
+    if (!emailSent) {
+      console.warn(`[WARN] OTP email failed to send for ${email}, but registration continues.`);
+    }
     console.log(`[DEV] OTP for ${email}: ${otp}`);
 
     // 4. Generate Token (Optional, but frontend expects it for immediate context login)
     const token = jwt.sign(
-      { userId: newUser._id, email: newUser.email, role: 'user' },
+      { userId: newUser._id.toString(), email: newUser.email, role: 'user' },
       process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
@@ -123,12 +141,13 @@ exports.login = async (req, res) => {
 
     // 3. Generate JWT Token
     const token = jwt.sign(
-      { userId: user._id, email: user.email, role: user.role },
+      { userId: user._id.toString(), email: user.email, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
 
     res.status(200).json({
+      success: true,
       message: "Login successful",
       token,
       user: {
@@ -166,33 +185,17 @@ exports.sendOTP = async (req, res) => {
     user.otpExpiry = otpExpiry;
     await user.save();
 
-    // 4. Send Email using Nodemailer (Non-blocking)
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-      }
-    });
-
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: user.email,
-      subject: 'PhirseShadi - Email Verification OTP',
-      text: `Your OTP for email verification is: ${otp}. This OTP is valid for 10 minutes.`
-    };
-
-    // Fire and forget
-    transporter.sendMail(mailOptions).catch(err => {
-      console.error("Background Email Error (sendOTP):", err.message);
-    });
-
+    // 4. Send OTP Email via Resend
+    const emailSent = await sendOtpEmail(user.email, otp);
+    if (!emailSent) {
+      console.warn(`[WARN] OTP resend email failed to send for ${user.email}, but process continues.`);
+    }
     console.log(`[DEV] OTP for ${identifier}: ${otp}`);
 
-    res.status(200).json({ message: "OTP sent successfully" });
+    res.status(200).json({ success: true, message: "OTP sent successfully" });
 
   } catch (error) {
-    res.status(500).json({ message: "Server error while sending OTP", error: error.message });
+    res.status(500).json({ success: false, message: "Server error while sending OTP", error: error.message });
   }
 };
 
@@ -223,7 +226,7 @@ exports.verifyOTP = async (req, res) => {
       success: true, 
       message: "Verified successfully",
       token: jwt.sign(
-        { userId: user._id, email: user.email, role: user.role },
+        { userId: user._id.toString(), email: user.email, role: user.role },
         process.env.JWT_SECRET,
         { expiresIn: '7d' }
       ),

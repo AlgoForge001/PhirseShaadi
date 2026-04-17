@@ -343,6 +343,10 @@
   cursor: pointer;
 }
 
+.chat-empty-state.access-denied {
+  background: linear-gradient(135deg, #fdfafd 0%, #fff 100%);
+}
+
 /* MOBILE RESPONSIVE */
 .back-btn-mobile { display: none; }
 

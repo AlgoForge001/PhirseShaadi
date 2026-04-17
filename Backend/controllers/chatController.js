@@ -63,3 +63,31 @@ exports.getChatHistory = async (req, res) => {
     res.status(200).json({ success: true, count: 0, data: [] });
   }
 };
+
+// GET /api/chat/access/:userId
+exports.checkChatAccess = async (req, res) => {
+  try {
+    const myId = req.user.userId;
+    const otherId = req.params.userId;
+
+    const Interest = require('../models/Interest');
+    
+    // Check if there is an accepted interest between the two users
+    const acceptedInterest = await Interest.findOne({
+      $or: [
+        { from: myId, to: otherId, status: 'accepted' },
+        { from: otherId, to: myId, status: 'accepted' }
+      ]
+    });
+
+    res.status(200).json({
+      success: true,
+      canChat: !!acceptedInterest,
+      interest: acceptedInterest || null
+    });
+
+  } catch (error) {
+    console.error("Check Chat Access Error:", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+};
