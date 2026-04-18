@@ -167,6 +167,18 @@ const Register = () => {
   const professions = ["Software Engineer", "Doctor", "Engineer", "Teacher", "Business Owner", "Government Employee", "Lawyer", "Accountant", "Architect", "Other"];
   const maritalStatuses = ["Never Married", "Divorced", "Widowed", "Awaiting Divorce"];
   const indianStates = ["Andhra Pradesh", "Delhi", "Gujarat", "Karnataka", "Kerala", "Madhya Pradesh", "Maharashtra", "Punjab", "Rajasthan", "Tamil Nadu", "Telangana", "Uttar Pradesh", "West Bengal", "Other"];
+  const usStates = [
+    "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming", "Other"
+  ];
+  const genericStates = ["State/Province/Region", "Other"];
+
+  // Dynamically determine state options based on selected country
+  const stateOptions =
+    formData.country === "India"
+      ? indianStates
+      : formData.country === "United States"
+      ? usStates
+      : genericStates;
   const countries = [
     "India", "United States", "United Kingdom", "Canada", "Australia", "Singapore", "UAE", "Saudi Arabia", "Kuwait", "Qatar", "South Africa", "New Zealand", "Other"
   ];
@@ -480,7 +492,9 @@ const Register = () => {
                   <div className={`input-wrap`}>
                     <select name="state" value={formData.state} onChange={handleChange}>
                       <option value="">Select</option>
-                      {indianStates.map(s => <option key={s} value={s}>{s}</option>)}
+                      {stateOptions.map(s => (
+                        <option key={s} value={s}>{s}</option>
+                      ))}
                     </select>
                   </div>
                 </div>

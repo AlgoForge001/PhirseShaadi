@@ -74,29 +74,29 @@ const LandingPage = () => {
       </header>
 
       {/* HERO SECTION */}
-      <section className="hero">
+      <section className="hero hero-modern">
         <div className="hero-bg" />
         <div className="hero-overlay" />
-
         <div className="lp-wrap hero-content-wrap">
           <div className="hero-copy center">
-            <p className="hero-kicker">India's Trusted Matrimonial Platform</p>
-            <h1>Find Your Perfect Match with Confidence</h1>
+            <div className="hero-heart-row">
+              <img src="https://img2.shaadi.com/assests/2025/images/homepage/Heart_Icon_Flat.svg" alt="Heart" style={{height: 44, marginRight: 12}} />
+              <p className="hero-kicker">India's Most Trusted Matrimonial Platform</p>
+            </div>
+            <h1 className="hero-main-title">Find Your Forever</h1>
             <p className="hero-lead">
-              Meaningful connections for individuals and families. Verified profiles, smart filters, and complete privacy control.
+              Discover a world beyond matrimony. Verified profiles, AI-powered matching, and complete privacy control.
             </p>
-
-            <div className="hero-badges">
+            <div className="hero-badges hero-badges-modern">
               <span><ShieldCheck size={15} /> Verified Profiles</span>
               <span><Users size={15} /> Smart Matching</span>
               <span><Sparkles size={15} /> Privacy Protected</span>
             </div>
-          </div>
-
-          <div className="hero-login-wrap">
-            <button className="btn solid hero-login-btn" onClick={() => navigate("/login")}>
-              Start Today <ArrowRight size={16} />
-            </button>
+            <div className="hero-login-wrap">
+              <button className="btn solid hero-login-btn" onClick={() => navigate("/register")}> 
+                Start Today <ArrowRight size={16} />
+              </button>
+            </div>
           </div>
         </div>
       </section>
