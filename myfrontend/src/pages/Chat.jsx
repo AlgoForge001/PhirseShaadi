@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   Send, Search, Info, MoreVertical,
-  ChevronLeft, MessageCircle, AlertCircle, Heart
+  ChevronLeft, MessageCircle, AlertCircle
 } from 'lucide-react';
 import { useSocket } from '../context/SocketContext';
 import { useAuth } from '../context/AuthContext';
@@ -77,16 +77,9 @@ const Chat = () => {
 
   const fetchMessages = async (userId) => {
     try {
-      const accessRes = await api.get(`/chat/access/${userId}`);
-      if (accessRes.data.success && !accessRes.data.canChat) {
-        setMessages([]);
-        setActiveConversation((prev) => ({ ...prev, accessDenied: true }));
-        return;
-      }
       const res = await getChatHistory(userId);
       if (res.data.success) {
         setMessages(res.data.data);
-        setActiveConversation((prev) => ({ ...prev, accessDenied: false }));
       }
     } catch (err) {
       console.error(err);
@@ -95,10 +88,7 @@ const Chat = () => {
 
   const startNewChat = async (userId) => {
     try {
-      const [profileRes, accessRes] = await Promise.all([
-        api.get(`/profile/${userId}`),
-        api.get(`/chat/access/${userId}`),
-      ]);
+      const profileRes = await api.get(`/profile/${userId}`);
       if (profileRes.data.success) {
         const profile = profileRes.data.profile;
         setActiveConversation({
@@ -107,7 +97,6 @@ const Chat = () => {
           participants: [user._id, userId],
           lastMessage: '',
           lastMessageTime: new Date(),
-          accessDenied: accessRes.data.success ? !accessRes.data.canChat : true,
         });
       }
     } catch (err) {
@@ -358,29 +347,7 @@ const Chat = () => {
               )}
 
               {/* Body */}
-              {activeConversation.accessDenied ? (
-                <div className="chat-empty-state access-denied">
-                  <div className="empty-box">
-                    <div className="empty-box-icon">
-                      <Heart size={40} color="#6B3F69" />
-                    </div>
-                    <h2>Connection Required</h2>
-                    <p>
-                      You can only message users who have accepted your interest.
-                      Send an interest request first!
-                    </p>
-                    <button
-                      className="explore-btn"
-                      onClick={() =>
-                        navigate(`/profile/${activeConversation.recipient._id}`)
-                      }
-                    >
-                      View Profile
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <>
+              <>
                   {/* Messages */}
                   <div className="messages-scroll">
                     {messages.length > 0 ? (
@@ -440,8 +407,7 @@ const Chat = () => {
                       <Send size={20} />
                     </button>
                   </form>
-                </>
-              )}
+              </>
             </>
           ) : (
             /* No conversation selected */
