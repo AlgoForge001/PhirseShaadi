@@ -33,25 +33,17 @@ app.set('io', io);
 app.set('onlineUsers', onlineUsers);
 
 
-// Multer for file uploads
-const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
 
-// Ensure uploads directory exists
-const uploadsDir = path.join(__dirname, 'uploads');
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir);
-}
-
-// Serve static files from uploads
-app.use('/uploads', express.static(uploadsDir));
 
 app.use(cors({
   origin: frontendOrigins,
   credentials: true
 }));
 app.use(express.json());
+
+// Serve uploaded photos as static files
+app.use('/uploads', require('express').static(require('path').join(__dirname, 'uploads')));
+
 
 // Passport middleware for Google OAuth (no sessions needed, JWT only)
 const passport = require('passport');

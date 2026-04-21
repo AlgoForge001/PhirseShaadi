@@ -139,9 +139,11 @@ const userSchema = new mongoose.Schema({
   photos: [
     {
       url: String,
+      publicId: String,
       isPrimary: { type: Boolean, default: false }
     }
   ],
+
   isVerified: {
     type: Boolean,
     default: false

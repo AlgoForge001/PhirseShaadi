@@ -1,5 +1,7 @@
 const User = require('../models/User');
 const Interest = require('../models/Interest');
+const path = require('path');
+const fs = require('fs');
 
 // GET /api/profile/me
 exports.getMe = async (req, res) => {
@@ -169,25 +171,128 @@ exports.updateFullProfile = async (req, res) => {
 };
 
 
-// Local photo upload using multer
-const path = require('path');
+// POST /api/profile/photo  — upload one photo (multipart/form-data, field: "photo")
 exports.uploadPhoto = async (req, res) => {
   try {
     if (!req.file) {
-      return res.status(400).json({ success: false, message: 'No file uploaded' });
+      return res.status(400).json({ success: false, message: "No file uploaded" });
     }
-    // Save file path to user profile
-    const user = await require('../models/User').findById(req.user.userId);
-    if (!user) {
-      return res.status(404).json({ success: false, message: 'User not found' });
+
+    const userId = req.user.userId;
+
+    // Build a public URL so the frontend can display it
+    const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:5000';
+    const publicId = req.file.filename; // e.g. "userId_timestamp.jpg"
+    const url = `${BACKEND_URL}/uploads/${publicId}`;
+
+    // Check if user already has 10 photos
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ success: false, message: "User not found" });
+
+    if (user.photos && user.photos.length >= 10) {
+      // Remove the just-uploaded file since we can't store it
+      fs.unlink(req.file.path, () => {});
+      return res.status(400).json({ success: false, message: "Maximum 10 photos allowed" });
     }
-    // Store photo info
-    const photoUrl = `/uploads/${req.file.filename}`;
-    user.photos.push({ url: photoUrl, isPrimary: user.photos.length === 0 });
-    await user.save();
-    res.json({ success: true, url: photoUrl });
-  } catch (err) {
-    res.status(500).json({ success: false, message: 'Failed to upload photo', error: err.message });
+
+    // If no photos yet, make this one primary
+    const isPrimary = !user.photos || user.photos.length === 0;
+
+    await User.findByIdAndUpdate(userId, {
+      $push: { photos: { url, isPrimary, publicId } }
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Photo uploaded successfully",
+      publicId,
+      url
+    });
+  } catch (error) {
+    console.error("Upload Photo Error:", error.message);
+    return res.status(500).json({ success: false, message: "Upload failed", error: error.message });
+  }
+};
+
+// DELETE /api/profile/photo/:publicId  — delete a photo
+exports.deletePhoto = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const { publicId } = req.params;
+
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ success: false, message: "User not found" });
+
+    const photoExists = user.photos.some(p => p.publicId === publicId || p.url?.endsWith(publicId));
+    if (!photoExists) {
+      return res.status(404).json({ success: false, message: "Photo not found" });
+    }
+
+    // Delete file from disk
+    const filePath = path.join(__dirname, '..', 'uploads', publicId);
+    if (fs.existsSync(filePath)) {
+      fs.unlink(filePath, (err) => {
+        if (err) console.error("File delete error:", err.message);
+      });
+    }
+
+    // Remove from DB
+    await User.findByIdAndUpdate(userId, {
+      $pull: { photos: { publicId } }
+    });
+
+    // If the deleted photo was primary and other photos exist, auto-set first as primary
+    const updatedUser = await User.findById(userId);
+    const hadPrimary = user.photos.find(p => p.publicId === publicId)?.isPrimary;
+    if (hadPrimary && updatedUser.photos.length > 0) {
+      const firstId = updatedUser.photos[0]._id;
+      await User.updateOne(
+        { _id: userId, 'photos._id': firstId },
+        { $set: { 'photos.$.isPrimary': true } }
+      );
+    }
+
+    return res.status(200).json({ success: true, message: "Photo deleted" });
+  } catch (error) {
+    console.error("Delete Photo Error:", error.message);
+    return res.status(500).json({ success: false, message: "Delete failed", error: error.message });
+  }
+};
+
+// POST /api/profile/photo/set-primary  — set a photo as primary
+exports.setPrimaryPhoto = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const { publicId } = req.body;
+
+    if (!publicId) {
+      return res.status(400).json({ success: false, message: "publicId is required" });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ success: false, message: "User not found" });
+
+    const photoExists = user.photos.some(p => p.publicId === publicId);
+    if (!photoExists) {
+      return res.status(404).json({ success: false, message: "Photo not found" });
+    }
+
+    // Clear all isPrimary flags first
+    await User.updateMany(
+      { _id: userId },
+      { $set: { 'photos.$[].isPrimary': false } }
+    );
+
+    // Set the selected one as primary
+    await User.updateOne(
+      { _id: userId, 'photos.publicId': publicId },
+      { $set: { 'photos.$.isPrimary': true } }
+    );
+
+    return res.status(200).json({ success: true, message: "Primary photo updated" });
+  } catch (error) {
+    console.error("Set Primary Error:", error.message);
+    return res.status(500).json({ success: false, message: "Failed to set primary", error: error.message });
   }
 };
 
