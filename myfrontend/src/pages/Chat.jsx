@@ -212,10 +212,17 @@ const Chat = () => {
         {/* ════ SIDEBAR ════ */}
         <div className={`chat-sidebar ${activeConversation ? 'hide-mobile' : ''}`}>
 
+          {/* Premium dark header */}
           <div className="sidebar-header">
-            <h2>Messages</h2>
+            <div className="sidebar-title-row">
+              <h2>Messages</h2>
+              {conversations.length > 0 && (
+                <span className="conv-count-badge">{conversations.length} chats</span>
+              )}
+            </div>
+
             <div className="sidebar-search">
-              <Search size={17} />
+              <Search size={16} />
               <input
                 type="text"
                 placeholder="Search conversations..."
@@ -223,8 +230,15 @@ const Chat = () => {
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
+
+            <div className="filter-tabs">
+              <button className="filter-tab active">All</button>
+              <button className="filter-tab">Online</button>
+              <button className="filter-tab">Recent</button>
+            </div>
           </div>
 
+          {/* Conv list */}
           <div className="conv-list">
             {loading && !conversationsLoaded ? (
               /* Skeleton shimmer */
@@ -275,9 +289,16 @@ const Chat = () => {
                 );
               })
             ) : (
+              /* Illustrated empty state */
               <div className="empty-conv">
-                <MessageCircle size={38} color="#b09ab0" />
-                <p>No conversations yet</p>
+                <div className="empty-conv-illustration">
+                  <span>💌</span>
+                </div>
+                <h3>No Messages Yet</h3>
+                <p>Connect with matches to start a beautiful conversation</p>
+                <button className="empty-conv-cta" onClick={() => navigate('/search')}>
+                  Find Matches
+                </button>
               </div>
             )}
           </div>
