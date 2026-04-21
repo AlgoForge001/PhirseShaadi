@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { 
-  Send, Search, Info, MoreVertical, 
-  ChevronLeft, MessageCircle, AlertCircle, Heart 
+import {
+  Send, Search, Info, MoreVertical,
+  ChevronLeft, MessageCircle, AlertCircle, Heart
 } from 'lucide-react';
 import { useSocket } from '../context/SocketContext';
 import { useAuth } from '../context/AuthContext';
@@ -15,74 +15,90 @@ const Chat = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { socket } = useSocket();
+
   const [conversations, setConversations] = useState([]);
+  const [conversationsLoaded, setConversationsLoaded] = useState(false);
   const [activeConversation, setActiveConversation] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
-  const [_loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const messagesEndRef = useRef(null);
+
+  // ── helpers ──────────────────────────────────────────────────────────────
 
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, []);
 
+  const avatarUrl = (person, size = 50) =>
+    person?.photos?.[0]?.url ||
+    `https://ui-avatars.com/api/?name=${encodeURIComponent(
+      person?.fullName || person?.name || 'U'
+    )}&background=6B3F69&color=fff&size=${size}`;
+
+  // ── data fetching ─────────────────────────────────────────────────────────
+
   const fetchConversations = async () => {
     try {
       const [convRes, intRes] = await Promise.all([
         getConversations(),
-        api.get('/interest/accepted')
+        api.get('/interest/accepted'),
       ]);
-      
+
       let allConvs = [];
-      if (convRes.data.success) {
-        allConvs = convRes.data.data;
-      }
-      
-      // Merge accepted interests that don't have conversations yet
+      if (convRes.data.success) allConvs = convRes.data.data;
+
       if (intRes.data.success) {
-        const acceptedUsers = intRes.data.data.map(i => i.user);
-        acceptedUsers.forEach(accUser => {
-          const exists = allConvs.find(c => c.participants.some(p => p._id === accUser._id));
+        const acceptedUsers = intRes.data.data.map((i) => i.user);
+        acceptedUsers.forEach((accUser) => {
+          const exists = allConvs.find((c) =>
+            c.participants.some((p) => p._id === accUser._id)
+          );
           if (!exists) {
             allConvs.push({
               _id: `new_${accUser._id}`,
               participants: [user, accUser],
-              lastMessage: 'Acceptance is the beginning...',
-              lastMessageTime: new Date()
+              lastMessage: 'Start the conversation ✨',
+              lastMessageTime: new Date(),
             });
           }
         });
       }
+
       setConversations(allConvs);
-    } catch (err) { console.error(err); }
+      setConversationsLoaded(true);
+    } catch (err) {
+      console.error(err);
+      setConversationsLoaded(true); // don't leave app stuck
+    }
   };
 
   const fetchMessages = async (userId) => {
     try {
       const accessRes = await api.get(`/chat/access/${userId}`);
       if (accessRes.data.success && !accessRes.data.canChat) {
-         setMessages([]);
-         setActiveConversation(prev => ({ ...prev, accessDenied: true }));
-         return;
+        setMessages([]);
+        setActiveConversation((prev) => ({ ...prev, accessDenied: true }));
+        return;
       }
-
       const res = await getChatHistory(userId);
       if (res.data.success) {
         setMessages(res.data.data);
-        setActiveConversation(prev => ({ ...prev, accessDenied: false }));
+        setActiveConversation((prev) => ({ ...prev, accessDenied: false }));
       }
-    } catch (err) { console.error(err); }
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const startNewChat = async (userId) => {
     try {
       const [profileRes, accessRes] = await Promise.all([
         api.get(`/profile/${userId}`),
-        api.get(`/chat/access/${userId}`)
+        api.get(`/chat/access/${userId}`),
       ]);
-      
       if (profileRes.data.success) {
         const profile = profileRes.data.profile;
         setActiveConversation({
@@ -91,222 +107,336 @@ const Chat = () => {
           participants: [user._id, userId],
           lastMessage: '',
           lastMessageTime: new Date(),
-          accessDenied: accessRes.data.success ? !accessRes.data.canChat : true
+          accessDenied: accessRes.data.success ? !accessRes.data.canChat : true,
         });
       }
-    } catch (err) { console.error("Failed to load recipient profile", err); }
+    } catch (err) {
+      console.error('Failed to load recipient profile', err);
+    }
   };
 
   const handleSendMessage = (e) => {
     e.preventDefault();
     if (!newMessage.trim() || !activeConversation) return;
-
-    const msgData = {
+    socket.emit('message:send', {
       from: user._id,
       to: activeConversation.recipient._id,
-      text: newMessage
-    };
-
-    socket.emit('message:send', msgData);
+      text: newMessage,
+    });
     setNewMessage('');
   };
 
-  // ── HOOKS ──
+  // ── effects ───────────────────────────────────────────────────────────────
 
-  // 1. Initial Load of Conversations
+  // 1. Load conversations on mount
   useEffect(() => {
-    const initChat = async () => {
+    const init = async () => {
       setLoading(true);
       await fetchConversations();
       setLoading(false);
     };
-    initChat();
+    init();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // 2. Handle direct chat via URL ID
+  // 2. Open conversation from URL — only after data is ready
   useEffect(() => {
-    if (id && conversations.length >= 0) {
-      const existing = conversations.find(c => 
-        c.participants.some(p => p._id === id)
-      );
+    if (!id || !conversationsLoaded) return;
+    if (activeConversation?.recipient?._id === id) return; // already open
 
-      if (existing) {
-        const recipient = existing.participants.find(p => p._id === id);
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setActiveConversation({ ...existing, recipient });
-      } else {
-        startNewChat(id);
-      }
+    const existing = conversations.find((c) =>
+      c.participants.some((p) => (p._id || p) === id)
+    );
+
+    if (existing) {
+      const recipient = existing.participants.find((p) => (p._id || p) === id);
+      setActiveConversation({ ...existing, recipient });
+    } else {
+      startNewChat(id);
     }
-  }, [id, conversations]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, conversationsLoaded, conversations]);
 
-  // 3. Fetch Messages when active conversation changes
+  // 3. Fetch messages when active conversation changes
   useEffect(() => {
     if (activeConversation?.recipient?._id) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       fetchMessages(activeConversation.recipient._id);
     }
-  }, [activeConversation]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeConversation?.recipient?._id]);
 
-  // 4. Socket Listeners
+  // 4. Socket listeners
   useEffect(() => {
-    if (socket) {
-      socket.on('message:receive', (msg) => {
-        if (activeConversation?.recipient?._id === msg.from || activeConversation?.recipient?._id === msg.to) {
-          setMessages((prev) => [...prev, msg]);
-        }
-        fetchConversations();
-      });
+    if (!socket) return;
 
-      socket.on('message:sent', (msg) => {
-        if (activeConversation?.recipient?._id === msg.to) {
-          setMessages((prev) => [...prev, msg]);
-        }
-      });
-
-      socket.on('error', (err) => {
-        setError(err.message);
-        setTimeout(() => setError(null), 5000);
-      });
-    }
-    return () => {
-      if (socket) {
-        socket.off('message:receive');
-        socket.off('message:sent');
-        socket.off('error');
+    socket.on('message:receive', (msg) => {
+      if (
+        activeConversation?.recipient?._id === msg.from ||
+        activeConversation?.recipient?._id === msg.to
+      ) {
+        setMessages((prev) => [...prev, msg]);
       }
+      fetchConversations();
+    });
+
+    socket.on('message:sent', (msg) => {
+      if (activeConversation?.recipient?._id === msg.to) {
+        setMessages((prev) => [...prev, msg]);
+      }
+    });
+
+    socket.on('error', (err) => {
+      setError(err.message);
+      setTimeout(() => setError(null), 5000);
+    });
+
+    return () => {
+      socket.off('message:receive');
+      socket.off('message:sent');
+      socket.off('error');
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket, activeConversation]);
 
+  // 5. Auto-scroll
   useEffect(() => scrollToBottom(), [messages, scrollToBottom]);
 
-  const filteredConversations = conversations.filter(c => {
-    const recipient = c.participants.find(p => p._id !== user._id);
-    return recipient?.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-           recipient?.name?.toLowerCase().includes(searchTerm.toLowerCase());
+  // ── derived ───────────────────────────────────────────────────────────────
+
+  const filteredConversations = conversations.filter((c) => {
+    const recipient = c.participants.find((p) => (p._id || p) !== user._id);
+    const term = searchTerm.toLowerCase();
+    return (
+      recipient?.fullName?.toLowerCase().includes(term) ||
+      recipient?.name?.toLowerCase().includes(term)
+    );
   });
+
+  // ── render ────────────────────────────────────────────────────────────────
 
   return (
     <div className="chat-premium-page">
       <Navbar />
-      
+
       <div className="chat-main-container">
-        {/* SIDEBAR */}
+
+        {/* ════ SIDEBAR ════ */}
         <div className={`chat-sidebar ${activeConversation ? 'hide-mobile' : ''}`}>
-          <div className="sidebar-search">
-            <Search size={18} />
-            <input 
-              type="text" 
-              placeholder="Search conversations..." 
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
+
+          <div className="sidebar-header">
+            <h2>Messages</h2>
+            <div className="sidebar-search">
+              <Search size={17} />
+              <input
+                type="text"
+                placeholder="Search conversations..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
           </div>
 
           <div className="conv-list">
-            {filteredConversations.length > 0 ? (
+            {loading && !conversationsLoaded ? (
+              /* Skeleton shimmer */
+              [1, 2, 3].map((n) => (
+                <div key={n} className="conv-skeleton">
+                  <div className="skel-avatar" />
+                  <div className="skel-lines">
+                    <div className="skel-line long" />
+                    <div className="skel-line short" />
+                  </div>
+                </div>
+              ))
+            ) : filteredConversations.length > 0 ? (
               filteredConversations.map((conv) => {
-                const recipient = conv.participants.find(p => p._id !== user._id);
-                const isSelected = activeConversation?.recipient?._id === recipient?._id;
-                
+                const recipient = conv.participants.find(
+                  (p) => (p._id || p) !== user._id
+                );
+                const isSelected =
+                  activeConversation?.recipient?._id === recipient?._id;
+
                 return (
-                  <div 
-                    key={conv._id} 
+                  <div
+                    key={conv._id}
                     className={`conv-item ${isSelected ? 'active' : ''}`}
-                    onClick={() => navigate(`/chat/${recipient._id}`)}
+                    onClick={() => {
+                      // Immediately set state — eliminates the "Explore Messages" flash
+                      setActiveConversation({ ...conv, recipient });
+                      navigate(`/chat/${recipient._id}`);
+                    }}
                   >
                     <div className="avatar-wrap">
-                      <img src={recipient?.photos?.[0]?.url || 'https://via.placeholder.com/50'} alt="" />
+                      <img src={avatarUrl(recipient, 50)} alt={recipient?.fullName || recipient?.name} />
                       {recipient?.online && <span className="online-indicator" />}
                     </div>
                     <div className="conv-meta">
                       <div className="conv-row-1">
                         <h4>{recipient?.fullName || recipient?.name}</h4>
-                        <span>{new Date(conv.lastMessageTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                        <span>
+                          {new Date(conv.lastMessageTime).toLocaleTimeString([], {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })}
+                        </span>
                       </div>
-                      <p className="last-msg">{conv.lastMessage}</p>
+                      <p className="last-msg">{conv.lastMessage || 'Say hello! 👋'}</p>
                     </div>
                   </div>
                 );
               })
             ) : (
               <div className="empty-conv">
-                <MessageCircle size={40} opacity={0.3} />
+                <MessageCircle size={38} color="#b09ab0" />
                 <p>No conversations yet</p>
               </div>
             )}
           </div>
         </div>
 
-        {/* MESSAGES AREA */}
+        {/* ════ CHAT WINDOW ════ */}
         <div className={`chat-window ${!activeConversation ? 'hide-mobile' : ''}`}>
           {activeConversation ? (
             <>
+              {/* Header */}
               <div className="chat-header">
-                <button className="back-btn-mobile" onClick={() => navigate('/chat')}>
-                  <ChevronLeft size={24} />
-                </button>
-                <div className="header-user">
-                  <img src={activeConversation.recipient?.photos?.[0]?.url || 'https://via.placeholder.com/50'} alt="" />
-                  <div className="user-text">
-                    <h3>{activeConversation.recipient?.fullName || activeConversation.recipient?.name}</h3>
-                    <span className="user-status">{activeConversation.recipient?.online ? 'Online' : 'Recently active'}</span>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <button
+                    className="back-btn-mobile"
+                    onClick={() => { setActiveConversation(null); navigate('/chat'); }}
+                  >
+                    <ChevronLeft size={22} />
+                  </button>
+                  <div className="header-user">
+                    <div className="header-avatar-wrap">
+                      <img
+                        src={avatarUrl(activeConversation.recipient, 46)}
+                        alt={activeConversation.recipient?.fullName}
+                      />
+                      {activeConversation.recipient?.online && (
+                        <span className="header-avatar-online" />
+                      )}
+                    </div>
+                    <div className="user-text">
+                      <h3>
+                        {activeConversation.recipient?.fullName ||
+                          activeConversation.recipient?.name}
+                      </h3>
+                      <span
+                        className={`user-status ${
+                          activeConversation.recipient?.online ? '' : 'offline'
+                        }`}
+                      >
+                        {activeConversation.recipient?.online
+                          ? '● Online'
+                          : 'Recently active'}
+                      </span>
+                    </div>
                   </div>
                 </div>
+
                 <div className="header-actions">
-                  <button><Info size={20} /></button>
-                  <button><MoreVertical size={20} /></button>
+                  <button
+                    title="View Profile"
+                    onClick={() =>
+                      navigate(`/profile/${activeConversation.recipient?._id}`)
+                    }
+                  >
+                    <Info size={19} />
+                  </button>
+                  <button title="More options">
+                    <MoreVertical size={19} />
+                  </button>
                 </div>
               </div>
 
+              {/* Error bar */}
               {error && (
                 <div className="chat-error-bar">
-                  <AlertCircle size={16} /> {error}
+                  <AlertCircle size={15} /> {error}
                 </div>
               )}
 
+              {/* Body */}
               {activeConversation.accessDenied ? (
                 <div className="chat-empty-state access-denied">
                   <div className="empty-box">
-                    <Heart size={60} opacity={0.3} color="#6B3F69" />
+                    <div className="empty-box-icon">
+                      <Heart size={40} color="#6B3F69" />
+                    </div>
                     <h2>Connection Required</h2>
-                    <p>You can only send messages to users who have accepted your interest. Express interest first!</p>
-                    <button className="search-trigger" onClick={() => navigate(`/profile/${activeConversation.recipient._id}`)}>
+                    <p>
+                      You can only message users who have accepted your interest.
+                      Send an interest request first!
+                    </p>
+                    <button
+                      className="explore-btn"
+                      onClick={() =>
+                        navigate(`/profile/${activeConversation.recipient._id}`)
+                      }
+                    >
                       View Profile
                     </button>
                   </div>
                 </div>
               ) : (
                 <>
+                  {/* Messages */}
                   <div className="messages-scroll">
                     {messages.length > 0 ? (
                       messages.map((m, i) => (
-                        <div key={i} className={`msg-bubble-wrapper ${m.from === user._id ? 'sent' : 'received'}`}>
+                        <div
+                          key={i}
+                          className={`msg-bubble-wrapper ${
+                            m.from === user._id ? 'sent' : 'received'
+                          }`}
+                        >
+                          {m.from !== user._id && (
+                            <img
+                              className="msg-avatar-small"
+                              src={avatarUrl(activeConversation.recipient, 30)}
+                              alt=""
+                            />
+                          )}
                           <div className="msg-bubble">
                             <p>{m.text}</p>
                             <span className="msg-time-stamp">
-                              {new Date(m.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                              {new Date(m.createdAt).toLocaleTimeString([], {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                              })}
                             </span>
                           </div>
                         </div>
                       ))
                     ) : (
                       <div className="start-convo">
-                        <div className="sparkle-icon">✨</div>
-                        <p>Start your beautiful journey with a message</p>
+                        <div className="sparkle-icon">💌</div>
+                        <p>Send the first message and start your beautiful journey together</p>
                       </div>
                     )}
                     <div ref={messagesEndRef} />
                   </div>
 
+                  {/* Input */}
                   <form className="chat-input-area" onSubmit={handleSendMessage}>
-                    <input 
-                      type="text" 
-                      placeholder="Type a thoughtful message..." 
-                      value={newMessage}
-                      onChange={(e) => setNewMessage(e.target.value)}
-                    />
-                    <button type="submit" disabled={!newMessage.trim()}>
+                    <div className="input-wrapper">
+                      <button type="button" className="emoji-btn" tabIndex={-1}>
+                        😊
+                      </button>
+                      <input
+                        type="text"
+                        placeholder="Type a thoughtful message..."
+                        value={newMessage}
+                        onChange={(e) => setNewMessage(e.target.value)}
+                        autoFocus
+                      />
+                    </div>
+                    <button
+                      type="submit"
+                      className="send-btn"
+                      disabled={!newMessage.trim()}
+                    >
                       <Send size={20} />
                     </button>
                   </form>
@@ -314,16 +444,25 @@ const Chat = () => {
               )}
             </>
           ) : (
+            /* No conversation selected */
             <div className="chat-empty-state">
               <div className="empty-box">
-                <MessageCircle size={60} />
+                <div className="empty-box-icon">
+                  <MessageCircle size={40} color="#6B3F69" />
+                </div>
                 <h2>Your Conversations</h2>
-                <p>Select a match to start your conversation or express interest to unlock chatting.</p>
-                <button className="search-trigger" onClick={() => navigate('/search')}>Explore Matches</button>
+                <p>
+                  Select a match from the sidebar to continue chatting, or explore
+                  new matches to connect with.
+                </p>
+                <button className="explore-btn" onClick={() => navigate('/search')}>
+                  Explore Matches
+                </button>
               </div>
             </div>
           )}
         </div>
+
       </div>
     </div>
   );
