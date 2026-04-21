@@ -32,7 +32,21 @@ const onlineUsers = new Map();
 app.set('io', io);
 app.set('onlineUsers', onlineUsers);
 
-// Middleware
+
+// Multer for file uploads
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
+
+// Ensure uploads directory exists
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir);
+}
+
+// Serve static files from uploads
+app.use('/uploads', express.static(uploadsDir));
+
 app.use(cors({
   origin: frontendOrigins,
   credentials: true

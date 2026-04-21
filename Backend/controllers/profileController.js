@@ -168,9 +168,27 @@ exports.updateFullProfile = async (req, res) => {
   }
 };
 
-// Placeholder for photo upload (to be implemented with multer/cloudinary if requested)
+
+// Local photo upload using multer
+const path = require('path');
 exports.uploadPhoto = async (req, res) => {
-  res.status(501).json({ success: false, message: "Photo upload not yet implemented on server" });
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: 'No file uploaded' });
+    }
+    // Save file path to user profile
+    const user = await require('../models/User').findById(req.user.userId);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+    // Store photo info
+    const photoUrl = `/uploads/${req.file.filename}`;
+    user.photos.push({ url: photoUrl, isPrimary: user.photos.length === 0 });
+    await user.save();
+    res.json({ success: true, url: photoUrl });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Failed to upload photo', error: err.message });
+  }
 };
 
 // GET /api/profile/viewers
