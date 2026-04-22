@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { User, Mail, Phone, Lock, Eye, EyeOff, Heart, ChevronRight, CheckCircle, Users, Calendar, AlertCircle } from "lucide-react";
+import { User, Mail, Phone, Lock, Eye, EyeOff, Heart, ChevronRight, CheckCircle, Users, Calendar, AlertCircle, Briefcase, Upload, Building2, Baby } from "lucide-react";
 import api from "../utils/api";
 import { useAuth } from "../context/AuthContext";
 import "./Register.css";
@@ -39,17 +39,40 @@ const Register = () => {
     community: "",
     motherTongue: "",
     maritalStatus: "",
+    isSecondMarriage: false,
+    secondMarriageReason: "",
+    hasChildren: "",
+    childrenCount: "",
+    childrenLivingWith: "",
+    childrenAfterMarriage: "",
+    divorceReason: "",
     height: "",
     country: "India",
     city: "",
     state: "",
     education: "",
     profession: "",
+    employmentType: "",
+    companyName: "",
+    jobTitle: "",
+    cvFile: null,
+    businessName: "",
+    businessType: "",
+    annualTurnover: "",
+    femaleWorkStatus: "",
+    workingCompany: "",
+    workingRole: "",
   });
 
+  const cvInputRef = useRef(null);
+
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type, files } = e.target;
+    if (type === "file") {
+      setFormData((prev) => ({ ...prev, [name]: files[0] || null }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
     setErrors((prev) => ({ ...prev, [name]: "" }));
     setApiError("");
   };
@@ -111,24 +134,21 @@ const Register = () => {
     setApiError("");
 
     try {
-      const res = await api.post("/auth/register", {
-        fullName: formData.fullName,
-        email: formData.email,
-        phone: formData.phone,
-        password: formData.password,
-        profileFor: formData.profileFor,
-        gender: formData.gender,
-        dob: formData.dob,
-        religion: formData.religion,
-        community: formData.community,
-        motherTongue: formData.motherTongue,
-        maritalStatus: formData.maritalStatus,
-        height: formData.height,
-        country: formData.country,
-        city: formData.city,
-        state: formData.state,
-        education: formData.education,
-        profession: formData.profession,
+      const payload = new FormData();
+      const fields = [
+        "fullName","email","phone","password","profileFor","gender","dob",
+        "religion","community","motherTongue","maritalStatus","isSecondMarriage",
+        "secondMarriageReason","hasChildren","childrenCount","childrenLivingWith",
+        "childrenAfterMarriage","divorceReason","height","country","city","state",
+        "education","profession","employmentType","companyName","jobTitle",
+        "businessName","businessType","annualTurnover","femaleWorkStatus",
+        "workingCompany","workingRole"
+      ];
+      fields.forEach(f => payload.append(f, formData[f] ?? ""));
+      if (formData.cvFile) payload.append("cvFile", formData.cvFile);
+
+      const res = await api.post("/auth/register", payload, {
+        headers: { "Content-Type": "multipart/form-data" }
       });
 
       if (res.data.success) {
@@ -374,16 +394,10 @@ const Register = () => {
               <div className="form-group">
                 <label>I am a <span className="req">*</span></label>
                 <div className="gender-options">
-                  <button 
-                    className={`gender-btn ${formData.gender === 'male' ? 'selected' : ''}`}
-                    onClick={() => setFormData({...formData, gender: 'male'})}
-                  >
+                  <button className={`gender-btn ${formData.gender === 'male' ? 'selected' : ''}`} onClick={() => setFormData({...formData, gender: 'male'})}>
                     <Users size={18} /> Male
                   </button>
-                  <button 
-                    className={`gender-btn ${formData.gender === 'female' ? 'selected' : ''}`}
-                    onClick={() => setFormData({...formData, gender: 'female'})}
-                  >
+                  <button className={`gender-btn ${formData.gender === 'female' ? 'selected' : ''}`} onClick={() => setFormData({...formData, gender: 'female'})}>
                     <Users size={18} /> Female
                   </button>
                 </div>
@@ -394,12 +408,7 @@ const Register = () => {
                 <label>Date of Birth <span className="req">*</span></label>
                 <div className={`input-wrap ${errors.dob ? 'error' : ''}`}>
                   <Calendar size={18} className="input-icon" />
-                  <input 
-                    type="date" 
-                    name="dob"
-                    value={formData.dob}
-                    onChange={handleChange}
-                  />
+                  <input type="date" name="dob" value={formData.dob} onChange={handleChange} />
                 </div>
                 {errors.dob && <span className="err-msg">{errors.dob}</span>}
               </div>
@@ -431,20 +440,107 @@ const Register = () => {
                 <label>Community / Caste (Optional)</label>
                 <div className="input-wrap">
                   <Users size={18} className="input-icon" />
-                  <input 
-                    type="text" 
-                    name="community"
-                    placeholder="e.g. Agarwal, Sunni, Brahmin" 
-                    value={formData.community}
-                    onChange={handleChange}
-                  />
+                  <input type="text" name="community" placeholder="e.g. Agarwal, Sunni, Brahmin" value={formData.community} onChange={handleChange} />
                 </div>
               </div>
+
+              {/* MARRIAGE TYPE */}
+              <div className="form-group">
+                <label>Marriage Type <span className="req">*</span></label>
+                <div className="gender-options">
+                  <button className={`gender-btn ${!formData.isSecondMarriage ? 'selected' : ''}`} onClick={() => setFormData({...formData, isSecondMarriage: false})}>
+                    💍 First Marriage
+                  </button>
+                  <button className={`gender-btn ${formData.isSecondMarriage ? 'selected' : ''}`} onClick={() => setFormData({...formData, isSecondMarriage: true})}>
+                    🔁 Second Marriage
+                  </button>
+                </div>
+              </div>
+
+              {/* SECOND MARRIAGE FIELDS */}
+              {formData.isSecondMarriage && (
+                <div className="conditional-section">
+                  <div className="section-badge">🔁 Second Marriage Details</div>
+
+                  <div className="form-group">
+                    <label>Reason for Second Marriage <span className="req">*</span></label>
+                    <div className="input-wrap">
+                      <select name="secondMarriageReason" value={formData.secondMarriageReason} onChange={handleChange}>
+                        <option value="">Select Reason</option>
+                        <option value="Divorced">Divorced</option>
+                        <option value="Widowed">Widowed / Spouse Passed Away</option>
+                        <option value="Separated">Separated / Awaiting Divorce</option>
+                        <option value="Other">Other</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {(formData.secondMarriageReason === 'Divorced' || formData.secondMarriageReason === 'Separated') && (
+                    <div className="form-group">
+                      <label>Reason for Divorce / Separation</label>
+                      <div className="input-wrap">
+                        <textarea name="divorceReason" placeholder="Briefly describe the reason..." value={formData.divorceReason} onChange={handleChange} rows={3} style={{padding:'10px',border:'none',outline:'none',resize:'vertical',width:'100%',fontFamily:'Poppins,sans-serif',fontSize:'0.9rem',background:'transparent'}} />
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="form-group">
+                    <label>Do you have children? <span className="req">*</span></label>
+                    <div className="gender-options">
+                      <button className={`gender-btn ${formData.hasChildren === 'yes' ? 'selected' : ''}`} onClick={() => setFormData({...formData, hasChildren: 'yes'})}>
+                        <Baby size={16} /> Yes
+                      </button>
+                      <button className={`gender-btn ${formData.hasChildren === 'no' ? 'selected' : ''}`} onClick={() => setFormData({...formData, hasChildren: 'no'})}>
+                        No
+                      </button>
+                    </div>
+                  </div>
+
+                  {formData.hasChildren === 'yes' && (
+                    <>
+                      <div className="form-row">
+                        <div className="form-group">
+                          <label>Number of Children</label>
+                          <div className="input-wrap">
+                            <Baby size={18} className="input-icon" />
+                            <input type="number" name="childrenCount" min="1" max="10" placeholder="e.g. 2" value={formData.childrenCount} onChange={handleChange} />
+                          </div>
+                        </div>
+                        <div className="form-group">
+                          <label>Children Currently With</label>
+                          <div className="input-wrap">
+                            <select name="childrenLivingWith" value={formData.childrenLivingWith} onChange={handleChange}>
+                              <option value="">Select</option>
+                              <option value="With Me">With Me</option>
+                              <option value="With Ex-Spouse">With Ex-Spouse</option>
+                              <option value="With Grandparents">With Grandparents</option>
+                              <option value="Shared Custody">Shared Custody</option>
+                              <option value="Other">Other</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="form-group">
+                        <label>Children After Re-marriage Will Live With</label>
+                        <div className="input-wrap">
+                          <select name="childrenAfterMarriage" value={formData.childrenAfterMarriage} onChange={handleChange}>
+                            <option value="">Select</option>
+                            <option value="With Us">With Us (Both Parents)</option>
+                            <option value="With Ex-Spouse">Remain With Ex-Spouse</option>
+                            <option value="Flexible">Flexible / To be Decided</option>
+                            <option value="Other">Other</option>
+                          </select>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
+              )}
 
               <div className="form-nav">
                 <button className="btn-back" onClick={() => setStep(1)}>Back</button>
                 <button className="btn-next" onClick={handleNext}>
-                  Next: Professionals <ChevronRight size={18} />
+                  Next: Professional Info <ChevronRight size={18} />
                 </button>
               </div>
             </div>
@@ -488,26 +584,18 @@ const Register = () => {
                   {errors.country && <span className="err-msg">{errors.country}</span>}
                 </div>
                 <div className="form-group">
-                  <label>State <span className="req">*</span></label>
-                  <div className={`input-wrap`}>
+                  <label>State</label>
+                  <div className="input-wrap">
                     <select name="state" value={formData.state} onChange={handleChange}>
                       <option value="">Select</option>
-                      {stateOptions.map(s => (
-                        <option key={s} value={s}>{s}</option>
-                      ))}
+                      {stateOptions.map(s => <option key={s} value={s}>{s}</option>)}
                     </select>
                   </div>
                 </div>
                 <div className="form-group">
                   <label>City <span className="req">*</span></label>
                   <div className={`input-wrap ${errors.city ? 'error' : ''}`}>
-                    <input 
-                      type="text" 
-                      name="city"
-                      placeholder="e.g. Mumbai" 
-                      value={formData.city}
-                      onChange={handleChange}
-                    />
+                    <input type="text" name="city" placeholder="e.g. Mumbai" value={formData.city} onChange={handleChange} />
                   </div>
                   {errors.city && <span className="err-msg">{errors.city}</span>}
                 </div>
@@ -524,15 +612,129 @@ const Register = () => {
                 {errors.education && <span className="err-msg">{errors.education}</span>}
               </div>
 
+              {/* EMPLOYMENT TYPE */}
               <div className="form-group">
-                <label>Profession (Optional)</label>
-                <div className="input-wrap">
-                  <select name="profession" value={formData.profession} onChange={handleChange}>
-                    <option value="">Select Profession</option>
-                    {professions.map(p => <option key={p} value={p}>{p}</option>)}
-                  </select>
+                <label>Employment Type</label>
+                <div className="gender-options" style={{flexWrap:'wrap',gap:'0.6rem'}}>
+                  {['Employed','Business Owner','Self-Employed','Government','Freelancer','Not Working'].map(t => (
+                    <button key={t} className={`gender-btn ${formData.employmentType === t ? 'selected' : ''}`} style={{flex:'0 1 auto',padding:'10px 14px',fontSize:'0.82rem'}} onClick={() => setFormData({...formData, employmentType: t})}>
+                      {t}
+                    </button>
+                  ))}
                 </div>
               </div>
+
+              {/* EMPLOYEE FIELDS */}
+              {(formData.employmentType === 'Employed' || formData.employmentType === 'Government' || formData.employmentType === 'Freelancer') && (
+                <div className="conditional-section">
+                  <div className="section-badge"><Briefcase size={14} /> Employment Details</div>
+                  <div className="form-row">
+                    <div className="form-group">
+                      <label>Company Name</label>
+                      <div className="input-wrap">
+                        <Building2 size={18} className="input-icon" />
+                        <input type="text" name="companyName" placeholder="e.g. Infosys" value={formData.companyName} onChange={handleChange} />
+                      </div>
+                    </div>
+                    <div className="form-group">
+                      <label>Job Title / Role</label>
+                      <div className="input-wrap">
+                        <Briefcase size={18} className="input-icon" />
+                        <input type="text" name="jobTitle" placeholder="e.g. Software Engineer" value={formData.jobTitle} onChange={handleChange} />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="form-group">
+                    <label>Upload CV / Resume (Optional)</label>
+                    <div className="cv-upload-box" onClick={() => cvInputRef.current?.click()}>
+                      <Upload size={22} />
+                      <span>{formData.cvFile ? formData.cvFile.name : 'Click to upload your CV (PDF/DOC)'}</span>
+                      <input ref={cvInputRef} type="file" name="cvFile" accept=".pdf,.doc,.docx" onChange={handleChange} style={{display:'none'}} />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* BUSINESS FIELDS */}
+              {formData.employmentType === 'Business Owner' && (
+                <div className="conditional-section">
+                  <div className="section-badge"><Building2 size={14} /> Business Details</div>
+                  <div className="form-row">
+                    <div className="form-group">
+                      <label>Business Name</label>
+                      <div className="input-wrap">
+                        <Building2 size={18} className="input-icon" />
+                        <input type="text" name="businessName" placeholder="e.g. ABC Traders" value={formData.businessName} onChange={handleChange} />
+                      </div>
+                    </div>
+                    <div className="form-group">
+                      <label>Business Type</label>
+                      <div className="input-wrap">
+                        <select name="businessType" value={formData.businessType} onChange={handleChange}>
+                          <option value="">Select</option>
+                          <option value="Manufacturing">Manufacturing</option>
+                          <option value="Retail">Retail / Trading</option>
+                          <option value="IT/Tech">IT / Technology</option>
+                          <option value="Real Estate">Real Estate</option>
+                          <option value="Healthcare">Healthcare</option>
+                          <option value="Food & Hospitality">Food & Hospitality</option>
+                          <option value="Finance">Finance / Consulting</option>
+                          <option value="Other">Other</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="form-group">
+                    <label>Annual Turnover (Approx)</label>
+                    <div className="input-wrap">
+                      <select name="annualTurnover" value={formData.annualTurnover} onChange={handleChange}>
+                        <option value="">Select Range</option>
+                        <option value="Below 5L">Below ₹5 Lakh</option>
+                        <option value="5L-25L">₹5L – ₹25 Lakh</option>
+                        <option value="25L-1Cr">₹25L – ₹1 Crore</option>
+                        <option value="1Cr-5Cr">₹1Cr – ₹5 Crore</option>
+                        <option value="Above 5Cr">Above ₹5 Crore</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* FEMALE WORK STATUS */}
+              {formData.gender === 'female' && (
+                <div className="conditional-section">
+                  <div className="section-badge">👩 Work Status</div>
+                  <div className="form-group">
+                    <label>Current Work Status</label>
+                    <div className="gender-options">
+                      <button className={`gender-btn ${formData.femaleWorkStatus === 'Homemaker' ? 'selected' : ''}`} onClick={() => setFormData({...formData, femaleWorkStatus: 'Homemaker'})}>
+                        🏠 Homemaker
+                      </button>
+                      <button className={`gender-btn ${formData.femaleWorkStatus === 'Working' ? 'selected' : ''}`} onClick={() => setFormData({...formData, femaleWorkStatus: 'Working'})}>
+                        💼 Working Professional
+                      </button>
+                    </div>
+                  </div>
+                  {formData.femaleWorkStatus === 'Working' && (
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label>Company / Organisation</label>
+                        <div className="input-wrap">
+                          <Building2 size={18} className="input-icon" />
+                          <input type="text" name="workingCompany" placeholder="e.g. TCS, Hospital" value={formData.workingCompany} onChange={handleChange} />
+                        </div>
+                      </div>
+                      <div className="form-group">
+                        <label>Role / Designation</label>
+                        <div className="input-wrap">
+                          <Briefcase size={18} className="input-icon" />
+                          <input type="text" name="workingRole" placeholder="e.g. Nurse, Teacher" value={formData.workingRole} onChange={handleChange} />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
 
               <p className="terms-text">
                 By clicking "Complete Registration", you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>.

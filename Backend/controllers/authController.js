@@ -40,17 +40,29 @@ const sendOtpEmail = async (toEmail, otp) => {
 // Register User
 exports.register = async (req, res) => {
   try {
-    const { fullName, email, phone, password, gender, profileFor, dob, religion, community, motherTongue, maritalStatus, height, country, city, state, education, profession } = req.body;
+    const {
+      fullName, email, phone, password, gender, profileFor,
+      dob, religion, community, motherTongue,
+      maritalStatus, height, country, city, state,
+      education, profession,
+      // Second marriage
+      isSecondMarriage, secondMarriageReason, divorceReason,
+      hasChildren, childrenCount, childrenLivingWith, childrenAfterMarriage,
+      // Employment
+      employmentType, companyName, jobTitle,
+      // Business
+      businessName, businessType, annualTurnover,
+      // Female work status
+      femaleWorkStatus, workingCompany, workingRole
+    } = req.body;
+
     const name = fullName;
-    
+
     // 1. Check if email or phone already exists
-    const existingUser = await User.findOne({ 
-      $or: [{ email }, { phone }] 
-    });
+    const existingUser = await User.findOne({ $or: [{ email }, { phone }] });
     if (existingUser) {
-      if (existingUser.email === email) {
+      if (existingUser.email === email)
         return res.status(400).json({ success: false, message: "Email already registered" });
-      }
       return res.status(400).json({ success: false, message: "Phone number already registered" });
     }
 
@@ -60,11 +72,18 @@ exports.register = async (req, res) => {
 
     // 3. Generate 6-digit OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 mins
+    const otpExpiry = new Date(Date.now() + 10 * 60 * 1000);
 
-    // 4. Create and Save User
+    // 4. Build CV URL if file was uploaded
+    let cvUrl = null;
+    if (req.file) {
+      cvUrl = `/uploads/cvs/${req.file.filename}`;
+    }
+
+    // 5. Create and Save User
     const newUser = new User({
       name,
+      fullName,
       email,
       phone,
       password: hashedPassword,
@@ -81,20 +100,41 @@ exports.register = async (req, res) => {
       state,
       education,
       profession,
+      // Second marriage fields
+      isSecondMarriage: isSecondMarriage === 'true' || isSecondMarriage === true,
+      secondMarriageReason: secondMarriageReason || null,
+      divorceReason: divorceReason || null,
+      hasChildren: hasChildren || null,
+      childrenCount: childrenCount ? Number(childrenCount) : null,
+      childrenLivingWith: childrenLivingWith || null,
+      childrenAfterMarriage: childrenAfterMarriage || null,
+      // Employment fields
+      employmentType: employmentType || null,
+      companyName: companyName || null,
+      jobTitle: jobTitle || null,
+      cvUrl,
+      // Business fields
+      businessName: businessName || null,
+      businessType: businessType || null,
+      annualTurnover: annualTurnover || null,
+      // Female work status
+      femaleWorkStatus: femaleWorkStatus || null,
+      workingCompany: workingCompany || null,
+      workingRole: workingRole || null,
       otp,
       otpExpiry
     });
 
     await newUser.save();
 
-    // 5. Send OTP Email via Resend
+    // 6. Send OTP Email via Resend
     const emailSent = await sendOtpEmail(email, otp);
     if (!emailSent) {
       console.warn(`[WARN] OTP email failed to send for ${email}, but registration continues.`);
     }
     console.log(`[DEV] OTP for ${email}: ${otp}`);
 
-    // 6. Generate Token
+    // 7. Generate Token
     const token = jwt.sign(
       { userId: newUser._id.toString(), email: newUser.email, role: 'user' },
       process.env.JWT_SECRET,

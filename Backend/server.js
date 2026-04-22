@@ -41,7 +41,7 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// Serve uploaded photos as static files
+// Serve uploaded files (photos, CVs) as static files
 app.use('/uploads', require('express').static(require('path').join(__dirname, 'uploads')));
 
 

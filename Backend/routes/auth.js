@@ -3,10 +3,34 @@ const router = express.Router();
 const authController = require('../controllers/authController');
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 
-// Task 2: Registration
-// ... existing routes
-router.post('/register', authController.register);
+// Multer setup for CV uploads
+const cvStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const dir = path.join(__dirname, '..', 'uploads', 'cvs');
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    cb(null, dir);
+  },
+  filename: (req, file, cb) => {
+    const unique = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    cb(null, unique + path.extname(file.originalname));
+  }
+});
+const uploadCV = multer({
+  storage: cvStorage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB
+  fileFilter: (req, file, cb) => {
+    const allowed = ['.pdf', '.doc', '.docx'];
+    if (allowed.includes(path.extname(file.originalname).toLowerCase())) cb(null, true);
+    else cb(new Error('Only PDF/DOC files allowed'));
+  }
+});
+
+// Task 2: Registration (with optional CV upload)
+router.post('/register', uploadCV.single('cvFile'), authController.register);
 
 // Task 3: Login
 router.post('/login', authController.login);

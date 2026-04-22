@@ -828,3 +828,58 @@
     font-size: 0.7rem;
   }
 }
+
+/* ── CONDITIONAL SECTIONS ── */
+.conditional-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background: linear-gradient(135deg, #faf5fa 0%, #fff8ff 100%);
+  border: 1.5px solid #e8dde8;
+  border-radius: 14px;
+  padding: 1.2rem;
+  animation: fadeInUp 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.section-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #6B3F69, #8D5F8C);
+  color: white;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 5px 14px;
+  border-radius: 20px;
+  letter-spacing: 0.04em;
+  width: fit-content;
+  margin-bottom: 0.2rem;
+}
+
+/* ── CV UPLOAD BOX ── */
+.cv-upload-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  border: 2px dashed #c4a8c4;
+  border-radius: 12px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  color: #6B3F69;
+  font-size: 0.88rem;
+  font-weight: 500;
+}
+
+.cv-upload-box:hover {
+  border-color: #6B3F69;
+  background: #faf5fa;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(107,63,105,0.12);
+}
+
+.cv-upload-box span {
+  color: #6b5b6b;
+  font-size: 0.85rem;
+}

@@ -51,6 +51,29 @@ const userSchema = new mongoose.Schema({
   maritalStatus: {
     type: String
   },
+  // ── Second Marriage ──
+  isSecondMarriage: {
+    type: Boolean,
+    default: false
+  },
+  secondMarriageReason: {
+    type: String
+  },
+  divorceReason: {
+    type: String
+  },
+  hasChildren: {
+    type: String
+  },
+  childrenCount: {
+    type: Number
+  },
+  childrenLivingWith: {
+    type: String
+  },
+  childrenAfterMarriage: {
+    type: String
+  },
   height: {
     type: String
   },
@@ -83,6 +106,36 @@ const userSchema = new mongoose.Schema({
     type: String
   },
   profession: {
+    type: String
+  },
+  // ── Employment ──
+  employmentType: {
+    type: String
+  },
+  jobTitle: {
+    type: String
+  },
+  cvUrl: {
+    type: String
+  },
+  // ── Business ──
+  businessName: {
+    type: String
+  },
+  businessType: {
+    type: String
+  },
+  annualTurnover: {
+    type: String
+  },
+  // ── Female Work Status ──
+  femaleWorkStatus: {
+    type: String
+  },
+  workingCompany: {
+    type: String
+  },
+  workingRole: {
     type: String
   },
   occupation: {
