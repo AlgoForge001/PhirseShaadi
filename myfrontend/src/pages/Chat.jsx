@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import { useSocket } from '../context/SocketContext';
 import { useAuth } from '../context/AuthContext';
-import api, { getConversations, getChatHistory } from '../utils/api';
+import api, { getConversations, getChatHistory, checkChatAccess } from '../utils/api';
 import Navbar from '../components/Navbar';
 import './Chat.css';
 
@@ -24,6 +24,7 @@ const Chat = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [canChat, setCanChat] = useState(true);
   const messagesEndRef = useRef(null);
 
   // ── helpers ──────────────────────────────────────────────────────────────
@@ -40,6 +41,8 @@ const Chat = () => {
 
   // ── data fetching ─────────────────────────────────────────────────────────
 
+  const myId = user?._id || user?.id;
+
   const fetchConversations = async () => {
     try {
       const [convRes, intRes] = await Promise.all([
@@ -53,8 +56,9 @@ const Chat = () => {
       if (intRes.data.success) {
         const acceptedUsers = intRes.data.data.map((i) => i.user);
         acceptedUsers.forEach((accUser) => {
+          if (!accUser || !accUser._id) return;
           const exists = allConvs.find((c) =>
-            c.participants.some((p) => p._id === accUser._id)
+            c.participants.some((p) => (p._id || p) === accUser._id)
           );
           if (!exists) {
             allConvs.push({
@@ -77,6 +81,12 @@ const Chat = () => {
 
   const fetchMessages = async (userId) => {
     try {
+      // Verify chat access before loading messages
+      const accessRes = await checkChatAccess(userId);
+      if (accessRes.data.success) {
+        setCanChat(accessRes.data.canChat);
+      }
+
       const res = await getChatHistory(userId);
       if (res.data.success) {
         setMessages(res.data.data);
@@ -106,9 +116,9 @@ const Chat = () => {
 
   const handleSendMessage = (e) => {
     e.preventDefault();
-    if (!newMessage.trim() || !activeConversation) return;
+    if (!newMessage.trim() || !activeConversation || !socket || !canChat) return;
     socket.emit('message:send', {
-      from: user._id,
+      from: myId,
       to: activeConversation.recipient._id,
       text: newMessage,
     });
@@ -134,11 +144,11 @@ const Chat = () => {
     if (activeConversation?.recipient?._id === id) return; // already open
 
     const existing = conversations.find((c) =>
-      c.participants.some((p) => (p._id || p) === id)
+      c.participants.some((p) => String(p._id || p) === String(id))
     );
 
     if (existing) {
-      const recipient = existing.participants.find((p) => (p._id || p) === id);
+      const recipient = existing.participants.find((p) => String(p._id || p) === String(id));
       setActiveConversation({ ...existing, recipient });
     } else {
       startNewChat(id);
@@ -160,8 +170,8 @@ const Chat = () => {
 
     socket.on('message:receive', (msg) => {
       if (
-        activeConversation?.recipient?._id === msg.from ||
-        activeConversation?.recipient?._id === msg.to
+        String(activeConversation?.recipient?._id) === String(msg.from) ||
+        String(activeConversation?.recipient?._id) === String(msg.to)
       ) {
         setMessages((prev) => [...prev, msg]);
       }
@@ -169,7 +179,7 @@ const Chat = () => {
     });
 
     socket.on('message:sent', (msg) => {
-      if (activeConversation?.recipient?._id === msg.to) {
+      if (String(activeConversation?.recipient?._id) === String(msg.to)) {
         setMessages((prev) => [...prev, msg]);
       }
     });
@@ -193,7 +203,7 @@ const Chat = () => {
   // ── derived ───────────────────────────────────────────────────────────────
 
   const filteredConversations = conversations.filter((c) => {
-    const recipient = c.participants.find((p) => (p._id || p) !== user._id);
+    const recipient = c.participants.find((p) => String(p._id || p) !== String(myId));
     const term = searchTerm.toLowerCase();
     return (
       recipient?.fullName?.toLowerCase().includes(term) ||
@@ -254,7 +264,7 @@ const Chat = () => {
             ) : filteredConversations.length > 0 ? (
               filteredConversations.map((conv) => {
                 const recipient = conv.participants.find(
-                  (p) => (p._id || p) !== user._id
+                  (p) => String(p._id || p) !== String(myId)
                 );
                 const isSelected =
                   activeConversation?.recipient?._id === recipient?._id;
@@ -376,10 +386,10 @@ const Chat = () => {
                         <div
                           key={i}
                           className={`msg-bubble-wrapper ${
-                            m.from === user._id ? 'sent' : 'received'
+                            String(m.from) === String(myId) ? 'sent' : 'received'
                           }`}
                         >
-                          {m.from !== user._id && (
+                          {String(m.from) !== String(myId) && (
                             <img
                               className="msg-avatar-small"
                               src={avatarUrl(activeConversation.recipient, 30)}
@@ -407,27 +417,34 @@ const Chat = () => {
                   </div>
 
                   {/* Input */}
-                  <form className="chat-input-area" onSubmit={handleSendMessage}>
-                    <div className="input-wrapper">
-                      <button type="button" className="emoji-btn" tabIndex={-1}>
-                        😊
+                  {canChat ? (
+                    <form className="chat-input-area" onSubmit={handleSendMessage}>
+                      <div className="input-wrapper">
+                        <button type="button" className="emoji-btn" tabIndex={-1}>
+                          😊
+                        </button>
+                        <input
+                          type="text"
+                          placeholder="Type a thoughtful message..."
+                          value={newMessage}
+                          onChange={(e) => setNewMessage(e.target.value)}
+                          autoFocus
+                        />
+                      </div>
+                      <button
+                        type="submit"
+                        className="send-btn"
+                        disabled={!newMessage.trim()}
+                      >
+                        <Send size={20} />
                       </button>
-                      <input
-                        type="text"
-                        placeholder="Type a thoughtful message..."
-                        value={newMessage}
-                        onChange={(e) => setNewMessage(e.target.value)}
-                        autoFocus
-                      />
+                    </form>
+                  ) : (
+                    <div className="chat-access-denied">
+                      <AlertCircle size={16} />
+                      <span>Accept each other's interest first to start chatting</span>
                     </div>
-                    <button
-                      type="submit"
-                      className="send-btn"
-                      disabled={!newMessage.trim()}
-                    >
-                      <Send size={20} />
-                    </button>
-                  </form>
+                  )}
               </>
             </>
           ) : (

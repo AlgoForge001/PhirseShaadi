@@ -835,6 +835,26 @@
   box-shadow: 0 10px 28px rgba(107, 63, 105, 0.4);
 }
 
+/* Chat Access Denied Bar */
+.chat-access-denied {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px 24px;
+  background: linear-gradient(90deg, #fff5f0, #fff0f3);
+  border-top: 1px solid #f0ebf0;
+  color: #9b7a9b;
+  font-size: 0.88rem;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+}
+
+.chat-access-denied svg {
+  color: #c77d6b;
+  flex-shrink: 0;
+}
+
 /* Access Denied State */
 .chat-empty-state.access-denied {
   background: linear-gradient(160deg, #fff5f8, #fdfafd);

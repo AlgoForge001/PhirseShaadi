@@ -1,5 +1,5 @@
-const TOGETHER_API_KEY = process.env.TOGETHER_API_KEY;
-const TOGETHER_API_URL = 'https://api.together.xyz/v1/chat/completions';
+const GROQ_API_KEY = process.env.GROQ_API_KEY;
+const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
 
 const SYSTEM_PROMPT = `You are PhirseShaadi Assistant 💕, a friendly and helpful chatbot for the PhirseShaadi matrimonial platform — a premium Indian matchmaking website.
 
@@ -113,7 +113,8 @@ exports.chat = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Messages are required' });
     }
 
-    if (!TOGETHER_API_KEY) {
+    if (!GROQ_API_KEY) {
+      console.error('GROQ_API_KEY is missing from .env');
       return res.status(500).json({ success: false, message: 'Chatbot API key not configured' });
     }
 
@@ -123,14 +124,14 @@ exports.chat = async (req, res) => {
       ...messages.slice(-10) // Keep last 10 messages for context (avoid token overflow)
     ];
 
-    const response = await fetch(TOGETHER_API_URL, {
+    const response = await fetch(GROQ_API_URL, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${TOGETHER_API_KEY}`,
+        'Authorization': `Bearer ${GROQ_API_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'meta-llama/Llama-3.3-70B-Instruct-Turbo-Free',
+        model: 'llama-3.3-70b-versatile',
         messages: fullMessages,
         max_tokens: 512,
         temperature: 0.7,
@@ -140,7 +141,7 @@ exports.chat = async (req, res) => {
 
     if (!response.ok) {
       const errText = await response.text();
-      console.error('Together AI error:', errText);
+      console.error('Groq AI error:', response.status, errText);
       return res.status(502).json({ success: false, message: 'AI service error. Please try again.' });
     }
 
