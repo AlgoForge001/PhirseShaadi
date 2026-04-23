@@ -15,17 +15,15 @@ const ProfileCard = ({ profile, onInterest, onShortlist }) => {
   const [shortlisted, setShortlisted] = useState(false);
   const [interestLoading, setInterestLoading] = useState(false);
   const [shortlistLoading, setShortlistLoading] = useState(false);
+  const [imgFailed, setImgFailed] = useState(false); // ✅ FIX: track image load failure in state
 
-  // Calculate age from DOB
   const calculateAge = (dob) => {
     if (!dob) return null;
     const today = new Date();
     const birthDate = new Date(dob);
     let age = today.getFullYear() - birthDate.getFullYear();
     const monthDiff = today.getMonth() - birthDate.getMonth();
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-      age--;
-    }
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) age--;
     return age;
   };
 
@@ -37,19 +35,23 @@ const ProfileCard = ({ profile, onInterest, onShortlist }) => {
   // ✅ Support both `name` and `fullName` fields
   const displayName = profile.name || profile.fullName || "Member";
 
-  // ✅ FIX: Get primary photo first, fallback to first photo
+  // ✅ Truncate long names to prevent overflow
+  const truncateName = (name, max = 20) =>
+    name.length > max ? name.slice(0, max).trim() + "…" : name;
+
   const getPrimaryPhoto = () => {
     if (!profile.photos || profile.photos.length === 0) return null;
     const primary = profile.photos.find(p => p.isPrimary);
     const photo = primary || profile.photos[0];
-    // ✅ FIX: Handle both string URLs and object with .url property
-    if (typeof photo === 'string') return photo;
+    if (typeof photo === "string") return photo;
     return photo?.url || null;
   };
 
   const primaryPhotoUrl = getPrimaryPhoto();
 
-  // Send Interest
+  // ✅ FIX: show photo only if URL exists AND image hasn't failed
+  const showPhoto = primaryPhotoUrl && !imgFailed;
+
   const handleInterest = async (e) => {
     e.stopPropagation();
     if (interested || interestLoading) return;
@@ -65,7 +67,6 @@ const ProfileCard = ({ profile, onInterest, onShortlist }) => {
     }
   };
 
-  // Shortlist
   const handleShortlist = async (e) => {
     e.stopPropagation();
     if (shortlistLoading) return;
@@ -85,30 +86,26 @@ const ProfileCard = ({ profile, onInterest, onShortlist }) => {
 
   return (
     <div className="profile-card" onClick={() => navigate(`/profile/${profile._id}`)}>
-      {/* FULL PHOTO BACKGROUND */}
       <div className="pc-photo-wrapper">
-        {primaryPhotoUrl ? (
-          // ✅ FIX: Use resolved primaryPhotoUrl, with onError fallback
+
+        {/* ✅ FIX: render img only when URL exists, set imgFailed on error */}
+        {primaryPhotoUrl && (
           <img
             src={primaryPhotoUrl}
             alt={displayName}
             className="pc-main-photo"
-            onError={(e) => {
-              e.target.style.display = "none";
-              e.target.nextSibling && (e.target.nextSibling.style.display = "flex");
-            }}
+            style={{ display: showPhoto ? "block" : "none" }}
+            onError={() => setImgFailed(true)}
           />
-        ) : null}
+        )}
 
-        {/* ✅ FIX: Placeholder shown when no photo OR image fails to load */}
-        <div
-          className="pc-photo-placeholder"
-          style={{ display: primaryPhotoUrl ? "none" : "flex" }}
-        >
-          <Users size={60} color="#6B3F69" />
-        </div>
+        {/* ✅ FIX: placeholder shows when no photo OR image failed — pure React state, no DOM hacks */}
+        {!showPhoto && (
+          <div className="pc-photo-placeholder">
+            <Users size={60} color="#6B3F69" />
+          </div>
+        )}
 
-        {/* OVERLAY CONTENT */}
         <div className="pc-overlay-gradient">
           {/* TOP BADGES */}
           <div className="pc-top-badges">
@@ -118,7 +115,7 @@ const ProfileCard = ({ profile, onInterest, onShortlist }) => {
               </span>
             )}
             {profile.matchPercentage !== undefined && (
-              <span className={`pc-match-badge ${profile.matchPercentage >= 80 ? 'high' : ''}`}>
+              <span className={`pc-match-badge ${profile.matchPercentage >= 80 ? "high" : ""}`}>
                 {profile.matchPercentage}% Match
               </span>
             )}
@@ -128,7 +125,10 @@ const ProfileCard = ({ profile, onInterest, onShortlist }) => {
           <div className="pc-bottom-wrap">
             <div className="pc-text-content">
               <div className="pc-name-row">
-                <span className="pc-user-name">{displayName}</span>
+                {/* ✅ FIX: truncate long names */}
+                <span className="pc-user-name" title={displayName}>
+                  {truncateName(displayName)}
+                </span>
                 {profile.isVerified && (
                   <CheckCircle size={14} fill="white" color="#6B3F69" className="pc-verified-icon" />
                 )}
@@ -151,7 +151,7 @@ const ProfileCard = ({ profile, onInterest, onShortlist }) => {
                 <MessageCircle size={18} color="white" />
               </button>
               <button
-                className={`pc-icon-action ${interested ? 'active' : ''}`}
+                className={`pc-icon-action ${interested ? "active" : ""}`}
                 onClick={handleInterest}
                 disabled={interested || interestLoading}
                 title="Send Interest"
@@ -159,7 +159,7 @@ const ProfileCard = ({ profile, onInterest, onShortlist }) => {
                 <Heart size={18} fill={interested ? "white" : "none"} color="white" />
               </button>
               <button
-                className={`pc-icon-action ${shortlisted ? 'active' : ''}`}
+                className={`pc-icon-action ${shortlisted ? "active" : ""}`}
                 onClick={handleShortlist}
                 disabled={shortlistLoading}
                 title="Shortlist"
