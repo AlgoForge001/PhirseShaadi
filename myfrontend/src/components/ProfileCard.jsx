@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  Heart, MapPin, Briefcase, CheckCircle, Star,
-  Send, Bookmark, Eye, Users, Calendar, MessageCircle
+  Heart, MapPin, CheckCircle,
+  Bookmark, Users, MessageCircle
 } from "lucide-react";
 import api from "../utils/api";
 import { useAuth } from "../context/AuthContext";
@@ -34,17 +34,16 @@ const ProfileCard = ({ profile, onInterest, onShortlist }) => {
     return city || state || "Location not specified";
   };
 
+  // ✅ FIX: Support both `name` and `fullName` fields from backend
+  const displayName = profile.name || profile.fullName || "Member";
+
   // Send Interest
   const handleInterest = async (e) => {
     e.stopPropagation();
+    if (interested || interestLoading) return;
     setInterestLoading(true);
     try {
-      // TODO [BACKEND]: POST /api/interest/send
-      await api.post(
-        "/interest/send",
-        { toUserId: profile._id },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      await api.post("/interest/send", { toUserId: profile._id });
       setInterested(true);
       if (onInterest) onInterest();
     } catch {
@@ -57,14 +56,10 @@ const ProfileCard = ({ profile, onInterest, onShortlist }) => {
   // Shortlist
   const handleShortlist = async (e) => {
     e.stopPropagation();
+    if (shortlistLoading) return;
     setShortlistLoading(true);
     try {
-      // TODO [BACKEND]: POST /api/shortlist
-      await api.post(
-        "/shortlist",
-        { userId: profile._id },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      await api.post("/shortlist", { userId: profile._id });
       setShortlisted(!shortlisted);
       if (onShortlist) onShortlist();
     } catch {
@@ -81,7 +76,8 @@ const ProfileCard = ({ profile, onInterest, onShortlist }) => {
       {/* FULL PHOTO BACKGROUND */}
       <div className="pc-photo-wrapper">
         {profile.photos && profile.photos.length > 0 ? (
-          <img src={profile.photos[0].url} alt={profile.fullName} className="pc-main-photo" />
+          // ✅ FIX: Use displayName for alt text
+          <img src={profile.photos[0].url} alt={displayName} className="pc-main-photo" />
         ) : (
           <div className="pc-photo-placeholder">
             <Users size={60} color="#6B3F69" />
@@ -108,37 +104,44 @@ const ProfileCard = ({ profile, onInterest, onShortlist }) => {
           <div className="pc-bottom-wrap">
             <div className="pc-text-content">
               <div className="pc-name-row">
-                <span className="pc-user-name">{profile.fullName}</span>
-                {profile.isVerified && <CheckCircle size={14} fill="white" color="#6B3F69" className="pc-verified-icon" />}
+                {/* ✅ FIX: Use displayName */}
+                <span className="pc-user-name">{displayName}</span>
+                {profile.isVerified && (
+                  <CheckCircle size={14} fill="white" color="#6B3F69" className="pc-verified-icon" />
+                )}
               </div>
               <p className="pc-user-subtitle">
-                {profile.occupation || "Member"} • {age}yrs
+                {profile.occupation || "Member"}{age ? ` • ${age}yrs` : ""}
               </p>
               <div className="pc-location-row">
                 <MapPin size={13} color="white" />
                 <span>{formatLocation(profile.city, profile.state)}</span>
               </div>
             </div>
-            
+
             <div className="pc-real-actions">
-              <button 
+              <button
                 className="pc-icon-action"
+                // ✅ FIX: Removed redundant e.stopPropagation() — navigate handles it
                 onClick={(e) => { e.stopPropagation(); navigate(`/chat/${profile._id}`); }}
                 title="Message"
               >
                 <MessageCircle size={18} color="white" />
               </button>
-              <button 
+              <button
                 className={`pc-icon-action ${interested ? 'active' : ''}`}
-                onClick={(e) => { e.stopPropagation(); handleInterest(e); }}
+                // ✅ FIX: handleInterest already calls stopPropagation — no duplicate needed
+                onClick={handleInterest}
                 disabled={interested || interestLoading}
+                title="Send Interest"
               >
                 <Heart size={18} fill={interested ? "white" : "none"} color="white" />
               </button>
-              <button 
+              <button
                 className={`pc-icon-action ${shortlisted ? 'active' : ''}`}
-                onClick={(e) => { e.stopPropagation(); handleShortlist(e); }}
+                onClick={handleShortlist}
                 disabled={shortlistLoading}
+                title="Shortlist"
               >
                 <Bookmark size={18} fill={shortlisted ? "white" : "none"} color="white" />
               </button>
@@ -148,8 +151,6 @@ const ProfileCard = ({ profile, onInterest, onShortlist }) => {
       </div>
     </div>
   );
-
-
 };
 
 export default ProfileCard;

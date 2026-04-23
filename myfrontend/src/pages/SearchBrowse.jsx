@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import {
-  Heart, Search, Filter, MapPin, Briefcase,
-  GraduationCap, ChevronDown, ChevronUp, X,
+  Search, Filter, MapPin,
+  ChevronDown, ChevronUp, X,
   SlidersHorizontal
 } from "lucide-react";
 import api from "../utils/api";
@@ -11,13 +11,11 @@ import ProfileCard from "../components/ProfileCard";
 import Navbar from "../components/Navbar";
 import "./SearchBrowse.css";
 
-// SearchHeader removed as Navbar replaces it.
-
-
 // ─────────────────────────────────────────────
 // FILTER PANEL
+// ✅ FIX: onApply passed as separate prop — no longer mixed into filters object
 // ─────────────────────────────────────────────
-const FilterPanel = ({ filters, setFilters, onClose }) => {
+const FilterPanel = ({ filters, setFilters, onApply, onClose }) => {
   const religions = ["Any", "Hindu", "Muslim", "Christian", "Sikh", "Jain", "Buddhist"];
   const educations = ["Any", "Bachelor's Degree", "Master's Degree", "MBA", "PhD", "MBBS", "Engineering", "CA/CS"];
   const occupations = ["Any", "Software Engineer", "Doctor", "Engineer", "Teacher", "Business Owner", "Government Employee", "Lawyer"];
@@ -171,7 +169,8 @@ const FilterPanel = ({ filters, setFilters, onClose }) => {
 
       </div>
 
-      <button className="apply-filters-btn" onClick={filters.onApply}>
+      {/* ✅ FIX: Use onApply prop directly */}
+      <button className="apply-filters-btn" onClick={onApply}>
         Apply Filters
       </button>
     </div>
@@ -179,19 +178,17 @@ const FilterPanel = ({ filters, setFilters, onClose }) => {
 };
 
 
-
 // ─────────────────────────────────────────────
 // MAIN SEARCH PAGE
 // ─────────────────────────────────────────────
 const SearchBrowse = () => {
-
   const location = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
   const [showFilter, setShowFilter] = useState(false);
   const [activeTab, setActiveTab] = useState("all");
   const [profiles, setProfiles] = useState([]);
   const [sameCityMeta, setSameCityMeta] = useState({ city: "", message: "" });
-  const [_loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [filters, setFilters] = useState({
     ageFrom: "18", ageTo: "40",
     heightFrom: "", heightTo: "",
@@ -213,13 +210,12 @@ const SearchBrowse = () => {
     try {
       setLoading(true);
       let endpoint = "/search";
-      
-      // Map tabs to match endpoints
+
       if (activeTab === "new") endpoint = "/matches/new-joins";
       if (activeTab === "nearby") endpoint = "/matches/near-you";
       if (activeTab === "sameCity") endpoint = "/matches/same-city";
       if (activeTab === "recommended") endpoint = "/matches/recommended";
-      
+
       const params = {
         minAge: activeFilters.ageFrom,
         maxAge: activeFilters.ageTo,
@@ -257,8 +253,8 @@ const SearchBrowse = () => {
 
   useEffect(() => {
     fetchProfiles();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeTab]); // Re-fetch on tab change
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab]);
 
   useEffect(() => {
     const qs = new URLSearchParams(location.search);
@@ -284,7 +280,7 @@ const SearchBrowse = () => {
     setFilters((prev) => ({ ...prev, ...parsedFilters }));
     setSearchQuery(parsedSearch);
     fetchProfiles(parsedFilters, parsedSearch);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.search]);
 
   const handleApplyFilters = () => {
@@ -292,107 +288,119 @@ const SearchBrowse = () => {
     setShowFilter(false);
   };
 
-  const filteredProfiles = profiles;
-
   return (
     <div className="search-page-new">
       <Navbar />
-      
+
       <div className="search-container-main">
         <div className="search-content-area">
 
-
-
-        {/* SEARCH BAR */}
-        <div className="search-bar-wrap">
-          <div className="search-bar">
-            <Search size={18} className="search-icon" />
-            <input
-              type="text"
-              placeholder="Search by name, city, community..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            {searchQuery && (
-              <button className="clear-search" onClick={() => setSearchQuery("")}>
-                <X size={16} />
-              </button>
-            )}
-          </div>
-          <button
-            className={`filter-toggle-btn ${showFilter ? "active" : ""}`}
-            onClick={() => setShowFilter(!showFilter)}
-          >
-            <Filter size={18} />
-            Filters
-            {showFilter ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
-          </button>
-        </div>
-
-        {/* FILTER PANEL */}
-        {showFilter && (
-          <FilterPanel
-            filters={{ ...filters, onApply: handleApplyFilters }}
-            setFilters={setFilters}
-            onClose={() => setShowFilter(false)}
-          />
-        )}
-
-        {/* TABS */}
-        <div className="search-tabs">
-          {tabs.map((t) => (
-            <button
-              key={t.key}
-              className={`tab-btn ${activeTab === t.key ? "active" : ""}`}
-              onClick={() => setActiveTab(t.key)}
-            >
-              {t.label}
-            </button>
-          ))}
-        </div>
-
-        {/* SAME CITY CONTEXT */}
-        {activeTab === "sameCity" && (
-          <div className="same-city-meta">
-            <div className="same-city-pill">
-              <MapPin size={15} />
-              <span>
-                {sameCityMeta.city ? `Using your city: ${sameCityMeta.city}` : "Set your city in profile to enable same-city matches"}
-              </span>
+          {/* SEARCH BAR */}
+          <div className="search-bar-wrap">
+            <div className="search-bar">
+              <Search size={18} className="search-icon" />
+              <input
+                type="text"
+                placeholder="Search by name, city, community..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                // ✅ FIX: Trigger search on Enter key
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") fetchProfiles(filters, e.target.value);
+                }}
+              />
+              {searchQuery && (
+                <button
+                  className="clear-search"
+                  onClick={() => {
+                    setSearchQuery("");
+                    fetchProfiles(filters, "");
+                  }}
+                >
+                  <X size={16} />
+                </button>
+              )}
             </div>
-            {sameCityMeta.message && <p className="same-city-note">{sameCityMeta.message}</p>}
+            <button
+              className={`filter-toggle-btn ${showFilter ? "active" : ""}`}
+              onClick={() => setShowFilter(!showFilter)}
+            >
+              <Filter size={18} />
+              Filters
+              {showFilter ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
+            </button>
           </div>
-        )}
 
-        {/* RESULTS COUNT */}
-        <div className="results-info">
-          <span>{filteredProfiles.length} profiles found</span>
-        </div>
+          {/* FILTER PANEL */}
+          {/* ✅ FIX: onApply passed as separate prop */}
+          {showFilter && (
+            <FilterPanel
+              filters={filters}
+              setFilters={setFilters}
+              onApply={handleApplyFilters}
+              onClose={() => setShowFilter(false)}
+            />
+          )}
 
-        {/* PROFILES GRID */}
-        {filteredProfiles.length > 0 ? (
-          <div className="profiles-grid">
-            {filteredProfiles.map((p) => (
-              <ProfileCard key={p._id} profile={p} />
+          {/* TABS */}
+          <div className="search-tabs">
+            {tabs.map((t) => (
+              <button
+                key={t.key}
+                className={`tab-btn ${activeTab === t.key ? "active" : ""}`}
+                onClick={() => setActiveTab(t.key)}
+              >
+                {t.label}
+              </button>
             ))}
           </div>
-        ) : (
-          <div className="no-results">
-            <Search size={48} color="#DDC3C3" />
-            <h3>{activeTab === "sameCity" ? "No same-city matches found" : "No profiles found"}</h3>
-            <p>
-              {activeTab === "sameCity"
-                ? (sameCityMeta.message || "Try broadening your filters or check back later for new profiles in your city.")
-                : "Try adjusting your filters or search query"}
-            </p>
+
+          {/* SAME CITY CONTEXT */}
+          {activeTab === "sameCity" && (
+            <div className="same-city-meta">
+              <div className="same-city-pill">
+                <MapPin size={15} />
+                <span>
+                  {sameCityMeta.city
+                    ? `Using your city: ${sameCityMeta.city}`
+                    : "Set your city in profile to enable same-city matches"}
+                </span>
+              </div>
+              {sameCityMeta.message && <p className="same-city-note">{sameCityMeta.message}</p>}
+            </div>
+          )}
+
+          {/* RESULTS COUNT */}
+          <div className="results-info">
+            {loading
+              ? <span>Loading profiles...</span>
+              : <span>{profiles.length} profiles found</span>
+            }
           </div>
-        )}
+
+          {/* PROFILES GRID */}
+          {!loading && profiles.length > 0 ? (
+            <div className="profiles-grid">
+              {profiles.map((p) => (
+                <ProfileCard key={p._id} profile={p} />
+              ))}
+            </div>
+          ) : !loading ? (
+            <div className="no-results">
+              <Search size={48} color="#DDC3C3" />
+              <h3>{activeTab === "sameCity" ? "No same-city matches found" : "No profiles found"}</h3>
+              <p>
+                {activeTab === "sameCity"
+                  ? (sameCityMeta.message || "Try broadening your filters or check back later.")
+                  : "Try adjusting your filters or search query"}
+              </p>
+            </div>
+          ) : null}
 
         </div>
       </div>
     </div>
   );
-
 };
 
 export default SearchBrowse;

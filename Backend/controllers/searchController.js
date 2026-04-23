@@ -8,11 +8,10 @@ const getOppositeGenderRegex = (genderValue) => {
 };
 
 // GET /api/search
-// Logic for searching users with dynamic filters and pagination
 exports.searchUsers = async (req, res) => {
   try {
     const {
-      minAge, maxAge, religion, city, state, 
+      minAge, maxAge, religion, city, state,
       education, jobType, income, gender, manglik,
       page = 1, limit = 10
     } = req.query;
@@ -22,29 +21,35 @@ exports.searchUsers = async (req, res) => {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
 
-    const query = { _id: { $ne: req.user.userId } };
+    // ✅ FIX: Build _id query correctly so $ne and $nin don't overwrite each other
+    const idQuery = { $ne: req.user.userId };
+    if (currentUser.blockedUsers && currentUser.blockedUsers.length > 0) {
+      idQuery.$nin = currentUser.blockedUsers;
+    }
 
-    // 1. Age to Date of Birth range conversion
+    const query = { _id: idQuery };
+
+    // Age to Date of Birth range conversion
     if (minAge || maxAge) {
       const currentYear = new Date().getFullYear();
       const birthQuery = {};
-      
+
       if (minAge) {
         const maxBirthDate = new Date();
         maxBirthDate.setFullYear(currentYear - parseInt(minAge));
         birthQuery.$lte = maxBirthDate;
       }
-      
+
       if (maxAge) {
         const minBirthDate = new Date();
         minBirthDate.setFullYear(currentYear - parseInt(maxAge) - 1);
         birthQuery.$gte = minBirthDate;
       }
-      
+
       query.dob = birthQuery;
     }
 
-    // 2. Dynamic filter building
+    // Dynamic filter building
     if (religion) query.religion = religion;
     if (city) query.city = city;
     if (state) query.state = state;
@@ -54,12 +59,7 @@ exports.searchUsers = async (req, res) => {
     if (gender) query.gender = new RegExp(`^${gender}$`, 'i');
     if (manglik) query.manglik = manglik;
 
-    // 3. Exclude blocked users
-    if (currentUser && currentUser.blockedUsers.length > 0) {
-      query._id.$nin = currentUser.blockedUsers;
-    }
-
-    // 4. Pagination & Execution
+    // Pagination & Execution
     const skip = (page - 1) * limit;
     const users = await User.find(query)
       .select('-password -otp -otpExpiry')
@@ -79,7 +79,7 @@ exports.searchUsers = async (req, res) => {
     });
 
   } catch (error) {
-    console.error("Search Error (mock fallback):", error.message);
+    console.error("Search Error:", error.message);
     res.status(200).json({ success: true, count: 0, data: [] });
   }
 };
@@ -130,35 +130,31 @@ exports.getRecommendedMatches = async (req, res) => {
 
     const { partnerPreferences, blockedUsers, gender } = user;
     const oppositeGenderRegex = getOppositeGenderRegex(gender);
-    
-    // Base Query: Opposite Gender & Not Blocked
-    const query = { 
-      _id: { $ne: req.user.userId },
-    };
+
+    // ✅ FIX: Correctly merge $ne and $nin
+    const idQuery = { $ne: req.user.userId };
+    if (blockedUsers && blockedUsers.length > 0) {
+      idQuery.$nin = blockedUsers;
+    }
+
+    const query = { _id: idQuery };
 
     if (oppositeGenderRegex) {
       query.gender = oppositeGenderRegex;
     }
 
-    if (blockedUsers && blockedUsers.length > 0) {
-      query._id = { ...query._id, $nin: blockedUsers };
-    }
-
-    // Fetch potential candidates (limit 100 for ranking)
     const candidates = await User.find(query)
       .select('-password -otp -otpExpiry')
       .limit(100);
 
-    // Calculate scores and sort
     const matchedUsers = candidates.map(candidate => {
       const score = calculateMatchScore(user, candidate);
-      return { 
-        ...candidate.toObject(), 
-        matchPercentage: score 
+      return {
+        ...candidate.toObject(),
+        matchPercentage: score
       };
     }).sort((a, b) => b.matchPercentage - a.matchPercentage);
 
-    // Return top 20
     const finalMatches = matchedUsers.slice(0, 20);
 
     res.status(200).json({
@@ -168,14 +164,8 @@ exports.getRecommendedMatches = async (req, res) => {
     });
 
   } catch (error) {
-    console.error("Recommended Matches Error (using mock fallback):", error.message);
-    // Provide some mock data if DB is down
-    const mockMatches = [
-      { _id: "1", name: "Ananya", gender: "female", city: "Mumbai", occupation: "Software Engineer", photos: [{url: "https://i.pravatar.cc/150?u=1"}] },
-      { _id: "2", name: "Ishaan", gender: "male", city: "Delhi", occupation: "Artist", photos: [{url: "https://i.pravatar.cc/150?u=2"}] },
-      { _id: "3", name: "Sanya", gender: "female", city: "Bangalore", occupation: "Doctor", photos: [{url: "https://i.pravatar.cc/150?u=3"}] }
-    ];
-    res.status(200).json({ success: true, count: 3, data: mockMatches });
+    console.error("Recommended Matches Error:", error.message);
+    res.status(200).json({ success: true, count: 0, data: [] });
   }
 };
 
@@ -195,8 +185,14 @@ exports.getSameCityMatches = async (req, res) => {
       });
     }
 
+    // ✅ FIX: Correctly merge $ne and $nin
+    const idQuery = { $ne: req.user.userId };
+    if (user.blockedUsers && user.blockedUsers.length > 0) {
+      idQuery.$nin = user.blockedUsers;
+    }
+
     const query = {
-      _id: { $ne: req.user.userId },
+      _id: idQuery,
       city: user.city
     };
 
@@ -230,10 +226,6 @@ exports.getSameCityMatches = async (req, res) => {
       query.dob = birthQuery;
     }
 
-    if (user.blockedUsers && user.blockedUsers.length > 0) {
-      query._id.$nin = user.blockedUsers;
-    }
-
     const matches = await User.find(query)
       .select('-password -otp -otpExpiry')
       .sort({ createdAt: -1 })
@@ -251,7 +243,6 @@ exports.getSameCityMatches = async (req, res) => {
   }
 };
 
-
 // GET /api/matches/near-you
 exports.getNearYouMatches = async (req, res) => {
   try {
@@ -260,11 +251,17 @@ exports.getNearYouMatches = async (req, res) => {
 
     const { city, state, gender, blockedUsers } = user;
     const oppositeGenderRegex = getOppositeGenderRegex(gender);
-    const baseQuery = { _id: { $ne: req.user.userId } };
+
+    // ✅ FIX: Correctly merge $ne and $nin
+    const idQuery = { $ne: req.user.userId };
+    if (blockedUsers && blockedUsers.length > 0) {
+      idQuery.$nin = blockedUsers;
+    }
+
+    const baseQuery = { _id: idQuery };
     if (oppositeGenderRegex) {
       baseQuery.gender = oppositeGenderRegex;
     }
-    if (blockedUsers && blockedUsers.length > 0) baseQuery._id.$nin = blockedUsers;
 
     let query = { ...baseQuery, city };
     let matches = await User.find(query).select('-password -otp -otpExpiry').limit(20);
@@ -277,7 +274,7 @@ exports.getNearYouMatches = async (req, res) => {
 
     res.status(200).json({ success: true, count: matches.length, data: matches });
   } catch (error) {
-    console.error("Near You Error (mock fallback):", error.message);
+    console.error("Near You Error:", error.message);
     res.status(200).json({ success: true, count: 0, data: [] });
   }
 };
@@ -289,8 +286,14 @@ exports.getNewJoins = async (req, res) => {
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
     const user = await User.findById(req.user.userId).select('blockedUsers');
-    const query = { _id: { $ne: req.user.userId }, createdAt: { $gte: sevenDaysAgo } };
-    if (user && user.blockedUsers.length > 0) query._id.$nin = user.blockedUsers;
+
+    // ✅ FIX: Correctly merge $ne and $nin
+    const idQuery = { $ne: req.user.userId };
+    if (user && user.blockedUsers && user.blockedUsers.length > 0) {
+      idQuery.$nin = user.blockedUsers;
+    }
+
+    const query = { _id: idQuery, createdAt: { $gte: sevenDaysAgo } };
 
     const matches = await User.find(query)
       .select('-password -otp -otpExpiry')
@@ -299,7 +302,7 @@ exports.getNewJoins = async (req, res) => {
 
     res.status(200).json({ success: true, count: matches.length, data: matches });
   } catch (error) {
-    console.error("New Joins Error (mock fallback):", error.message);
+    console.error("New Joins Error:", error.message);
     res.status(200).json({ success: true, count: 0, data: [] });
   }
 };
@@ -311,8 +314,14 @@ exports.getRecentlyActive = async (req, res) => {
     oneDayAgo.setHours(oneDayAgo.getHours() - 24);
 
     const user = await User.findById(req.user.userId).select('blockedUsers');
-    const query = { _id: { $ne: req.user.userId }, lastActive: { $gte: oneDayAgo } };
-    if (user && user.blockedUsers.length > 0) query._id.$nin = user.blockedUsers;
+
+    // ✅ FIX: Correctly merge $ne and $nin
+    const idQuery = { $ne: req.user.userId };
+    if (user && user.blockedUsers && user.blockedUsers.length > 0) {
+      idQuery.$nin = user.blockedUsers;
+    }
+
+    const query = { _id: idQuery, lastActive: { $gte: oneDayAgo } };
 
     const matches = await User.find(query)
       .select('-password -otp -otpExpiry')
@@ -321,7 +330,7 @@ exports.getRecentlyActive = async (req, res) => {
 
     res.status(200).json({ success: true, count: matches.length, data: matches });
   } catch (error) {
-    console.error("Recently Active Error (mock fallback):", error.message);
+    console.error("Recently Active Error:", error.message);
     res.status(200).json({ success: true, count: 0, data: [] });
   }
 };
