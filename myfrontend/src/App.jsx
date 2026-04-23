@@ -22,6 +22,7 @@ import FamilyMembers from "./components/FamilyMembers";
 import FamilyShortlist from "./components/FamilyShortlist";
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { SocketProvider } from './context/SocketContext'
+import Chatbot from './components/Chatbot'
 
 const PublicLayout = () => (
   <Routes>
@@ -61,6 +62,8 @@ const PrivateLayout = () => (
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </div>
+    {/* Floating AI Chatbot — visible on all private pages */}
+    <Chatbot />
   </div>
 )
 

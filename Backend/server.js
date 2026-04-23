@@ -68,6 +68,7 @@ const privacyRoutes = require('./routes/privacy');
 const userRoutes = require('./routes/user');
 const notificationRoutes = require('./routes/notification');
 const familyRoutes = require('./routes/family');
+const chatbotRoutes = require('./routes/chatbot');
 const updateLastActive = require('./middleware/activity');
 
 app.use('/api/auth', authRoutes);
@@ -81,6 +82,7 @@ app.use('/api/shortlist', updateLastActive, shortlistRoutes);
 app.use('/api/family', updateLastActive, familyRoutes);
 app.use('/api/chat', updateLastActive, chatRoutes);
 app.use('/api/notifications', updateLastActive, notificationRoutes);
+app.use('/api/chatbot', chatbotRoutes);
 
 // Test Route
 app.get('/', (req, res) => {
