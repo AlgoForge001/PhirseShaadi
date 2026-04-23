@@ -34,8 +34,20 @@ const ProfileCard = ({ profile, onInterest, onShortlist }) => {
     return city || state || "Location not specified";
   };
 
-  // ✅ FIX: Support both `name` and `fullName` fields from backend
+  // ✅ Support both `name` and `fullName` fields
   const displayName = profile.name || profile.fullName || "Member";
+
+  // ✅ FIX: Get primary photo first, fallback to first photo
+  const getPrimaryPhoto = () => {
+    if (!profile.photos || profile.photos.length === 0) return null;
+    const primary = profile.photos.find(p => p.isPrimary);
+    const photo = primary || profile.photos[0];
+    // ✅ FIX: Handle both string URLs and object with .url property
+    if (typeof photo === 'string') return photo;
+    return photo?.url || null;
+  };
+
+  const primaryPhotoUrl = getPrimaryPhoto();
 
   // Send Interest
   const handleInterest = async (e) => {
@@ -75,14 +87,26 @@ const ProfileCard = ({ profile, onInterest, onShortlist }) => {
     <div className="profile-card" onClick={() => navigate(`/profile/${profile._id}`)}>
       {/* FULL PHOTO BACKGROUND */}
       <div className="pc-photo-wrapper">
-        {profile.photos && profile.photos.length > 0 ? (
-          // ✅ FIX: Use displayName for alt text
-          <img src={profile.photos[0].url} alt={displayName} className="pc-main-photo" />
-        ) : (
-          <div className="pc-photo-placeholder">
-            <Users size={60} color="#6B3F69" />
-          </div>
-        )}
+        {primaryPhotoUrl ? (
+          // ✅ FIX: Use resolved primaryPhotoUrl, with onError fallback
+          <img
+            src={primaryPhotoUrl}
+            alt={displayName}
+            className="pc-main-photo"
+            onError={(e) => {
+              e.target.style.display = "none";
+              e.target.nextSibling && (e.target.nextSibling.style.display = "flex");
+            }}
+          />
+        ) : null}
+
+        {/* ✅ FIX: Placeholder shown when no photo OR image fails to load */}
+        <div
+          className="pc-photo-placeholder"
+          style={{ display: primaryPhotoUrl ? "none" : "flex" }}
+        >
+          <Users size={60} color="#6B3F69" />
+        </div>
 
         {/* OVERLAY CONTENT */}
         <div className="pc-overlay-gradient">
@@ -104,7 +128,6 @@ const ProfileCard = ({ profile, onInterest, onShortlist }) => {
           <div className="pc-bottom-wrap">
             <div className="pc-text-content">
               <div className="pc-name-row">
-                {/* ✅ FIX: Use displayName */}
                 <span className="pc-user-name">{displayName}</span>
                 {profile.isVerified && (
                   <CheckCircle size={14} fill="white" color="#6B3F69" className="pc-verified-icon" />
@@ -122,7 +145,6 @@ const ProfileCard = ({ profile, onInterest, onShortlist }) => {
             <div className="pc-real-actions">
               <button
                 className="pc-icon-action"
-                // ✅ FIX: Removed redundant e.stopPropagation() — navigate handles it
                 onClick={(e) => { e.stopPropagation(); navigate(`/chat/${profile._id}`); }}
                 title="Message"
               >
@@ -130,7 +152,6 @@ const ProfileCard = ({ profile, onInterest, onShortlist }) => {
               </button>
               <button
                 className={`pc-icon-action ${interested ? 'active' : ''}`}
-                // ✅ FIX: handleInterest already calls stopPropagation — no duplicate needed
                 onClick={handleInterest}
                 disabled={interested || interestLoading}
                 title="Send Interest"
