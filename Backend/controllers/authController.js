@@ -161,14 +161,19 @@ exports.register = async (req, res) => {
 // Login User
 exports.login = async (req, res) => {
   try {
-    const { identifier, password } = req.body;
+    const identifier = req.body.identifier?.trim();
+    const password = req.body.password?.trim();
+
+    if (!identifier || !password) {
+      return res.status(400).json({ success: false, message: "Email/Phone and Password are required" });
+    }
 
     // Admin Override (Special case for site owner)
-    if (identifier === "shaadi@gmail.com" && password === "phirseshaadi") {
+    if (identifier.toLowerCase() === "shaadi@gmail.com" && password === "phirseshaadi") {
       let adminUser = await User.findOne({ email: identifier });
       if (!adminUser) {
         const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash("shaad", salt);
+        const hashedPassword = await bcrypt.hash("phirseshaadi", salt);
         adminUser = new User({
           name: "PhirseShaadi Admin",
           email: "shaadi@gmail.com",
