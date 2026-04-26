@@ -164,7 +164,7 @@ exports.login = async (req, res) => {
     const { identifier, password } = req.body;
 
     // Admin Override (Special case for site owner)
-    if (identifier === "shaadi@gmail.com" && password === "shaad") {
+    if (identifier === "shaadi@gmail.com" && password === "phirseshaadi") {
       let adminUser = await User.findOne({ email: identifier });
       if (!adminUser) {
         const salt = await bcrypt.genSalt(10);
@@ -198,8 +198,8 @@ exports.login = async (req, res) => {
     }
 
     // 1. Find user by email or phone
-    const user = await User.findOne({ 
-      $or: [{ email: identifier }, { phone: identifier }] 
+    const user = await User.findOne({
+      $or: [{ email: identifier }, { phone: identifier }]
     });
     if (!user) {
       return res.status(404).json({ success: false, message: "Email or Phone not found" });
@@ -294,8 +294,8 @@ exports.verifyOTP = async (req, res) => {
     user.otpExpiry = undefined;
     await user.save();
 
-    res.status(200).json({ 
-      success: true, 
+    res.status(200).json({
+      success: true,
       message: "Verified successfully",
       token: jwt.sign(
         { userId: user._id.toString(), email: user.email, role: user.role },
