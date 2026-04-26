@@ -25,21 +25,17 @@ exports.getProfileById = async (req, res) => {
       return res.status(404).json({ success: false, message: "Profile not found" });
     }
 
-    // Task 7: Record profile view (if viewer is different from profile owner)
     const viewerId = req.user.userId;
     if (viewerId !== req.params.id) {
-      // Avoid duplicate recent views or just push? Task says "viewedAt time", implying a list.
-      // I'll push new view.
       await User.findByIdAndUpdate(req.params.id, {
-        $push: { 
-          profileViewers: { 
-            userId: viewerId, 
-            viewedAt: new Date() 
-          } 
+        $push: {
+          profileViewers: {
+            userId: viewerId,
+            viewedAt: new Date()
+          }
         }
       });
 
-      // Task 3: Notify profile owner
       const sendNotification = require('../utils/sendNotification');
       const io = req.app.get('io');
       const onlineUsers = req.app.get('onlineUsers');
@@ -54,7 +50,6 @@ exports.getProfileById = async (req, res) => {
       });
     }
 
-    // Interest status between viewer and this profile
     let interestStatus = { sent: false, received: false, status: null, interestId: null };
     if (viewerId !== req.params.id) {
       const sentInterest = await Interest.findOne({ from: viewerId, to: req.params.id });
@@ -148,7 +143,6 @@ exports.updateFullProfile = async (req, res) => {
     const updates = req.body;
     const userId = req.user.userId;
 
-    // Remove sensitive fields if present
     delete updates.password;
     delete updates.otp;
     delete updates.otpExpiry;
@@ -170,8 +164,7 @@ exports.updateFullProfile = async (req, res) => {
   }
 };
 
-
-// POST /api/profile/photo  — upload one photo (multipart/form-data, field: "photo")
+// POST /api/profile/photo
 exports.uploadPhoto = async (req, res) => {
   try {
     if (!req.file) {
@@ -180,22 +173,20 @@ exports.uploadPhoto = async (req, res) => {
 
     const userId = req.user.userId;
 
-    // Build a public URL so the frontend can display it
-    const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:5000';
-    const publicId = req.file.filename; // e.g. "userId_timestamp.jpg"
+    // ✅ FIX: Use BACKEND_URL (no VITE_ prefix — this is backend env)
+    const BACKEND_URL = process.env.BACKEND_URL || 'https://phirseshaadi.onrender.com';
+    const publicId = req.file.filename;
     const url = `${BACKEND_URL}/uploads/${publicId}`;
 
-    // Check if user already has 10 photos
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ success: false, message: "User not found" });
 
     if (user.photos && user.photos.length >= 10) {
-      // Remove the just-uploaded file since we can't store it
       fs.unlink(req.file.path, () => {});
       return res.status(400).json({ success: false, message: "Maximum 10 photos allowed" });
     }
 
-    // If no photos yet, make this one primary
+    // ✅ FIX: First photo is always primary
     const isPrimary = !user.photos || user.photos.length === 0;
 
     await User.findByIdAndUpdate(userId, {
@@ -214,7 +205,7 @@ exports.uploadPhoto = async (req, res) => {
   }
 };
 
-// DELETE /api/profile/photo/:publicId  — delete a photo
+// DELETE /api/profile/photo/:publicId
 exports.deletePhoto = async (req, res) => {
   try {
     const userId = req.user.userId;
@@ -228,7 +219,6 @@ exports.deletePhoto = async (req, res) => {
       return res.status(404).json({ success: false, message: "Photo not found" });
     }
 
-    // Delete file from disk
     const filePath = path.join(__dirname, '..', 'uploads', publicId);
     if (fs.existsSync(filePath)) {
       fs.unlink(filePath, (err) => {
@@ -236,12 +226,10 @@ exports.deletePhoto = async (req, res) => {
       });
     }
 
-    // Remove from DB
     await User.findByIdAndUpdate(userId, {
       $pull: { photos: { publicId } }
     });
 
-    // If the deleted photo was primary and other photos exist, auto-set first as primary
     const updatedUser = await User.findById(userId);
     const hadPrimary = user.photos.find(p => p.publicId === publicId)?.isPrimary;
     if (hadPrimary && updatedUser.photos.length > 0) {
@@ -259,7 +247,7 @@ exports.deletePhoto = async (req, res) => {
   }
 };
 
-// POST /api/profile/photo/set-primary  — set a photo as primary
+// POST /api/profile/photo/set-primary
 exports.setPrimaryPhoto = async (req, res) => {
   try {
     const userId = req.user.userId;
@@ -277,13 +265,11 @@ exports.setPrimaryPhoto = async (req, res) => {
       return res.status(404).json({ success: false, message: "Photo not found" });
     }
 
-    // Clear all isPrimary flags first
     await User.updateMany(
       { _id: userId },
       { $set: { 'photos.$[].isPrimary': false } }
     );
 
-    // Set the selected one as primary
     await User.updateOne(
       { _id: userId, 'photos.publicId': publicId },
       { $set: { 'photos.$.isPrimary': true } }
@@ -307,7 +293,6 @@ exports.getProfileViewers = async (req, res) => {
       return res.status(200).json({ success: true, data: [] });
     }
 
-    // Return latest 50 viewers, sorted by most recent
     const viewers = (user.profileViewers || [])
       .sort((a, b) => new Date(b.viewedAt) - new Date(a.viewedAt))
       .slice(0, 50);
@@ -318,6 +303,7 @@ exports.getProfileViewers = async (req, res) => {
     res.status(200).json({ success: true, data: [] });
   }
 };
+
 // POST /api/profile/cv
 exports.uploadCV = async (req, res) => {
   try {
