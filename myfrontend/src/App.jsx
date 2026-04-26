@@ -83,6 +83,11 @@ const AppRouter = () => {
     return <AdminDashboard />;
   }
 
+  // Redirect admin away from the regular user dashboard
+  if (isLoggedIn && user?.role === 'admin' && location.pathname === '/dashboard') {
+    return <Navigate to="/admin-dashboard" replace />;
+  }
+
   return isPublicRoute ? <PublicLayout /> : <PrivateLayout />
 }
 

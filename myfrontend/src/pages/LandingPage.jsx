@@ -13,6 +13,8 @@ import "./LandingPage.css";
 const LandingPage = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
+  const userString = localStorage.getItem("user");
+  const user = userString ? JSON.parse(userString) : null;
   const [expandedFaq, setExpandedFaq] = useState(null);
 
   const faqItems = [
@@ -80,7 +82,7 @@ const LandingPage = () => {
         <div className="lp-wrap hero-content-wrap">
           <div className="hero-copy center">
             <div className="hero-heart-row">
-              <img src="https://img2.shaadi.com/assests/2025/images/homepage/Heart_Icon_Flat.svg" alt="Heart" style={{height: 44, marginRight: 12}} />
+              <img src="https://img2.shaadi.com/assests/2025/images/homepage/Heart_Icon_Flat.svg" alt="Heart" style={{ height: 44, marginRight: 12 }} />
               <p className="hero-kicker">India's Most Trusted Matrimonial Platform</p>
             </div>
             <h1 className="hero-main-title">Find Your Forever</h1>
@@ -93,7 +95,7 @@ const LandingPage = () => {
               <span><Sparkles size={15} /> Privacy Protected</span>
             </div>
             <div className="hero-login-wrap">
-              <button className="btn solid hero-login-btn" onClick={() => navigate("/register")}> 
+              <button className="btn solid hero-login-btn" onClick={() => navigate("/register")}>
                 Start Today <ArrowRight size={16} />
               </button>
             </div>
@@ -219,7 +221,7 @@ const LandingPage = () => {
             <h3>Ready to Start Your Journey?</h3>
             <p>Join thousands of members finding their perfect match on PhirseShaadi.</p>
           </div>
-          <button className="btn solid cta-button" onClick={() => navigate(token ? "/dashboard" : "/register")}>
+          <button className="btn solid cta-button" onClick={() => navigate(token ? (user?.role === 'admin' ? '/admin-dashboard' : '/dashboard') : "/register")}>
             {token ? "Go to Dashboard" : "Create Free Profile"} <ArrowRight size={16} />
           </button>
         </div>
