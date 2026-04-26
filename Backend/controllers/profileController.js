@@ -318,3 +318,25 @@ exports.getProfileViewers = async (req, res) => {
     res.status(200).json({ success: true, data: [] });
   }
 };
+// POST /api/profile/cv
+exports.uploadCV = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: "No CV file uploaded" });
+    }
+
+    const userId = req.user.userId;
+    const cvUrl = `/uploads/cvs/${req.file.filename}`;
+
+    await User.findByIdAndUpdate(userId, { $set: { cvUrl } });
+
+    res.status(200).json({ 
+      success: true, 
+      message: "CV uploaded successfully", 
+      cvUrl 
+    });
+  } catch (error) {
+    console.error("Upload CV Error:", error.message);
+    res.status(500).json({ success: false, message: "Upload failed", error: error.message });
+  }
+};

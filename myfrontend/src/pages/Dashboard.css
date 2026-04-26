@@ -213,6 +213,80 @@
   color: #2a3341;
 }
 
+.dashboard-smart-matches {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border-radius: 28px;
+  padding: 30px;
+  color: white;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.25);
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 215, 0, 0.2);
+}
+
+.dashboard-smart-matches::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,215,0,0.05) 0%, transparent 60%);
+  animation: pulse-gold 8s infinite alternate;
+}
+
+@keyframes pulse-gold {
+  from { transform: scale(1); opacity: 0.3; }
+  to { transform: scale(1.1); opacity: 0.6; }
+}
+
+.section-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dashboard-smart-matches h2 {
+  color: white !important;
+  margin: 0;
+}
+
+.premium-tag {
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  color: #333;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+}
+
+.section-subtitle {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+  margin-top: 4px;
+  margin-bottom: 24px;
+  max-width: 600px;
+}
+
+.matches-grid-premium {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.empty-recommendations {
+  grid-column: 1 / -1;
+  padding: 36px 14px;
+  text-align: center;
+  background: #f9fafb;
+  border: 1px dashed #d9cde1;
+  border-radius: 16px;
+  color: var(--muted);
+}
+
 .dashboard-recommendations {
   background: linear-gradient(180deg, #ffffff 0%, #fbf8fd 100%);
   border: 1px solid rgba(230, 212, 236, 0.95);
@@ -249,16 +323,6 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 14px;
-}
-
-.empty-recommendations {
-  grid-column: 1 / -1;
-  padding: 36px 14px;
-  text-align: center;
-  background: #f9fafb;
-  border: 1px dashed #d9cde1;
-  border-radius: 16px;
-  color: var(--muted);
 }
 
 .premium-banner-minimal {

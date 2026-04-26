@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import {
   Heart, Edit, ChevronRight, Zap, MapPin,
   Briefcase, CheckCircle, Star, MessageCircle, 
-  Search, User, Bell
+  Search, User, Bell, Sparkles
 } from "lucide-react";
 import api from "../utils/api";
 
@@ -16,6 +16,7 @@ const Dashboard = () => {
 
   const [userData, setUserData] = useState(null);
   const [recommendations, setRecommendations] = useState([]);
+  const [smartMatches, setSmartMatches] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -23,14 +24,16 @@ const Dashboard = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const [profileRes, matchRes] = await Promise.all([
+        const [profileRes, matchRes, smartMatchRes] = await Promise.all([
           api.get("/profile/me"),
-          api.get("/matches/recommended").catch(() => ({ data: { data: [] } }))
+          api.get("/matches/recommended").catch(() => ({ data: { data: [] } })),
+          api.get("/matches/smart-match").catch(() => ({ data: { data: [] } }))
         ]);
         
         if (profileRes.data.profile) {
           setUserData(profileRes.data.profile);
           setRecommendations(matchRes.data.data?.slice(0, 4) || []);
+          setSmartMatches(smartMatchRes.data.data || []);
         } else {
           // If no profile data, it's a new Clerk user
           navigate("/profile-creation");
@@ -126,6 +129,25 @@ const Dashboard = () => {
             </div>
           </div>
         </section>
+
+        {/* SMART AI MATCHES */}
+        {smartMatches.length > 0 && (
+          <section className="dashboard-smart-matches">
+            <div className="section-header">
+              <div className="section-title-wrap">
+                <Sparkles size={24} color="#FFD700" fill="#FFD700" />
+                <h2>AI Deep Compatibility</h2>
+              </div>
+              <span className="premium-tag">USP Exclusive</span>
+            </div>
+            <p className="section-subtitle">Our AI has analyzed your bio and preferences to find these high-potential connections.</p>
+            <div className="matches-grid-premium">
+              {smartMatches.map(profile => (
+                <ProfileCard key={profile._id} profile={profile} />
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* RECOMMENDATIONS */}
         <section className="dashboard-recommendations">

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Heart, MapPin, CheckCircle,
-  Bookmark, Users, MessageCircle
+  Bookmark, Users, MessageCircle, Sparkles, Brain
 } from "lucide-react";
 import api from "../utils/api";
 import { useAuth } from "../context/AuthContext";
@@ -93,12 +93,35 @@ const ProfileCard = ({ profile, onInterest, onShortlist }) => {
                 <CheckCircle size={14} fill="#6B3F69" color="white" />
               </span>
             )}
+            {profile.isSmartMatch && (
+              <span className="pc-smart-badge">
+                <Sparkles size={12} fill="white" /> Smart AI Match
+              </span>
+            )}
             {profile.matchPercentage !== undefined && (
               <span className={`pc-match-badge ${profile.matchPercentage >= 80 ? 'high' : ''}`}>
                 {profile.matchPercentage}% Match
               </span>
             )}
           </div>
+
+          {/* AI INSIGHTS OVERLAY (if smart match) */}
+          {profile.isSmartMatch && profile.aiInsight && (
+            <div className="pc-ai-insight">
+              <div className="ai-insight-header">
+                <Brain size={14} color="#6B3F69" />
+                <span>AI Insight</span>
+              </div>
+              <p>{profile.aiInsight}</p>
+              {profile.aiTags && (
+                <div className="ai-tags">
+                  {profile.aiTags.map((tag, i) => (
+                    <span key={i} className="ai-tag">{tag}</span>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
 
           {/* BOTTOM INFO */}
           <div className="pc-bottom-wrap">

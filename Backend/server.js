@@ -69,6 +69,7 @@ const userRoutes = require('./routes/user');
 const notificationRoutes = require('./routes/notification');
 const familyRoutes = require('./routes/family');
 const chatbotRoutes = require('./routes/chatbot');
+const adminRoutes = require('./routes/admin');
 const updateLastActive = require('./middleware/activity');
 
 app.use('/api/auth', authRoutes);
@@ -83,6 +84,7 @@ app.use('/api/family', updateLastActive, familyRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/notifications', updateLastActive, notificationRoutes);
 app.use('/api/chatbot', chatbotRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Test Route
 app.get('/', (req, res) => {
@@ -109,6 +111,25 @@ io.on('connection', (socket) => {
   socket.on('message:send', async (data) => {
     try {
       const { from, to, text } = data;
+
+      // Safety: Check for phone numbers or emails (Personal Info Protection)
+      const phoneRegex = /\b\d{10}\b/;
+      const emailRegex = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/;
+      
+      if (phoneRegex.test(text) || emailRegex.test(text)) {
+        return socket.emit('error', { 
+          message: "For safety reasons, sharing phone numbers or emails is not allowed. Please use the platform chat." 
+        });
+      }
+
+      // AI Safety Check: Catch "nine eight...", "user at gmail", etc.
+      const { checkMessageSafety } = require('./utils/geminiAI');
+      const isUnsafe = await checkMessageSafety(text);
+      if (isUnsafe) {
+        return socket.emit('error', { 
+          message: "Our AI detected contact information in your message. Sharing personal contact info is restricted for safety." 
+        });
+      }
 
       // Task 7: Check if interest is accepted before allowing chat
       const interest = await Interest.findOne({

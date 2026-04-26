@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Heart, ChevronRight, ChevronLeft, Edit, MapPin,
-  Briefcase, GraduationCap, Users, Sun, CheckCircle
+  Briefcase, GraduationCap, Users, Sun, CheckCircle,
+  Upload, X, Star, Trash2, FileText
 } from "lucide-react";
 import api from "../utils/api";
 
@@ -11,7 +12,7 @@ import "./EditProfile.css";
 const EditProfile = () => {
   const navigate = useNavigate();
 
-  const [step, setStep] = useState(1); // 4 steps: Basic, Education, Family, Horoscope
+  const [step, setStep] = useState(1); // 5 steps: Basic, Education, Family, Horoscope, Photos
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -58,7 +59,14 @@ const EditProfile = () => {
     gotra: "",
     nakshatra: "",
     rashi: "",
+    // Photos & CV
+    photos: [],
+    cvUrl: "",
   });
+
+  const [cvFile, setCvFile] = useState(null);
+  const [uploadingCv, setUploadingCv] = useState(false);
+  const [uploadingPhotoIndex, setUploadingPhotoIndex] = useState(null);
 
   // ── FETCH PROFILE DATA ──
   useEffect(() => {
@@ -77,7 +85,8 @@ const EditProfile = () => {
           fullName: profileData.fullName || profileData.name || prev.fullName || "",
           bio: profileData.bio || "",
           aboutFamily: profileData.aboutFamily || "",
-          // Ensure other fields are strings to avoid crashes
+          photos: profileData.photos || [],
+          cvUrl: profileData.cvUrl || "",
         }));
       } catch (err) {
         console.error("Failed to load profile:", err);
@@ -191,6 +200,9 @@ const EditProfile = () => {
       }
 
       if (step === 4) {
+        setSaving(false);
+        handleNext();
+      } else if (step === 5) {
         setTimeout(() => {
           setSaving(false);
           navigate("/my-profile");
@@ -202,6 +214,116 @@ const EditProfile = () => {
     } catch (err) {
       console.error("Failed to save profile", err);
       setSaving(false);
+    }
+  };
+
+  // ── CV UPLOAD ──
+  const handleCvChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const allowed = [".pdf", ".doc", ".docx"];
+      const ext = file.name.substring(file.name.lastIndexOf(".")).toLowerCase();
+      if (!allowed.includes(ext)) {
+        alert("Only PDF, DOC, and DOCX files are allowed.");
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        alert("File size must be under 5MB.");
+        return;
+      }
+      setCvFile(file);
+    }
+  };
+
+  const uploadCv = async () => {
+    if (!cvFile) return;
+    setUploadingCv(true);
+    try {
+      const formData = new FormData();
+      formData.append("cvFile", cvFile);
+      const res = await api.post("/profile/cv", formData, {
+        headers: { "Content-Type": "multipart/form-data" }
+      });
+      if (res.data.success) {
+        setFormData(p => ({ ...p, cvUrl: res.data.cvUrl }));
+        setCvFile(null);
+        alert("CV uploaded successfully!");
+      }
+    } catch (err) {
+      console.error("CV Upload Failed", err);
+      alert("Failed to upload CV.");
+    } finally {
+      setUploadingCv(false);
+    }
+  };
+
+  // ── PHOTO MANAGEMENT ──
+  const handlePhotoUpload = async (e) => {
+    const files = Array.from(e.target.files);
+    if (files.length === 0) return;
+
+    if (formData.photos.length + files.length > 10) {
+      alert("Maximum 10 photos allowed.");
+      return;
+    }
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const fData = new FormData();
+      fData.append("photo", file);
+
+      try {
+        setUploadingPhotoIndex(formData.photos.length + i);
+        const res = await api.post("/profile/photo", fData, {
+          headers: { "Content-Type": "multipart/form-data" }
+        });
+        if (res.data.success) {
+          setFormData(p => ({
+            ...p,
+            photos: [...p.photos, {
+              url: res.data.url,
+              publicId: res.data.publicId,
+              isPrimary: p.photos.length === 0
+            }]
+          }));
+        }
+      } catch (err) {
+        console.error("Photo Upload Failed", err);
+      } finally {
+        setUploadingPhotoIndex(null);
+      }
+    }
+  };
+
+  const handleDeletePhoto = async (publicId) => {
+    if (!window.confirm("Are you sure you want to delete this photo?")) return;
+    try {
+      const res = await api.delete(`/profile/photo/${publicId}`);
+      if (res.data.success) {
+        setFormData(p => ({
+          ...p,
+          photos: p.photos.filter(ph => ph.publicId !== publicId)
+        }));
+      }
+    } catch (err) {
+      console.error("Delete Photo Failed", err);
+    }
+  };
+
+  const handleSetPrimaryPhoto = async (publicId) => {
+    try {
+      const res = await api.post("/profile/photo/set-primary", { publicId });
+      if (res.data.success) {
+        setFormData(p => ({
+          ...p,
+          photos: p.photos.map(ph => ({
+            ...ph,
+            isPrimary: ph.publicId === publicId
+          }))
+        }));
+      }
+    } catch (err) {
+      console.error("Set Primary Failed", err);
     }
   };
 
@@ -228,6 +350,7 @@ const EditProfile = () => {
     { label: "Education", icon: <GraduationCap size={16} /> },
     { label: "Family", icon: <Heart size={16} /> },
     { label: "Horoscope", icon: <Sun size={16} /> },
+    { label: "Photos", icon: <Upload size={16} /> },
   ];
 
   if (loading) {
@@ -249,12 +372,12 @@ const EditProfile = () => {
         </div>
         <div className="ep-progress">
           <div className="ep-progress-bar">
-            <div
+          <div
               className="ep-progress-fill"
-              style={{ width: `${(step / 4) * 100}%` }}
+              style={{ width: `${(step / 5) * 100}%` }}
             />
           </div>
-          <span>{Math.round((step / 4) * 100)}% Complete</span>
+          <span>{Math.round((step / 5) * 100)}% Complete</span>
         </div>
       </div>
 
@@ -494,17 +617,43 @@ const EditProfile = () => {
                     />
                   </div>
                 </div>
+                  <div className="form-group">
+                    <label>Annual Income</label>
+                    <div className="input-wrap">
+                      <select name="annualIncome" value={formData.annualIncome} onChange={handleChange}>
+                        <option value="">Select Income</option>
+                        {incomes.map((i) => <option key={i} value={i}>{i}</option>)}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                {/* CV UPLOAD */}
                 <div className="form-group">
-                  <label>Annual Income</label>
-                  <div className="input-wrap">
-                    <select name="annualIncome" value={formData.annualIncome} onChange={handleChange}>
-                      <option value="">Select Income</option>
-                      {incomes.map((i) => <option key={i} value={i}>{i}</option>)}
-                    </select>
+                  <label>Update CV / Resume (PDF/DOC)</label>
+                  <div className="cv-upload-area">
+                    <input 
+                      type="file" 
+                      accept=".pdf,.doc,.docx" 
+                      onChange={handleCvChange}
+                      id="cv-upload-input"
+                      hidden
+                    />
+                    <div className="cv-upload-box" onClick={() => document.getElementById('cv-upload-input').click()}>
+                      <FileText size={20} />
+                      <span>{cvFile ? cvFile.name : formData.cvUrl ? "CV Already Uploaded (Click to change)" : "Click to upload CV"}</span>
+                    </div>
+                    {cvFile && (
+                      <button className="btn-upload-cv" onClick={uploadCv} disabled={uploadingCv}>
+                        {uploadingCv ? "Uploading..." : "Upload Now"}
+                      </button>
+                    )}
+                    {formData.cvUrl && !cvFile && (
+                      <a href={formData.cvUrl} target="_blank" rel="noreferrer" className="view-cv-link">View Current CV</a>
+                    )}
                   </div>
                 </div>
               </div>
-            </div>
           )}
 
           {/* ── STEP 3 — FAMILY ── */}
@@ -701,6 +850,68 @@ const EditProfile = () => {
             </div>
           )}
 
+          {/* ── STEP 5 — PHOTOS ── */}
+          {step === 5 && (
+            <div className="ep-form">
+              <h2><Upload size={18} /> Manage Photos</h2>
+              <p className="ep-form-desc">Add or remove photos. Your primary photo is shown in search results.</p>
+
+              <div className="photo-upload-section">
+                <input 
+                  type="file" 
+                  multiple 
+                  accept="image/*" 
+                  onChange={handlePhotoUpload}
+                  id="photo-upload-input"
+                  hidden
+                />
+                <button 
+                  className="btn-add-photos"
+                  onClick={() => document.getElementById('photo-upload-input').click()}
+                >
+                  <Upload size={18} /> Add Photos
+                </button>
+              </div>
+
+              <div className="ep-photo-grid">
+                {formData.photos.map((ph, idx) => (
+                  <div key={idx} className={`ep-photo-thumb ${ph.isPrimary ? 'primary' : ''}`}>
+                    <img src={ph.url} alt="Profile" />
+                    <div className="ep-photo-actions">
+                      <button 
+                        className={`action-btn star ${ph.isPrimary ? 'active' : ''}`}
+                        onClick={() => handleSetPrimaryPhoto(ph.publicId)}
+                        title="Set as Primary"
+                      >
+                        <Star size={14} fill={ph.isPrimary ? "#ffc107" : "none"} />
+                      </button>
+                      <button 
+                        className="action-btn delete"
+                        onClick={() => handleDeletePhoto(ph.publicId)}
+                        title="Delete Photo"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                    {ph.isPrimary && <div className="primary-label">Primary</div>}
+                  </div>
+                ))}
+                {uploadingPhotoIndex !== null && (
+                  <div className="ep-photo-thumb uploading">
+                    <div className="ep-spinner-small"></div>
+                  </div>
+                )}
+              </div>
+
+              {formData.photos.length === 0 && (
+                <div className="no-photos-msg">
+                  <Heart size={48} color="#ddd" />
+                  <p>You haven't added any photos yet.</p>
+                </div>
+              )}
+            </div>
+          )}
+
           {/* NAVIGATION */}
           <div className="ep-nav">
             {step > 1 && (
@@ -713,7 +924,7 @@ const EditProfile = () => {
                 <span className="spinner" />
               ) : (
                 <>
-                  {step === 4 ? "Save Changes" : "Continue"}
+                  {step === 5 ? "Finish" : "Continue"}
                   <ChevronRight size={17} />
                 </>
               )}

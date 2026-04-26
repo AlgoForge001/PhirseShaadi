@@ -202,7 +202,6 @@ const SearchBrowse = () => {
     { key: "sameCity", label: "Same City Match" },
     { key: "recommended", label: "Smart Matches" },
     { key: "new", label: "New Joins" },
-    { key: "nearby", label: "Near You" },
   ];
 
   // ── FETCH PROFILES FROM BACKEND ──

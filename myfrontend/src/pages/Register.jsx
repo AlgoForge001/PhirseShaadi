@@ -448,10 +448,16 @@ const Register = () => {
               <div className="form-group">
                 <label>Marriage Type <span className="req">*</span></label>
                 <div className="gender-options">
-                  <button className={`gender-btn ${!formData.isSecondMarriage ? 'selected' : ''}`} onClick={() => setFormData({...formData, isSecondMarriage: false})}>
+                  <button 
+                    className={`gender-btn ${!formData.isSecondMarriage ? 'selected' : ''}`} 
+                    onClick={() => setFormData({...formData, isSecondMarriage: false, maritalStatus: 'Never Married'})}
+                  >
                     💍 First Marriage
                   </button>
-                  <button className={`gender-btn ${formData.isSecondMarriage ? 'selected' : ''}`} onClick={() => setFormData({...formData, isSecondMarriage: true})}>
+                  <button 
+                    className={`gender-btn ${formData.isSecondMarriage ? 'selected' : ''}`} 
+                    onClick={() => setFormData({...formData, isSecondMarriage: true, maritalStatus: ''})}
+                  >
                     🔁 Second Marriage
                   </button>
                 </div>
@@ -552,10 +558,23 @@ const Register = () => {
               <div className="form-row">
                 <div className="form-group">
                   <label>Marital Status <span className="req">*</span></label>
-                  <div className={`input-wrap ${errors.maritalStatus ? 'error' : ''}`}>
-                    <select name="maritalStatus" value={formData.maritalStatus} onChange={handleChange}>
-                      <option value="">Select</option>
-                      {maritalStatuses.map(m => <option key={m} value={m}>{m}</option>)}
+                  <div className={`input-wrap ${errors.maritalStatus ? 'error' : ''} ${!formData.isSecondMarriage ? 'disabled' : ''}`}>
+                    <select 
+                      name="maritalStatus" 
+                      value={formData.maritalStatus} 
+                      onChange={handleChange}
+                      disabled={!formData.isSecondMarriage}
+                    >
+                      {!formData.isSecondMarriage ? (
+                        <option value="Never Married">Never Married</option>
+                      ) : (
+                        <>
+                          <option value="">Select</option>
+                          {maritalStatuses.filter(s => s !== "Never Married").map(m => (
+                            <option key={m} value={m}>{m}</option>
+                          ))}
+                        </>
+                      )}
                     </select>
                   </div>
                   {errors.maritalStatus && <span className="err-msg">{errors.maritalStatus}</span>}

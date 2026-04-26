@@ -261,6 +261,20 @@
   transform: translateY(-2px);
 }
 
+.input-wrap.disabled {
+  background: #f8f8f8;
+  opacity: 0.8;
+  cursor: not-allowed;
+  border-color: #e8dde8;
+  transform: none !important;
+}
+
+.input-wrap.disabled select,
+.input-wrap.disabled input {
+  cursor: not-allowed;
+  color: #a376a2;
+}
+
 .input-wrap.error {
   border-color: #e53935;
   box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.08);

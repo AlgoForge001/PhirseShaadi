@@ -75,8 +75,12 @@ const Login = () => {
         // Use AuthContext login to save token + user in state & localStorage
         login(res.data.token, res.data.user);
         
-        // Navigate to dashboard
-        navigate("/dashboard");
+        // Navigate based on role
+        if (res.data.user.role === 'admin') {
+          navigate("/admin-dashboard");
+        } else {
+          navigate("/dashboard");
+        }
       } else {
         setApiError(res.data.message || "Login failed. Please try again.");
       }

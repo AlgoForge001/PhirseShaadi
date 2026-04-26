@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const { analyzeCompatibility } = require('../utils/geminiAI');
 
 const getOppositeGenderRegex = (genderValue) => {
   const value = (genderValue || '').toString().trim().toLowerCase();
@@ -243,41 +244,6 @@ exports.getSameCityMatches = async (req, res) => {
   }
 };
 
-// GET /api/matches/near-you
-exports.getNearYouMatches = async (req, res) => {
-  try {
-    const user = await User.findById(req.user.userId).select('city state gender blockedUsers');
-    if (!user) return res.status(404).json({ success: false, message: "User not found" });
-
-    const { city, state, gender, blockedUsers } = user;
-    const oppositeGenderRegex = getOppositeGenderRegex(gender);
-
-    // ✅ FIX: Correctly merge $ne and $nin
-    const idQuery = { $ne: req.user.userId };
-    if (blockedUsers && blockedUsers.length > 0) {
-      idQuery.$nin = blockedUsers;
-    }
-
-    const baseQuery = { _id: idQuery };
-    if (oppositeGenderRegex) {
-      baseQuery.gender = oppositeGenderRegex;
-    }
-
-    let query = { ...baseQuery, city };
-    let matches = await User.find(query).select('-password -otp -otpExpiry').limit(20);
-
-    if (matches.length < 10) {
-      const stateQuery = { ...baseQuery, state, city: { $ne: city } };
-      const stateMatches = await User.find(stateQuery).select('-password -otp -otpExpiry').limit(20 - matches.length);
-      matches = [...matches, ...stateMatches];
-    }
-
-    res.status(200).json({ success: true, count: matches.length, data: matches });
-  } catch (error) {
-    console.error("Near You Error:", error.message);
-    res.status(200).json({ success: true, count: 0, data: [] });
-  }
-};
 
 // GET /api/matches/new-joins
 exports.getNewJoins = async (req, res) => {
@@ -285,7 +251,7 @@ exports.getNewJoins = async (req, res) => {
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-    const user = await User.findById(req.user.userId).select('blockedUsers');
+    const user = await User.findById(req.user.userId).select('blockedUsers gender');
 
     // ✅ FIX: Correctly merge $ne and $nin
     const idQuery = { $ne: req.user.userId };
@@ -294,6 +260,13 @@ exports.getNewJoins = async (req, res) => {
     }
 
     const query = { _id: idQuery, createdAt: { $gte: sevenDaysAgo } };
+
+    if (user) {
+      const oppositeGenderRegex = getOppositeGenderRegex(user.gender);
+      if (oppositeGenderRegex) {
+        query.gender = oppositeGenderRegex;
+      }
+    }
 
     const matches = await User.find(query)
       .select('-password -otp -otpExpiry')
@@ -331,6 +304,70 @@ exports.getRecentlyActive = async (req, res) => {
     res.status(200).json({ success: true, count: matches.length, data: matches });
   } catch (error) {
     console.error("Recently Active Error:", error.message);
+    res.status(200).json({ success: true, count: 0, data: [] });
+  }
+};
+
+// GET /api/matches/smart-match
+exports.getSmartMatches = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.userId);
+    if (!user) return res.status(404).json({ success: false, message: "User not found" });
+
+    // 1. Get pool of candidates
+    const oppositeGenderRegex = getOppositeGenderRegex(user.gender);
+    const query = { 
+      _id: { $ne: req.user.userId, $nin: user.blockedUsers || [] }
+    };
+    if (oppositeGenderRegex) query.gender = oppositeGenderRegex;
+
+    // Filter by religion if user has one (simple preference)
+    if (user.religion) query.religion = user.religion;
+
+    const candidates = await User.find(query)
+      .select('-password -otp -otpExpiry')
+      .limit(30);
+
+    // 2. Score them using static logic first
+    const scoredCandidates = candidates.map(c => ({
+      profile: c,
+      staticScore: calculateMatchScore(user, c)
+    })).sort((a, b) => b.staticScore - a.staticScore);
+
+    // 3. Take top 6 for AI Deep Analysis
+    const topCandidates = scoredCandidates.slice(0, 6);
+    
+    const smartMatches = await Promise.all(topCandidates.map(async (item) => {
+      try {
+        const aiResult = await analyzeCompatibility(user, item.profile);
+        return {
+          ...item.profile.toObject(),
+          staticScore: item.staticScore,
+          aiScore: aiResult.score,
+          matchPercentage: Math.round((item.staticScore * 0.4) + (aiResult.score * 0.6)),
+          aiInsight: aiResult.reason,
+          aiTags: aiResult.tags,
+          isSmartMatch: true
+        };
+      } catch (err) {
+        return {
+          ...item.profile.toObject(),
+          matchPercentage: item.staticScore,
+          isSmartMatch: false
+        };
+      }
+    }));
+
+    const finalData = smartMatches.filter(m => m.isSmartMatch).sort((a, b) => b.matchPercentage - a.matchPercentage);
+
+    res.status(200).json({
+      success: true,
+      count: finalData.length,
+      data: finalData
+    });
+
+  } catch (error) {
+    console.error("Smart Match Error:", error.message);
     res.status(200).json({ success: true, count: 0, data: [] });
   }
 };

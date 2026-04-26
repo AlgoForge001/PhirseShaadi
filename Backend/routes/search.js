@@ -9,8 +9,9 @@ router.get('/', protect, searchController.searchUsers);
 // Task 2: GET /api/matches/recommended
 router.get('/recommended', protect, searchController.getRecommendedMatches);
 
-// Task 3: GET /api/matches/near-you
-router.get('/near-you', protect, searchController.getNearYouMatches);
+// AI Powered Smart Matches
+router.get('/smart-match', protect, searchController.getSmartMatches);
+
 
 // Same-city opposite-gender matching
 router.get('/same-city', protect, searchController.getSameCityMatches);

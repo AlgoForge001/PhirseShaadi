@@ -20,6 +20,7 @@ import ProfileViewers from './pages/ProfileViewers'
 import Interests from './pages/Interests'
 import FamilyMembers from "./components/FamilyMembers";
 import FamilyShortlist from "./components/FamilyShortlist";
+import AdminDashboard from "./pages/AdminDashboard";
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { SocketProvider } from './context/SocketContext'
 import Chatbot from './components/Chatbot'
@@ -69,10 +70,18 @@ const PrivateLayout = () => (
 
 
 const AppRouter = () => {
-  const { isLoggedIn, loading } = useAuth()
+  const { isLoggedIn, loading, user } = useAuth()
   const location = useLocation()
   const publicPaths = ['/', '/home', '/login', '/register', '/about', '/otp-verify', '/google-success']
   const isPublicRoute = publicPaths.includes(location.pathname)
+
+  if (loading) return <div className="loading-screen">Loading...</div>
+
+  // Specific check for Admin Dashboard (No Sidebar)
+  if (location.pathname === '/admin-dashboard') {
+    if (!isLoggedIn || user?.role !== 'admin') return <Navigate to="/login" />;
+    return <AdminDashboard />;
+  }
 
   return isPublicRoute ? <PublicLayout /> : <PrivateLayout />
 }
