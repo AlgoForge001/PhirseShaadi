@@ -71,7 +71,15 @@ const Register = () => {
     if (type === "file") {
       setFormData((prev) => ({ ...prev, [name]: files[0] || null }));
     } else {
-      setFormData((prev) => ({ ...prev, [name]: value }));
+      setFormData((prev) => {
+        const newData = { ...prev, [name]: value };
+        if (name === "secondMarriageReason") {
+          let mStatus = value;
+          if (value === "Separated") mStatus = "Awaiting Divorce";
+          newData.maritalStatus = mStatus;
+        }
+        return newData;
+      });
     }
     setErrors((prev) => ({ ...prev, [name]: "" }));
     setApiError("");
@@ -98,6 +106,10 @@ const Register = () => {
     if (!formData.dob) errs.dob = "Date of birth is required";
     if (!formData.religion) errs.religion = "Please select religion";
     if (!formData.motherTongue) errs.motherTongue = "Please select mother tongue";
+    if (formData.isSecondMarriage) {
+      if (!formData.secondMarriageReason) errs.secondMarriageReason = "Please select reason for second marriage";
+      if (!formData.hasChildren) errs.hasChildren = "Please select if you have children";
+    }
     return errs;
   };
 
@@ -450,13 +462,13 @@ const Register = () => {
                 <div className="gender-options">
                   <button 
                     className={`gender-btn ${!formData.isSecondMarriage ? 'selected' : ''}`} 
-                    onClick={() => setFormData({...formData, isSecondMarriage: false, maritalStatus: 'Never Married'})}
+                    onClick={() => setFormData({...formData, isSecondMarriage: false, maritalStatus: 'Never Married', secondMarriageReason: ''})}
                   >
                     💍 First Marriage
                   </button>
                   <button 
                     className={`gender-btn ${formData.isSecondMarriage ? 'selected' : ''}`} 
-                    onClick={() => setFormData({...formData, isSecondMarriage: true, maritalStatus: ''})}
+                    onClick={() => setFormData({...formData, isSecondMarriage: true, maritalStatus: formData.secondMarriageReason === 'Separated' ? 'Awaiting Divorce' : formData.secondMarriageReason})}
                   >
                     🔁 Second Marriage
                   </button>
@@ -470,7 +482,7 @@ const Register = () => {
 
                   <div className="form-group">
                     <label>Reason for Second Marriage <span className="req">*</span></label>
-                    <div className="input-wrap">
+                    <div className={`input-wrap ${errors.secondMarriageReason ? 'error' : ''}`}>
                       <select name="secondMarriageReason" value={formData.secondMarriageReason} onChange={handleChange}>
                         <option value="">Select Reason</option>
                         <option value="Divorced">Divorced</option>
@@ -479,6 +491,7 @@ const Register = () => {
                         <option value="Other">Other</option>
                       </select>
                     </div>
+                    {errors.secondMarriageReason && <span className="err-msg">{errors.secondMarriageReason}</span>}
                   </div>
 
                   {(formData.secondMarriageReason === 'Divorced' || formData.secondMarriageReason === 'Separated') && (
@@ -493,13 +506,14 @@ const Register = () => {
                   <div className="form-group">
                     <label>Do you have children? <span className="req">*</span></label>
                     <div className="gender-options">
-                      <button className={`gender-btn ${formData.hasChildren === 'yes' ? 'selected' : ''}`} onClick={() => setFormData({...formData, hasChildren: 'yes'})}>
+                      <button className={`gender-btn ${formData.hasChildren === 'yes' ? 'selected' : ''}`} onClick={() => { setFormData({...formData, hasChildren: 'yes'}); setErrors({...errors, hasChildren: ''}); }}>
                         <Baby size={16} /> Yes
                       </button>
-                      <button className={`gender-btn ${formData.hasChildren === 'no' ? 'selected' : ''}`} onClick={() => setFormData({...formData, hasChildren: 'no'})}>
+                      <button className={`gender-btn ${formData.hasChildren === 'no' ? 'selected' : ''}`} onClick={() => { setFormData({...formData, hasChildren: 'no'}); setErrors({...errors, hasChildren: ''}); }}>
                         No
                       </button>
                     </div>
+                    {errors.hasChildren && <span className="err-msg">{errors.hasChildren}</span>}
                   </div>
 
                   {formData.hasChildren === 'yes' && (
@@ -556,29 +570,22 @@ const Register = () => {
           {step === 3 && (
             <div className="form-step">
               <div className="form-row">
-                <div className="form-group">
-                  <label>Marital Status <span className="req">*</span></label>
-                  <div className={`input-wrap ${errors.maritalStatus ? 'error' : ''} ${!formData.isSecondMarriage ? 'disabled' : ''}`}>
-                    <select 
-                      name="maritalStatus" 
-                      value={formData.maritalStatus} 
-                      onChange={handleChange}
-                      disabled={!formData.isSecondMarriage}
-                    >
-                      {!formData.isSecondMarriage ? (
+                {!formData.isSecondMarriage && (
+                  <div className="form-group">
+                    <label>Marital Status <span className="req">*</span></label>
+                    <div className={`input-wrap ${errors.maritalStatus ? 'error' : ''} disabled`}>
+                      <select 
+                        name="maritalStatus" 
+                        value={formData.maritalStatus} 
+                        onChange={handleChange}
+                        disabled
+                      >
                         <option value="Never Married">Never Married</option>
-                      ) : (
-                        <>
-                          <option value="">Select</option>
-                          {maritalStatuses.filter(s => s !== "Never Married").map(m => (
-                            <option key={m} value={m}>{m}</option>
-                          ))}
-                        </>
-                      )}
-                    </select>
+                      </select>
+                    </div>
+                    {errors.maritalStatus && <span className="err-msg">{errors.maritalStatus}</span>}
                   </div>
-                  {errors.maritalStatus && <span className="err-msg">{errors.maritalStatus}</span>}
-                </div>
+                )}
                 <div className="form-group">
                   <label>Height <span className="req">*</span></label>
                   <div className={`input-wrap ${errors.height ? 'error' : ''}`}>
