@@ -231,11 +231,14 @@ const Dashboard = () => {
           </div>
           <div className="hero-image-wrap">
             <div className="abstract-shape" />
-            {userData.photos?.[0]?.url ? (
-              <img src={userData.photos[0].url} alt="You" />
-            ) : (
-              <div className="profile-image-placeholder"><User size={40} /></div>
-            )}
+          {(() => {
+  const photo = userData.photos?.find(p => p.isPrimary) || userData.photos?.[0];
+  return photo?.url ? (
+    <img src={photo.url} alt="You" />
+  ) : (
+    <div className="profile-image-placeholder"><User size={40} /></div>
+  );
+})()}
           </div>
         </section>
 
