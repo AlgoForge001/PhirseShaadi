@@ -276,9 +276,7 @@ const AdminDashboard = () => {
         </div>
       )}
     </div>
-    {/* Footer removed as requested */}
   );
 };
 
-// import Footer from "../components/Footer";
 export default AdminDashboard;
