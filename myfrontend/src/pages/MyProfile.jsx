@@ -608,6 +608,8 @@ const MyProfile = () => {
       )}
     </div>
   );
+  <Footer />
 };
 
+import Footer from "../components/Footer";
 export default MyProfile;

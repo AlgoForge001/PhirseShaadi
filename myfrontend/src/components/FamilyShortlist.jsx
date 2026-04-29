@@ -260,6 +260,8 @@ const FamilyShortlist = () => {
       )}
     </div>
   );
+  <Footer />
 };
 
+import Footer from "./Footer";
 export default FamilyShortlist;

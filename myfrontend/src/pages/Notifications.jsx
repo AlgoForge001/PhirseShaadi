@@ -100,6 +100,8 @@ const Notifications = () => {
       </div>
     </div>
   );
+  <Footer />
 };
 
+import Footer from "../components/Footer";
 export default Notifications;

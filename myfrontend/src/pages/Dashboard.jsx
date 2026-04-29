@@ -305,7 +305,9 @@ const Dashboard = () => {
         )}
       </main>
     </div>
+    <Footer />
   );
 };
 
+import Footer from "../components/Footer";
 export default Dashboard;

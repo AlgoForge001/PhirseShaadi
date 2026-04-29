@@ -230,6 +230,8 @@ const FamilyMembers = () => {
       )}
     </div>
   );
+  <Footer />
 };
 
+import Footer from "./Footer";
 export default FamilyMembers;

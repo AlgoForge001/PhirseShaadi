@@ -146,6 +146,8 @@ const Interests = () => {
       </div>
     </div>
   );
+  <Footer />
 };
 
+import Footer from "../components/Footer";
 export default Interests;

@@ -251,6 +251,8 @@ const ProfileView = () => {
       </footer>
     </div>
   );
+  <Footer />
 };
 
+import Footer from "../components/Footer";
 export default ProfileView;
