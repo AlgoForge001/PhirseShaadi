@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../utils/api";
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 import "./MyProfile.css";
 
 /* ─────────────────────────────────────────
@@ -34,11 +35,6 @@ const IconLock = ({ size = 16, color = "currentColor" }) => (
 const IconCheck = ({ size = 13, color = "currentColor" }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
     <polyline points="20 6 9 17 4 12"/>
-  </svg>
-);
-const IconStar = ({ size = 13, color = "currentColor" }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill={color} stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
   </svg>
 );
 const IconMapPin = ({ size = 14, color = "currentColor" }) => (
@@ -86,6 +82,30 @@ const IconTrash = ({ size = 14, color = "currentColor" }) => (
 const IconCrown = ({ size = 13, color = "currentColor" }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill={color} stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
     <path d="M2 20h20M5 20l-2-12 7 6 2-8 2 8 7-6-2 12"/>
+  </svg>
+);
+const IconUser = ({ size = 18, color = "currentColor" }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+  </svg>
+);
+const IconHome = ({ size = 18, color = "currentColor" }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+  </svg>
+);
+const IconSun = ({ size = 18, color = "currentColor" }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+    <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+  </svg>
+);
+const IconImage = ({ size = 18, color = "currentColor" }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+    <polyline points="21 15 16 10 5 21"/>
   </svg>
 );
 
@@ -141,7 +161,11 @@ const PhotoGalleryModal = ({ photos, startIndex, onClose, onDelete, onSetPrimary
   };
 
   useEffect(() => {
-    const handler = (e) => { if (e.key === "Escape") onClose(); if (e.key === "ArrowLeft") prev(); if (e.key === "ArrowRight") next(); };
+    const handler = (e) => {
+      if (e.key === "Escape") onClose();
+      if (e.key === "ArrowLeft") prev();
+      if (e.key === "ArrowRight") next();
+    };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, []);
@@ -181,11 +205,36 @@ const PhotoGalleryModal = ({ photos, startIndex, onClose, onDelete, onSetPrimary
 };
 
 /* ─────────────────────────────────────────
+   SECTION COMPONENT
+───────────────────────────────────────── */
+const ProfileSection = ({ id, icon, title, children }) => (
+  <section className="mp-section" id={id}>
+    <div className="mp-section-title">
+      <span className="mp-section-icon">{icon}</span>
+      <h2>{title}</h2>
+      <div className="mp-section-line" />
+    </div>
+    <div className="mp-section-body">
+      {children}
+    </div>
+  </section>
+);
+
+/* ─────────────────────────────────────────
+   DETAIL ROW COMPONENT
+───────────────────────────────────────── */
+const DetailRow = ({ label, value }) => (
+  <div className="mp-detail-row">
+    <span className="mp-detail-label">{label}</span>
+    <span className="mp-detail-value">{value || "—"}</span>
+  </div>
+);
+
+/* ─────────────────────────────────────────
    MAIN COMPONENT
 ───────────────────────────────────────── */
 const MyProfile = () => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("basic");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [profile, setProfile] = useState(null);
@@ -220,7 +269,6 @@ const MyProfile = () => {
     fetchViewers();
   }, []);
 
-  /* ── Photo handlers ── */
   const handlePhotoUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -252,20 +300,11 @@ const MyProfile = () => {
     } catch { alert("Failed to set primary photo"); }
   };
 
-  /* ── Render helpers ── */
-  const renderDetail = (label, value) => (
-    <div className="mp-detail-row" key={label}>
-      <span className="mp-detail-label">{label}</span>
-      <span className="mp-detail-value">{value || "—"}</span>
-    </div>
-  );
-
   const formatLocation = (city, state) => {
     if (city && state) return `${city}, ${state}`;
     return city || state || "Location not specified";
   };
 
-  /* ── States ── */
   if (loading) return (
     <div className="mp-loading">
       <div className="mp-loading-ring" />
@@ -285,14 +324,6 @@ const MyProfile = () => {
   const photos = profile.photos || [];
   const displayName = profile.name || profile.fullName || "Member";
 
-  const tabs = [
-    { id: "basic",     label: "General"   },
-    { id: "education", label: "Career"    },
-    { id: "family",    label: "Family"    },
-    { id: "horoscope", label: "Faith"     },
-    { id: "photos",    label: "Photos"    },
-  ];
-
   return (
     <div className="my-profile-page">
       <Navbar />
@@ -307,87 +338,45 @@ const MyProfile = () => {
       <main className="mp-main">
 
         {/* ── PROFILE HEADER CARD ── */}
-        <section className="mp-header-card">
-
+        <div className="mp-header-card">
           {/* Avatar */}
-          <div className="mp-avatar-section">
-            <div className="mp-avatar-wrap">
-              <div
-                className="mp-avatar"
-                onClick={() => { if (photos.length > 0) { setGalleryStart(0); setGalleryOpen(true); } }}
-                style={{ cursor: photos.length > 0 ? "pointer" : "default" }}
-              >
-                {primaryPhotoUrl
-                  ? <img src={primaryPhotoUrl} alt={displayName} onError={e => { e.target.style.display = "none"; }} />
-                  : <div className="mp-avatar-placeholder"><IconUsers size={48} color="#6B3F69" /></div>
-                }
-                {photos.length > 0 && (
-                  <div className="mp-avatar-count">{photos.length}</div>
-                )}
-              </div>
-
-              {/* Upload button */}
-              <button
-                className="mp-upload-btn"
-                onClick={() => fileInputRef.current?.click()}
-                title="Add photo"
-                disabled={uploading}
-              >
-                {uploading ? <div className="mp-mini-spinner" /> : <IconCamera size={16} color="#fff" />}
-              </button>
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                style={{ display: "none" }}
-                onChange={handlePhotoUpload}
-              />
+          <div className="mp-avatar-wrap">
+            <div
+              className="mp-avatar"
+              onClick={() => { if (photos.length > 0) { setGalleryStart(0); setGalleryOpen(true); } }}
+              style={{ cursor: photos.length > 0 ? "pointer" : "default" }}
+            >
+              {primaryPhotoUrl
+                ? <img src={primaryPhotoUrl} alt={displayName} onError={e => { e.target.style.display = "none"; }} />
+                : <div className="mp-avatar-placeholder"><IconUsers size={48} color="#6B3F69" /></div>
+              }
+              {photos.length > 0 && <div className="mp-avatar-count">{photos.length}</div>}
             </div>
-
-            {/* Thumbnail strip */}
-            {photos.length > 1 && (
-              <div className="mp-thumb-strip">
-                {photos.slice(0, 5).map((p, i) => {
-                  const url = typeof p === "string" ? p : p?.url;
-                  return (
-                    <div
-                      key={i}
-                      className={`mp-thumb-item ${p.isPrimary ? "is-primary" : ""}`}
-                      onClick={() => { setGalleryStart(i); setGalleryOpen(true); }}
-                    >
-                      <img src={url} alt={`Photo ${i + 1}`} />
-                      {p.isPrimary && <div className="mp-thumb-primary-dot" />}
-                    </div>
-                  );
-                })}
-                {photos.length > 5 && (
-                  <div className="mp-thumb-more" onClick={() => { setGalleryStart(5); setGalleryOpen(true); }}>
-                    +{photos.length - 5}
-                  </div>
-                )}
-              </div>
-            )}
+            <button
+              className="mp-upload-btn"
+              onClick={() => fileInputRef.current?.click()}
+              title="Add photo"
+              disabled={uploading}
+            >
+              {uploading ? <div className="mp-mini-spinner" /> : <IconCamera size={16} color="#fff" />}
+            </button>
+            <input ref={fileInputRef} type="file" accept="image/*" style={{ display: "none" }} onChange={handlePhotoUpload} />
           </div>
 
-          {/* Profile info */}
-          <div className="mp-profile-info">
+          {/* Name + meta */}
+          <div className="mp-header-info">
             <div className="mp-name-row">
               <h1 className="mp-name">{displayName}</h1>
               <div className="mp-badges">
                 {profile.isVerified && (
-                  <span className="mp-badge verified">
-                    <IconCheck size={11} color="#fff" /> Verified
-                  </span>
+                  <span className="mp-badge verified"><IconCheck size={11} color="#fff" /> Verified</span>
                 )}
                 {profile.isPremium && (
-                  <span className="mp-badge premium">
-                    <IconCrown size={11} color="#fff" /> Premium
-                  </span>
+                  <span className="mp-badge premium"><IconCrown size={11} color="#fff" /> Premium</span>
                 )}
               </div>
             </div>
 
-            {/* Sub-line */}
             <p className="mp-tagline">
               {age ? `${age} yrs` : ""}
               {age && profile.height ? " · " : ""}
@@ -395,34 +384,13 @@ const MyProfile = () => {
               {profile.maritalStatus ? ` · ${profile.maritalStatus}` : ""}
             </p>
 
-            {/* Pills */}
             <div className="mp-pills">
-              {profile.religion && (
-                <span className="mp-pill"><IconHeart size={13} color="#6B3F69" />{profile.religion}</span>
-              )}
-              {(profile.city || profile.state) && (
-                <span className="mp-pill"><IconMapPin size={13} color="#6B3F69" />{formatLocation(profile.city, profile.state)}</span>
-              )}
-              {profile.occupation && (
-                <span className="mp-pill"><IconBriefcase size={13} color="#6B3F69" />{profile.occupation}</span>
-              )}
-              {profile.education && (
-                <span className="mp-pill"><IconGradCap size={13} color="#6B3F69" />{profile.education}</span>
-              )}
+              {profile.religion && <span className="mp-pill"><IconHeart size={13} color="#6B3F69" />{profile.religion}</span>}
+              {(profile.city || profile.state) && <span className="mp-pill"><IconMapPin size={13} color="#6B3F69" />{formatLocation(profile.city, profile.state)}</span>}
+              {profile.occupation && <span className="mp-pill"><IconBriefcase size={13} color="#6B3F69" />{profile.occupation}</span>}
+              {profile.education && <span className="mp-pill"><IconGradCap size={13} color="#6B3F69" />{profile.education}</span>}
             </div>
 
-            {/* Bio */}
-            {profile.about && (
-              <p className="mp-bio">{profile.about}</p>
-            )}
-            {!profile.about && (
-              <p className="mp-bio mp-bio-empty">
-                No bio added yet.{" "}
-                <span className="mp-bio-link" onClick={() => navigate("/profile-creation")}>Add one →</span>
-              </p>
-            )}
-
-            {/* Stat strip */}
             <div className="mp-stat-strip">
               <div className="mp-stat">
                 <span className="mp-stat-number">{photos.length}</span>
@@ -440,7 +408,6 @@ const MyProfile = () => {
               </div>
             </div>
 
-            {/* Action buttons */}
             <div className="mp-actions">
               <button className="mp-btn-primary" onClick={() => navigate("/profile-creation")}>
                 <IconEdit size={15} color="#fff" /> Edit Profile
@@ -450,153 +417,152 @@ const MyProfile = () => {
               </button>
             </div>
           </div>
-        </section>
+        </div>
 
-        {/* ── DETAILS CARD ── */}
-        <section className="mp-details-card">
-          <div className="mp-tabs">
-            {tabs.map(t => (
-              <button
-                key={t.id}
-                className={`mp-tab ${activeTab === t.id ? "active" : ""}`}
-                onClick={() => setActiveTab(t.id)}
-              >
-                {t.label}
-              </button>
-            ))}
-          </div>
+        {/* ── SINGLE PAGE CONTENT ── */}
+        <div className="mp-page-content">
 
-          <div className="mp-tab-body">
+          {/* Bio Section */}
+          {(profile.about || true) && (
+            <ProfileSection id="about" icon={<IconUser size={18} color="#6B3F69" />} title="About Me">
+              {profile.about
+                ? <p className="mp-bio-text">{profile.about}</p>
+                : <p className="mp-bio-empty">
+                    No bio added yet.{" "}
+                    <span className="mp-bio-link" onClick={() => navigate("/profile-creation")}>Add one →</span>
+                  </p>
+              }
+            </ProfileSection>
+          )}
 
-            {activeTab === "basic" && (
-              <div className="mp-details-grid">
-                {renderDetail("Marital Status",  profile.maritalStatus)}
-                {renderDetail("Date of Birth",   formatDOB(profile.dob))}
-                {renderDetail("Height",          profile.height)}
-                {renderDetail("Weight",          profile.weight)}
-                {renderDetail("Body Type",       profile.bodyType)}
-                {renderDetail("Complexion",      profile.complexion)}
-                {renderDetail("Mother Tongue",   profile.motherTongue)}
-                {renderDetail("Physical Status", profile.physicalStatus)}
-                {renderDetail("Diet",            profile.diet)}
-                {renderDetail("Drinking",        profile.drinking)}
-                {renderDetail("Smoking",         profile.smoking)}
-              </div>
-            )}
-
-            {activeTab === "education" && (
-              <div className="mp-details-grid">
-                {renderDetail("Education",     profile.education)}
-                {renderDetail("Profession",    profile.occupation)}
-                {renderDetail("Company",       profile.companyName)}
-                {renderDetail("Employed In",   profile.employedIn)}
-                {renderDetail("Annual Income", profile.annualIncome)}
-                {renderDetail("Work Location", profile.workLocation)}
-              </div>
-            )}
-
-            {activeTab === "family" && (
-              <div className="mp-details-grid">
-                {renderDetail("Family Type",         profile.familyType)}
-                {renderDetail("Family Values",       profile.familyValues)}
-                {renderDetail("Family Status",       profile.familyStatus)}
-                {renderDetail("Father's Occupation", profile.fatherOccupation)}
-                {renderDetail("Mother's Occupation", profile.motherOccupation)}
-                {renderDetail("Siblings",            profile.siblings)}
-                {renderDetail("Living With Family",  profile.livingWithFamily)}
-              </div>
-            )}
-
-            {activeTab === "horoscope" && (
-              <div className="mp-details-grid">
-                {renderDetail("Date of Birth", formatDOB(profile.dob))}
-                {renderDetail("Birth Place",   profile.birthPlace)}
-                {renderDetail("Birth Time",    profile.birthTime)}
-                {renderDetail("Manglik",       profile.manglik)}
-                {renderDetail("Rashi",         profile.rashi)}
-                {renderDetail("Nakshatra",     profile.nakshatra)}
-                {renderDetail("Gotra",         profile.gotra)}
-              </div>
-            )}
-
-            {activeTab === "photos" && (
-              <div className="mp-photos-grid">
-                {photos.map((p, i) => {
-                  const url = typeof p === "string" ? p : p?.url;
-                  return (
-                    <div
-                      key={i}
-                      className={`mp-photo-cell ${p.isPrimary ? "primary" : ""}`}
-                      onClick={() => { setGalleryStart(i); setGalleryOpen(true); }}
-                    >
-                      <img src={url} alt={`Photo ${i + 1}`} />
-                      {p.isPrimary && <div className="mp-photo-primary-label">Primary</div>}
-                      <div className="mp-photo-hover-overlay">
-                        <IconEye size={20} color="#fff" />
-                      </div>
-                    </div>
-                  );
-                })}
-
-                {/* Add more photos cell */}
-                {photos.length < 10 && (
-                  <div className="mp-photo-add-cell" onClick={() => fileInputRef.current?.click()}>
-                    <IconCamera size={28} color="#6B3F69" />
-                    <span>Add Photo</span>
-                    <span className="mp-photo-add-count">{photos.length}/10</span>
-                  </div>
-                )}
-
-                {photos.length === 0 && (
-                  <div className="mp-photos-empty">
-                    <IconCamera size={40} color="#c9a0dc" />
-                    <p>No photos yet</p>
-                    <button onClick={() => fileInputRef.current?.click()}>Upload Your First Photo</button>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        </section>
-
-        {/* ── PROFILE VIEWERS ── */}
-        {viewers.length > 0 && (
-          <section className="mp-viewers-card">
-            <div className="mp-section-header">
-              <IconEye size={16} color="#6B3F69" />
-              <h3>Recent Profile Views</h3>
-              <span className="mp-viewers-count">{viewers.length}</span>
+          {/* General Info */}
+          <ProfileSection id="basic" icon={<IconUser size={18} color="#6B3F69" />} title="General Information">
+            <div className="mp-details-grid">
+              <DetailRow label="Marital Status"  value={profile.maritalStatus} />
+              <DetailRow label="Date of Birth"   value={formatDOB(profile.dob)} />
+              <DetailRow label="Height"          value={profile.height} />
+              <DetailRow label="Weight"          value={profile.weight} />
+              <DetailRow label="Body Type"       value={profile.bodyType} />
+              <DetailRow label="Complexion"      value={profile.complexion} />
+              <DetailRow label="Mother Tongue"   value={profile.motherTongue} />
+              <DetailRow label="Physical Status" value={profile.physicalStatus} />
+              <DetailRow label="Diet"            value={profile.diet} />
+              <DetailRow label="Drinking"        value={profile.drinking} />
+              <DetailRow label="Smoking"         value={profile.smoking} />
             </div>
-            <div className="mp-viewers-list">
-              {viewers.slice(0, 8).map((v, i) => {
-                const vp = getPrimaryPhoto(v.userId?.photos);
+          </ProfileSection>
+
+          {/* Career & Education */}
+          <ProfileSection id="education" icon={<IconBriefcase size={18} color="#6B3F69" />} title="Career & Education">
+            <div className="mp-details-grid">
+              <DetailRow label="Education"     value={profile.education} />
+              <DetailRow label="Profession"    value={profile.occupation} />
+              <DetailRow label="Company"       value={profile.companyName} />
+              <DetailRow label="Employed In"   value={profile.employedIn} />
+              <DetailRow label="Annual Income" value={profile.annualIncome} />
+              <DetailRow label="Work Location" value={profile.workLocation} />
+            </div>
+          </ProfileSection>
+
+          {/* Family */}
+          <ProfileSection id="family" icon={<IconHome size={18} color="#6B3F69" />} title="Family Details">
+            <div className="mp-details-grid">
+              <DetailRow label="Family Type"         value={profile.familyType} />
+              <DetailRow label="Family Values"       value={profile.familyValues} />
+              <DetailRow label="Family Status"       value={profile.familyStatus} />
+              <DetailRow label="Father's Occupation" value={profile.fatherOccupation} />
+              <DetailRow label="Mother's Occupation" value={profile.motherOccupation} />
+              <DetailRow label="Siblings"            value={profile.siblings} />
+              <DetailRow label="Living With Family"  value={profile.livingWithFamily} />
+            </div>
+          </ProfileSection>
+
+          {/* Faith & Horoscope */}
+          <ProfileSection id="horoscope" icon={<IconSun size={18} color="#6B3F69" />} title="Faith & Horoscope">
+            <div className="mp-details-grid">
+              <DetailRow label="Date of Birth" value={formatDOB(profile.dob)} />
+              <DetailRow label="Birth Place"   value={profile.birthPlace} />
+              <DetailRow label="Birth Time"    value={profile.birthTime} />
+              <DetailRow label="Manglik"       value={profile.manglik} />
+              <DetailRow label="Rashi"         value={profile.rashi} />
+              <DetailRow label="Nakshatra"     value={profile.nakshatra} />
+              <DetailRow label="Gotra"         value={profile.gotra} />
+            </div>
+          </ProfileSection>
+
+          {/* Photos */}
+          <ProfileSection id="photos" icon={<IconImage size={18} color="#6B3F69" />} title="Photos">
+            <div className="mp-photos-grid">
+              {photos.map((p, i) => {
+                const url = typeof p === "string" ? p : p?.url;
                 return (
                   <div
                     key={i}
-                    className="mp-viewer-chip"
-                    onClick={() => navigate(`/profile/${v.userId?._id}`)}
-                    title={v.userId?.name || "Member"}
+                    className={`mp-photo-cell ${p.isPrimary ? "primary" : ""}`}
+                    onClick={() => { setGalleryStart(i); setGalleryOpen(true); }}
                   >
-                    <div className="mp-viewer-avatar">
-                      {vp
-                        ? <img src={vp} alt={v.userId?.name} />
-                        : <IconUsers size={18} color="#6B3F69" />
-                      }
-                    </div>
-                    <div className="mp-viewer-info">
-                      <span className="mp-viewer-name">{v.userId?.name || "Member"}</span>
-                      <span className="mp-viewer-city">{v.userId?.city || ""}</span>
+                    <img src={url} alt={`Photo ${i + 1}`} />
+                    {p.isPrimary && <div className="mp-photo-primary-label">Primary</div>}
+                    <div className="mp-photo-hover-overlay">
+                      <IconEye size={20} color="#fff" />
                     </div>
                   </div>
                 );
               })}
-            </div>
-          </section>
-        )}
 
+              {photos.length < 10 && (
+                <div className="mp-photo-add-cell" onClick={() => fileInputRef.current?.click()}>
+                  <IconCamera size={28} color="#6B3F69" />
+                  <span>Add Photo</span>
+                  <span className="mp-photo-add-count">{photos.length}/10</span>
+                </div>
+              )}
+
+              {photos.length === 0 && (
+                <div className="mp-photos-empty">
+                  <IconCamera size={40} color="#c9a0dc" />
+                  <p>No photos yet</p>
+                  <button onClick={() => fileInputRef.current?.click()}>Upload Your First Photo</button>
+                </div>
+              )}
+            </div>
+          </ProfileSection>
+
+          {/* Profile Viewers */}
+          {viewers.length > 0 && (
+            <ProfileSection id="viewers" icon={<IconEye size={18} color="#6B3F69" />} title="Recent Profile Views">
+              <div className="mp-viewers-list">
+                {viewers.slice(0, 8).map((v, i) => {
+                  const vp = getPrimaryPhoto(v.userId?.photos);
+                  return (
+                    <div
+                      key={i}
+                      className="mp-viewer-chip"
+                      onClick={() => navigate(`/profile/${v.userId?._id}`)}
+                      title={v.userId?.name || "Member"}
+                    >
+                      <div className="mp-viewer-avatar">
+                        {vp
+                          ? <img src={vp} alt={v.userId?.name} />
+                          : <IconUsers size={18} color="#6B3F69" />
+                        }
+                      </div>
+                      <div className="mp-viewer-info">
+                        <span className="mp-viewer-name">{v.userId?.name || "Member"}</span>
+                        <span className="mp-viewer-city">{v.userId?.city || ""}</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </ProfileSection>
+          )}
+
+        </div>
       </main>
 
-      {/* ── PHOTO GALLERY MODAL ── */}
+      <Footer />
+
       {galleryOpen && photos.length > 0 && (
         <PhotoGalleryModal
           photos={photos}
@@ -608,8 +574,6 @@ const MyProfile = () => {
       )}
     </div>
   );
-  <Footer />
 };
 
-import Footer from "../components/Footer";
 export default MyProfile;
