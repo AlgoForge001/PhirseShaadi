@@ -160,7 +160,7 @@ const cvHtml = `
                   )}
                 </div>
 `;
-result = result.replace(/(\{\s*activeTab === "career" && \([\s\S]*?<\/div>\s*<\/div>\s*)\)\s*\}/, `$1${cvHtml})}`);
+result = result.replace(/(\{\s*activeTab === "career" && \()([\s\S]*?<\/div>\s*<\/div>\s*)\)\s*\}/, `$1<>$2${cvHtml}</>)}`);
 
 fs.writeFileSync('myfrontend/src/pages/MyProfile.jsx', result);
 console.log("Merge completed cleanly.");
