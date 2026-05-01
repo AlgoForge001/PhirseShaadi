@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
-  Users, Search, Edit2, Trash2, CheckCircle, XCircle, 
-  Filter, LogOut, Shield, ChevronLeft, ChevronRight, User
+  Users, Search, Trash2, CheckCircle, XCircle, 
+  Shield, User, ChevronDown
 } from "lucide-react";
 import api from "../utils/api";
 import "./AdminDashboard.css";
@@ -86,119 +86,122 @@ const AdminDashboard = () => {
 
   return (
     <div className="admin-layout">
-      {/* SIDEBAR */}
-      <aside className="admin-sidebar">
-        <div className="admin-logo">
-          <Shield size={24} color="#6B3F69" fill="#6B3F69" />
-          <span>Shaadi Admin</span>
+      {/* GLOBAL NAV */}
+      <nav className="global-nav">
+        <div className="global-nav-content">
+          <div className="admin-logo">
+            <Shield size={16} color="#ffffff" fill="#ffffff" />
+            <span>Shaadi Admin</span>
+          </div>
+          <div className="global-nav-links">
+            <button className="nav-link">Users</button>
+            <button className="nav-link" onClick={handleLogout}>Log Out</button>
+          </div>
         </div>
-        <nav className="admin-nav">
-          <button className="nav-item active"><Users size={20} /> Users</button>
-          {/* Add more admin sections here in future */}
-        </nav>
-        <button className="admin-logout" onClick={handleLogout}>
-          <LogOut size={20} /> Logout
-        </button>
-      </aside>
+      </nav>
 
-      {/* MAIN CONTENT */}
-      <main className="admin-main">
-        <header className="admin-header">
-          <h1>User Management</h1>
-          <div className="admin-header-actions">
-            <div className="admin-search">
-              <Search size={18} />
+      {/* SUB NAV FROSTED */}
+      <div className="sub-nav-frosted">
+        <div className="sub-nav-content">
+          <h1 className="sub-nav-title">Users</h1>
+          <div className="sub-nav-actions">
+            <div className="search-input-wrapper">
+              <Search size={14} className="search-icon" />
               <input 
                 type="text" 
-                placeholder="Search name, email, or phone..." 
+                className="search-input"
+                placeholder="Search users..." 
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            <div className="admin-filter">
-              <Filter size={18} />
-              <select value={filter} onChange={(e) => setFilter(e.target.value)}>
-                <option value="all">All Users</option>
+            <div className="filter-wrapper">
+              <select className="filter-select" value={filter} onChange={(e) => setFilter(e.target.value)}>
+                <option value="all">All</option>
                 <option value="verified">Verified</option>
                 <option value="unverified">Unverified</option>
               </select>
+              <ChevronDown size={14} className="filter-icon" />
             </div>
           </div>
-        </header>
+        </div>
+      </div>
 
+      {/* MAIN CONTENT */}
+      <main className="admin-main">
         {loading ? (
           <div className="admin-loading">
             <div className="spinner"></div>
-            <p>Fetching users...</p>
           </div>
         ) : (
-          <div className="admin-table-wrap">
-            <table className="admin-table">
-              <thead>
-                <tr>
-                  <th>User</th>
-                  <th>Contact Info</th>
-                  <th>Profile Details</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredUsers.map(user => (
-                  <tr key={user._id}>
-                    <td>
-                      <div className="user-info-cell">
-                        <div className="user-avatar">
-                          {user.photos?.[0]?.url ? (
-                            <img src={user.photos[0].url} alt="" />
-                          ) : (
-                            <User size={20} />
-                          )}
-                        </div>
-                        <div>
-                          <div className="user-name">{user.name}</div>
-                          <div className="user-id">ID: {user._id.slice(-6)}</div>
-                        </div>
-                      </div>
-                    </td>
-                    <td>
-                      <div className="contact-cell">
-                        <div className="cell-email">{user.email}</div>
-                        <div className="cell-phone">{user.phone}</div>
-                      </div>
-                    </td>
-                    <td>
-                      <div className="details-cell">
-                        <span>{user.gender} • {user.religion}</span>
-                        <span>{user.city}, {user.state}</span>
-                      </div>
-                    </td>
-                    <td>
-                      <button 
-                        className={`status-pill ${user.isVerified ? 'verified' : 'unverified'}`}
-                        onClick={() => handleToggleVerify(user._id)}
-                      >
-                        {user.isVerified ? <CheckCircle size={14} /> : <XCircle size={14} />}
-                        {user.isVerified ? "Verified" : "Unverified"}
-                      </button>
-                    </td>
-                    <td>
-                      <div className="admin-actions">
-                        <button className="edit-btn" onClick={() => handleEditClick(user)} title="Edit">
-                          <Edit2 size={16} />
-                        </button>
-                        <button className="delete-btn" onClick={() => handleDelete(user._id)} title="Delete">
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
-                    </td>
+          <div className="store-utility-card">
+            <div className="table-responsive">
+              <table className="admin-table">
+                <thead>
+                  <tr>
+                    <th>Profile</th>
+                    <th>Contact</th>
+                    <th>Details</th>
+                    <th>Status</th>
+                    <th className="text-right">Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {filteredUsers.map(user => (
+                    <tr key={user._id}>
+                      <td>
+                        <div className="user-info-cell">
+                          <div className="user-avatar">
+                            {user.photos?.[0]?.url ? (
+                              <img src={user.photos[0].url} alt="" />
+                            ) : (
+                              <User size={18} color="#1d1d1f" />
+                            )}
+                          </div>
+                          <div>
+                            <div className="user-name">{user.name}</div>
+                            <div className="user-id">ID: {user._id.slice(-6)}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <div className="contact-cell">
+                          <div className="cell-email">{user.email}</div>
+                          <div className="cell-phone">{user.phone}</div>
+                        </div>
+                      </td>
+                      <td>
+                        <div className="details-cell">
+                          <span>{user.gender} • {user.religion}</span>
+                          <span>{user.city}, {user.state}</span>
+                        </div>
+                      </td>
+                      <td>
+                        <button 
+                          className={`status-chip ${user.isVerified ? 'verified' : 'unverified'}`}
+                          onClick={() => handleToggleVerify(user._id)}
+                        >
+                          {user.isVerified ? "Verified" : "Unverified"}
+                        </button>
+                      </td>
+                      <td>
+                        <div className="admin-actions">
+                          <button className="button-pearl-capsule" onClick={() => handleEditClick(user)}>
+                            Edit
+                          </button>
+                          <button className="button-icon-circular delete" onClick={() => handleDelete(user._id)}>
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
             {filteredUsers.length === 0 && (
               <div className="admin-empty">
-                <Users size={48} color="#ccc" />
+                <Users size={32} color="#cccccc" />
                 <p>No users found matching your criteria.</p>
               </div>
             )}
@@ -211,8 +214,10 @@ const AdminDashboard = () => {
         <div className="admin-modal-overlay">
           <div className="admin-modal">
             <div className="modal-header">
-              <h2>Edit User Profile</h2>
-              <button onClick={() => setShowEditModal(false)}><XCircle size={24} /></button>
+              <h2>Edit Profile</h2>
+              <button className="modal-close" onClick={() => setShowEditModal(false)}>
+                <XCircle size={20} color="#1d1d1f" />
+              </button>
             </div>
             <div className="modal-body">
               <div className="modal-grid">
@@ -269,8 +274,8 @@ const AdminDashboard = () => {
               </div>
             </div>
             <div className="modal-footer">
-              <button className="modal-cancel" onClick={() => setShowEditModal(false)}>Cancel</button>
-              <button className="modal-save" onClick={handleUpdateUser}>Save Changes</button>
+              <button className="button-secondary-pill" onClick={() => setShowEditModal(false)}>Cancel</button>
+              <button className="button-primary" onClick={handleUpdateUser}>Save</button>
             </div>
           </div>
         </div>
