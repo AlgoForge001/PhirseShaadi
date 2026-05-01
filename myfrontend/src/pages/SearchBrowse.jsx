@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import {
   Search, Filter, MapPin,
@@ -13,16 +13,15 @@ import "./SearchBrowse.css";
 
 // ─────────────────────────────────────────────
 // FILTER PANEL
-// ✅ FIX: onApply passed as separate prop — no longer mixed into filters object
 // ─────────────────────────────────────────────
 const FilterPanel = ({ filters, setFilters, onApply, onClose }) => {
-  const religions = ["Any", "Hindu", "Muslim", "Christian", "Sikh", "Jain", "Buddhist"];
-  const educations = ["Any", "Bachelor's Degree", "Master's Degree", "MBA", "PhD", "MBBS", "Engineering", "CA/CS"];
+  const religions   = ["Any", "Hindu", "Muslim", "Christian", "Sikh", "Jain", "Buddhist"];
+  const educations  = ["Any", "Bachelor's Degree", "Master's Degree", "MBA", "PhD", "MBBS", "Engineering", "CA/CS"];
   const occupations = ["Any", "Software Engineer", "Doctor", "Engineer", "Teacher", "Business Owner", "Government Employee", "Lawyer"];
-  const incomes = ["Any", "Below ₹2L", "₹2L - ₹5L", "₹5L - ₹10L", "₹10L - ₹15L", "₹15L - ₹20L", "Above ₹20L"];
+  const incomes     = ["Any", "Below ₹2L", "₹2L - ₹5L", "₹5L - ₹10L", "₹10L - ₹15L", "₹15L - ₹20L", "Above ₹20L"];
 
   const handleChange = (key, value) => {
-    setFilters((p) => ({ ...p, [key]: value }));
+    setFilters((prev) => ({ ...prev, [key]: value }));
   };
 
   const handleReset = () => {
@@ -52,16 +51,14 @@ const FilterPanel = ({ filters, setFilters, onApply, onClose }) => {
           <label>Age Range</label>
           <div className="range-inputs">
             <input
-              type="number"
-              min="18" max="60"
+              type="number" min="18" max="60"
               value={filters.ageFrom}
               onChange={(e) => handleChange("ageFrom", e.target.value)}
               placeholder="From"
             />
             <span>to</span>
             <input
-              type="number"
-              min="18" max="60"
+              type="number" min="18" max="60"
               value={filters.ageTo}
               onChange={(e) => handleChange("ageTo", e.target.value)}
               placeholder="To"
@@ -133,6 +130,7 @@ const FilterPanel = ({ filters, setFilters, onApply, onClose }) => {
           />
         </div>
 
+        {/* STATE */}
         <div className="filter-group">
           <label>State</label>
           <input
@@ -169,7 +167,6 @@ const FilterPanel = ({ filters, setFilters, onApply, onClose }) => {
 
       </div>
 
-      {/* ✅ FIX: Use onApply prop directly */}
       <button className="apply-filters-btn" onClick={onApply}>
         Apply Filters
       </button>
@@ -183,12 +180,13 @@ const FilterPanel = ({ filters, setFilters, onApply, onClose }) => {
 // ─────────────────────────────────────────────
 const SearchBrowse = () => {
   const location = useLocation();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [showFilter, setShowFilter] = useState(false);
-  const [activeTab, setActiveTab] = useState("all");
-  const [profiles, setProfiles] = useState([]);
+  const [searchQuery, setSearchQuery]   = useState("");
+  const [showFilter, setShowFilter]     = useState(false);
+  const [activeTab, setActiveTab]       = useState("all");
+  const [profiles, setProfiles]         = useState([]);
   const [sameCityMeta, setSameCityMeta] = useState({ city: "", message: "" });
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading]           = useState(false);
+
   const [filters, setFilters] = useState({
     ageFrom: "18", ageTo: "40",
     heightFrom: "", heightTo: "",
@@ -198,42 +196,49 @@ const SearchBrowse = () => {
   });
 
   const tabs = [
-    { key: "all", label: "All Members" },
-    { key: "sameCity", label: "Same City Match" },
-    { key: "recommended", label: "Smart Matches" },
-    { key: "new", label: "New Joins" },
+    { key: "all",         label: "All Members"   },
+    { key: "sameCity",    label: "Same City Match"},
+    { key: "recommended", label: "Smart Matches"  },
+    { key: "new",         label: "New Joins"      },
   ];
 
-  // ── FETCH PROFILES FROM BACKEND ──
-  const fetchProfiles = async (activeFilters = filters, activeSearchQuery = searchQuery) => {
+  // ── FETCH PROFILES ──────────────────────────
+  // FIX: useCallback with explicit params so callers always pass fresh state.
+  // activeTab is also a param (not captured from closure) so tab switches
+  // and filter applies can never race against a stale value.
+  const fetchProfiles = useCallback(async (
+    tab          = activeTab,
+    activeFilters = filters,
+    activeSearch  = searchQuery
+  ) => {
     try {
       setLoading(true);
-      let endpoint = "/search";
 
-      if (activeTab === "new") endpoint = "/matches/new-joins";
-      if (activeTab === "nearby") endpoint = "/matches/near-you";
-      if (activeTab === "sameCity") endpoint = "/matches/same-city";
-      if (activeTab === "recommended") endpoint = "/matches/recommended";
+      let endpoint = "/search";
+      if (tab === "new")         endpoint = "/matches/new-joins";
+      if (tab === "nearby")      endpoint = "/matches/near-you";
+      if (tab === "sameCity")    endpoint = "/matches/same-city";
+      if (tab === "recommended") endpoint = "/matches/recommended";
 
       const params = {
-        minAge: activeFilters.ageFrom,
-        maxAge: activeFilters.ageTo,
-        religion: activeFilters.religion !== "Any" ? activeFilters.religion : undefined,
-        city: activeFilters.city || undefined,
-        state: activeFilters.state || undefined,
-        education: activeFilters.education !== "Any" ? activeFilters.education : undefined,
-        jobType: activeFilters.occupation !== "Any" ? activeFilters.occupation : undefined,
-        income: activeFilters.income !== "Any" ? activeFilters.income : undefined,
-        search: activeSearchQuery || undefined
+        minAge:   activeFilters.ageFrom,
+        maxAge:   activeFilters.ageTo,
+        religion: activeFilters.religion  !== "Any" ? activeFilters.religion  : undefined,
+        city:     activeFilters.city      || undefined,
+        state:    activeFilters.state     || undefined,
+        education:activeFilters.education !== "Any" ? activeFilters.education : undefined,
+        jobType:  activeFilters.occupation!== "Any" ? activeFilters.occupation: undefined,
+        income:   activeFilters.income    !== "Any" ? activeFilters.income    : undefined,
+        search:   activeSearch            || undefined,
       };
 
       const res = await api.get(endpoint, { params });
 
       if (res.data.success) {
         setProfiles(res.data.data || []);
-        if (activeTab === "sameCity") {
+        if (tab === "sameCity") {
           setSameCityMeta({
-            city: res.data.city || "",
+            city:    res.data.city    || "",
             message: res.data.message || "",
           });
         } else {
@@ -242,49 +247,63 @@ const SearchBrowse = () => {
       }
     } catch (err) {
       console.error("Failed to fetch profiles:", err);
-      if (activeTab === "sameCity") {
+      setProfiles([]);
+      if (tab === "sameCity") {
         setSameCityMeta({ city: "", message: "Unable to load same-city matches right now." });
       }
     } finally {
       setLoading(false);
     }
-  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);   // stable ref — callers pass all state as arguments
 
+  // Re-fetch whenever the active tab changes
   useEffect(() => {
-    fetchProfiles();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    fetchProfiles(activeTab, filters, searchQuery);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab]);
 
+  // Parse query-string filters on navigation (e.g. from homepage search)
   useEffect(() => {
-    const qs = new URLSearchParams(location.search);
     if (!location.search) return;
 
+    const qs = new URLSearchParams(location.search);
+
     const parsedFilters = {
-      ageFrom: qs.get("minAge") || "18",
-      ageTo: qs.get("maxAge") || "40",
-      religion: qs.get("religion") || "Any",
-      city: qs.get("city") || "",
-      state: qs.get("state") || "",
-      education: qs.get("education") || "Any",
-      occupation: qs.get("jobType") || "Any",
-      income: qs.get("income") || "Any",
-      heightFrom: "",
-      heightTo: "",
-      onlyVerified: false,
+      ageFrom:     qs.get("minAge")     || "18",
+      ageTo:       qs.get("maxAge")     || "40",
+      religion:    qs.get("religion")   || "Any",
+      city:        qs.get("city")       || "",
+      state:       qs.get("state")      || "",
+      education:   qs.get("education")  || "Any",
+      occupation:  qs.get("jobType")    || "Any",
+      income:      qs.get("income")     || "Any",
+      heightFrom:  "",
+      heightTo:    "",
+      onlyVerified:false,
       onlyPremium: false,
     };
 
     const parsedSearch = qs.get("search") || "";
 
-    setFilters((prev) => ({ ...prev, ...parsedFilters }));
+    setFilters(parsedFilters);
     setSearchQuery(parsedSearch);
-    fetchProfiles(parsedFilters, parsedSearch);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // Pass fresh values directly — don't rely on state having updated yet
+    fetchProfiles(activeTab, parsedFilters, parsedSearch);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.search]);
 
+  // Called when user clicks "Apply Filters"
   const handleApplyFilters = () => {
-    fetchProfiles();
+    fetchProfiles(activeTab, filters, searchQuery);
     setShowFilter(false);
+  };
+
+  // Called on tab click
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    // useEffect [activeTab] will fire, but also call directly so it feels instant
+    fetchProfiles(tab, filters, searchQuery);
   };
 
   return (
@@ -303,9 +322,8 @@ const SearchBrowse = () => {
                 placeholder="Search by name, city, community..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                // ✅ FIX: Trigger search on Enter key
                 onKeyDown={(e) => {
-                  if (e.key === "Enter") fetchProfiles(filters, e.target.value);
+                  if (e.key === "Enter") fetchProfiles(activeTab, filters, e.target.value);
                 }}
               />
               {searchQuery && (
@@ -313,7 +331,7 @@ const SearchBrowse = () => {
                   className="clear-search"
                   onClick={() => {
                     setSearchQuery("");
-                    fetchProfiles(filters, "");
+                    fetchProfiles(activeTab, filters, "");
                   }}
                 >
                   <X size={16} />
@@ -322,7 +340,7 @@ const SearchBrowse = () => {
             </div>
             <button
               className={`filter-toggle-btn ${showFilter ? "active" : ""}`}
-              onClick={() => setShowFilter(!showFilter)}
+              onClick={() => setShowFilter((prev) => !prev)}
             >
               <Filter size={18} />
               Filters
@@ -331,7 +349,6 @@ const SearchBrowse = () => {
           </div>
 
           {/* FILTER PANEL */}
-          {/* ✅ FIX: onApply passed as separate prop */}
           {showFilter && (
             <FilterPanel
               filters={filters}
@@ -347,7 +364,7 @@ const SearchBrowse = () => {
               <button
                 key={t.key}
                 className={`tab-btn ${activeTab === t.key ? "active" : ""}`}
-                onClick={() => setActiveTab(t.key)}
+                onClick={() => handleTabChange(t.key)}
               >
                 {t.label}
               </button>
@@ -365,7 +382,9 @@ const SearchBrowse = () => {
                     : "Set your city in profile to enable same-city matches"}
                 </span>
               </div>
-              {sameCityMeta.message && <p className="same-city-note">{sameCityMeta.message}</p>}
+              {sameCityMeta.message && (
+                <p className="same-city-note">{sameCityMeta.message}</p>
+              )}
             </div>
           )}
 
@@ -373,7 +392,7 @@ const SearchBrowse = () => {
           <div className="results-info">
             {loading
               ? <span>Loading profiles...</span>
-              : <span>{profiles.length} profiles found</span>
+              : <span>{profiles.length} profile{profiles.length !== 1 ? "s" : ""} found</span>
             }
           </div>
 
@@ -387,7 +406,11 @@ const SearchBrowse = () => {
           ) : !loading ? (
             <div className="no-results">
               <Search size={48} color="#DDC3C3" />
-              <h3>{activeTab === "sameCity" ? "No same-city matches found" : "No profiles found"}</h3>
+              <h3>
+                {activeTab === "sameCity"
+                  ? "No same-city matches found"
+                  : "No profiles found"}
+              </h3>
               <p>
                 {activeTab === "sameCity"
                   ? (sameCityMeta.message || "Try broadening your filters or check back later.")

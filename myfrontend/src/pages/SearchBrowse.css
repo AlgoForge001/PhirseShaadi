@@ -178,6 +178,9 @@
   padding: 18px 20px;
   border-right: 1px solid #f5eef5;
   border-bottom: 1px solid #f5eef5;
+  /* FIX: prevent children from overflowing their cell */
+  min-width: 0;
+  overflow: hidden;
 }
 
 .filter-group:last-child { border-right: none; }
@@ -209,6 +212,8 @@
   text-align: center;
   transition: border-color 0.2s;
   outline: none;
+  /* FIX: box-sizing so padding doesn't blow out the width */
+  box-sizing: border-box;
 }
 .range-inputs input:focus { border-color: #6B3F69; background: white; }
 
@@ -219,7 +224,9 @@
 }
 
 .filter-select {
+  /* FIX: full width without overflowing the cell */
   width: 100%;
+  box-sizing: border-box;
   padding: 9px 12px;
   border: 1.5px solid #ede0ed;
   border-radius: 8px;
@@ -234,7 +241,9 @@
 .filter-select:focus { border-color: #6B3F69; background: white; }
 
 .filter-input {
+  /* FIX: full width without overflowing the cell */
   width: 100%;
+  box-sizing: border-box;
   padding: 9px 12px;
   border: 1.5px solid #ede0ed;
   border-radius: 8px;
@@ -294,6 +303,7 @@
   height: 16px;
   accent-color: #6B3F69;
   cursor: pointer;
+  flex-shrink: 0;
 }
 
 .apply-filters-btn {
