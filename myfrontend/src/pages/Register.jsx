@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { User, Mail, Phone, Lock, Eye, EyeOff, Heart, ChevronRight, CheckCircle, Users, Calendar, AlertCircle, Briefcase, Upload, Building2, Baby } from "lucide-react";
+import { User, Mail, Phone, Lock, Eye, EyeOff, Heart, ChevronRight, CheckCircle, Users, Calendar, AlertCircle, Briefcase, Upload, Building2, Baby, Camera } from "lucide-react";
 import api from "../utils/api";
 import { useAuth } from "../context/AuthContext";
 import "./Register.css";
@@ -65,6 +65,9 @@ const Register = () => {
   });
 
   const cvInputRef = useRef(null);
+  const photoInputRef = useRef(null);
+  const [photoFile, setPhotoFile] = useState(null);
+  const [photoPreview, setPhotoPreview] = useState(null);
 
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
@@ -158,6 +161,7 @@ const Register = () => {
       ];
       fields.forEach(f => payload.append(f, formData[f] ?? ""));
       if (formData.cvFile) payload.append("cvFile", formData.cvFile);
+      if (photoFile) payload.append("profilePhoto", photoFile);
 
       const res = await api.post("/auth/register", payload, {
         headers: { "Content-Type": "multipart/form-data" }
@@ -670,14 +674,6 @@ const Register = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="form-group">
-                    <label>Upload CV / Resume (Optional)</label>
-                    <div className="cv-upload-box" onClick={() => cvInputRef.current?.click()}>
-                      <Upload size={22} />
-                      <span>{formData.cvFile ? formData.cvFile.name : 'Click to upload your CV (PDF/DOC)'}</span>
-                      <input ref={cvInputRef} type="file" name="cvFile" accept=".pdf,.doc,.docx" onChange={handleChange} style={{display:'none'}} />
-                    </div>
-                  </div>
                 </div>
               )}
 
@@ -761,6 +757,61 @@ const Register = () => {
                   )}
                 </div>
               )}
+
+              {/* PHOTO UPLOAD - Available for everyone */}
+              <div className="form-group">
+                <label>Upload Profile Photo (Optional)</label>
+                <div className="photo-upload-row">
+                  <div className="reg-photo-preview">
+                    {photoPreview ? (
+                      <img src={photoPreview} alt="Preview" />
+                    ) : (
+                      <div className="reg-photo-placeholder">
+                        <Camera size={28} color="#A376A2" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="reg-photo-info">
+                    <p>{photoPreview ? 'Photo selected' : 'Add a clear photo of your face'}</p>
+                    <button
+                      type="button"
+                      className="reg-photo-btn"
+                      onClick={() => photoInputRef.current?.click()}
+                    >
+                      <Camera size={15} /> {photoPreview ? 'Change Photo' : 'Choose Photo'}
+                    </button>
+                    <input
+                      ref={photoInputRef}
+                      type="file"
+                      accept="image/*"
+                      style={{ display: 'none' }}
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          if (file.size > 5 * 1024 * 1024) {
+                            alert('Photo must be under 5MB.');
+                            return;
+                          }
+                          setPhotoFile(file);
+                          const reader = new FileReader();
+                          reader.onload = () => setPhotoPreview(reader.result);
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* CV UPLOAD - Available for everyone */}
+              <div className="form-group">
+                <label>Upload CV / Resume (Optional)</label>
+                <div className="cv-upload-box" onClick={() => cvInputRef.current?.click()}>
+                  <Upload size={22} />
+                  <span>{formData.cvFile ? formData.cvFile.name : 'Click to upload your CV (PDF/DOC)'}</span>
+                  <input ref={cvInputRef} type="file" name="cvFile" accept=".pdf,.doc,.docx" onChange={handleChange} style={{display:'none'}} />
+                </div>
+              </div>
 
               <p className="terms-text">
                 By clicking "Complete Registration", you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>.

@@ -76,7 +76,7 @@ const EditProfile = () => {
         setApiError(null);
         // Using interceptor
         const response = await api.get("/profile/me");
-        
+
         // Merge API data with default state to avoid undefined fields
         const profileData = response.data.profile || {};
         setFormData(prev => ({
@@ -328,7 +328,7 @@ const EditProfile = () => {
   };
 
   // ── DATA OPTIONS ──
-  const heights = ["4'6\"","4'7\"","4'8\"","4'9\"","4'10\"","4'11\"","5'0\"","5'1\"","5'2\"","5'3\"","5'4\"","5'5\"","5'6\"","5'7\"","5'8\"","5'9\"","5'10\"","5'11\"","6'0\"","6'1\"","6'2\"","6'3\"","6'4\""];
+  const heights = ["4'6\"", "4'7\"", "4'8\"", "4'9\"", "4'10\"", "4'11\"", "5'0\"", "5'1\"", "5'2\"", "5'3\"", "5'4\"", "5'5\"", "5'6\"", "5'7\"", "5'8\"", "5'9\"", "5'10\"", "5'11\"", "6'0\"", "6'1\"", "6'2\"", "6'3\"", "6'4\""];
   const weights = Array.from({ length: 81 }, (_, i) => `${40 + i} kg`);
   const complexions = ["Very Fair", "Fair", "Wheatish", "Wheatish Brown", "Dark"];
   const bodyTypes = ["Slim", "Athletic", "Average", "Heavy"];
@@ -372,7 +372,7 @@ const EditProfile = () => {
         </div>
         <div className="ep-progress">
           <div className="ep-progress-bar">
-          <div
+            <div
               className="ep-progress-fill"
               style={{ width: `${(step / 5) * 100}%` }}
             />
@@ -617,43 +617,43 @@ const EditProfile = () => {
                     />
                   </div>
                 </div>
-                  <div className="form-group">
-                    <label>Annual Income</label>
-                    <div className="input-wrap">
-                      <select name="annualIncome" value={formData.annualIncome} onChange={handleChange}>
-                        <option value="">Select Income</option>
-                        {incomes.map((i) => <option key={i} value={i}>{i}</option>)}
-                      </select>
-                    </div>
-                  </div>
-                </div>
-
-                {/* CV UPLOAD */}
                 <div className="form-group">
-                  <label>Update CV / Resume (PDF/DOC)</label>
-                  <div className="cv-upload-area">
-                    <input 
-                      type="file" 
-                      accept=".pdf,.doc,.docx" 
-                      onChange={handleCvChange}
-                      id="cv-upload-input"
-                      hidden
-                    />
-                    <div className="cv-upload-box" onClick={() => document.getElementById('cv-upload-input').click()}>
-                      <FileText size={20} />
-                      <span>{cvFile ? cvFile.name : formData.cvUrl ? "CV Already Uploaded (Click to change)" : "Click to upload CV"}</span>
-                    </div>
-                    {cvFile && (
-                      <button className="btn-upload-cv" onClick={uploadCv} disabled={uploadingCv}>
-                        {uploadingCv ? "Uploading..." : "Upload Now"}
-                      </button>
-                    )}
-                    {formData.cvUrl && !cvFile && (
-                      <a href={formData.cvUrl} target="_blank" rel="noreferrer" className="view-cv-link">View Current CV</a>
-                    )}
+                  <label>Annual Income</label>
+                  <div className="input-wrap">
+                    <select name="annualIncome" value={formData.annualIncome} onChange={handleChange}>
+                      <option value="">Select Income</option>
+                      {incomes.map((i) => <option key={i} value={i}>{i}</option>)}
+                    </select>
                   </div>
                 </div>
               </div>
+
+              {/* CV UPLOAD */}
+              <div className="form-group">
+                <label>Update CV / Resume (PDF/DOC)</label>
+                <div className="cv-upload-area">
+                  <input
+                    type="file"
+                    accept=".pdf,.doc,.docx"
+                    onChange={handleCvChange}
+                    id="cv-upload-input"
+                    hidden
+                  />
+                  <div className="cv-upload-box" onClick={() => document.getElementById('cv-upload-input').click()}>
+                    <FileText size={20} />
+                    <span>{cvFile ? cvFile.name : formData.cvUrl ? "CV Already Uploaded (Click to change)" : "Click to upload CV"}</span>
+                  </div>
+                  {cvFile && (
+                    <button className="btn-upload-cv" onClick={uploadCv} disabled={uploadingCv}>
+                      {uploadingCv ? "Uploading..." : "Upload Now"}
+                    </button>
+                  )}
+                  {formData.cvUrl && !cvFile && (
+                    <a href={formData.cvUrl} target="_blank" rel="noreferrer" className="view-cv-link">View Current CV</a>
+                  )}
+                </div>
+              </div>
+            </div>
           )}
 
           {/* ── STEP 3 — FAMILY ── */}
@@ -857,15 +857,15 @@ const EditProfile = () => {
               <p className="ep-form-desc">Add or remove photos. Your primary photo is shown in search results.</p>
 
               <div className="photo-upload-section">
-                <input 
-                  type="file" 
-                  multiple 
-                  accept="image/*" 
+                <input
+                  type="file"
+                  multiple
+                  accept="image/*"
                   onChange={handlePhotoUpload}
                   id="photo-upload-input"
                   hidden
                 />
-                <button 
+                <button
                   className="btn-add-photos"
                   onClick={() => document.getElementById('photo-upload-input').click()}
                 >
@@ -878,14 +878,14 @@ const EditProfile = () => {
                   <div key={idx} className={`ep-photo-thumb ${ph.isPrimary ? 'primary' : ''}`}>
                     <img src={ph.url} alt="Profile" />
                     <div className="ep-photo-actions">
-                      <button 
+                      <button
                         className={`action-btn star ${ph.isPrimary ? 'active' : ''}`}
                         onClick={() => handleSetPrimaryPhoto(ph.publicId)}
                         title="Set as Primary"
                       >
                         <Star size={14} fill={ph.isPrimary ? "#ffc107" : "none"} />
                       </button>
-                      <button 
+                      <button
                         className="action-btn delete"
                         onClick={() => handleDeletePhoto(ph.publicId)}
                         title="Delete Photo"
