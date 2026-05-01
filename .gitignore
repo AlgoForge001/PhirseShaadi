@@ -35,4 +35,5 @@ lerna-debug.log*
 *.sln
 *.sw?
 
-implement.md
+admin/admin.md
+admin/design.md

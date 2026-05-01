@@ -1,5 +1,60 @@
 const User = require('../models/User');
+const Report = require('../models/Report');
 
+// GET /api/admin/stats
+exports.getStats = async (req, res) => {
+  try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const weekAgo = new Date();
+    weekAgo.setDate(today.getDate() - 7);
+    
+    const monthAgo = new Date();
+    monthAgo.setMonth(today.getMonth() - 1);
+
+    const totalUsers = await User.countDocuments({ role: 'user' });
+    const newToday = await User.countDocuments({ role: 'user', createdAt: { $gte: today } });
+    const newThisWeek = await User.countDocuments({ role: 'user', createdAt: { $gte: weekAgo } });
+    const newThisMonth = await User.countDocuments({ role: 'user', createdAt: { $gte: monthAgo } });
+    
+    const premiumUsers = await User.countDocuments({ role: 'user', isPremium: true });
+    const verifiedUsers = await User.countDocuments({ role: 'user', isVerified: true });
+    
+    const activeToday = await User.countDocuments({ role: 'user', lastActive: { $gte: today } });
+    const activeThisWeek = await User.countDocuments({ role: 'user', lastActive: { $gte: weekAgo } });
+
+    const totalReports = await Report.countDocuments();
+    const pendingReports = await Report.countDocuments({ status: 'pending' });
+
+    // Payment model missing, using 0 for now as placeholder
+    const totalRevenue = 0;
+    const revenueThisMonth = 0;
+
+    const conversionRate = totalUsers > 0 ? ((premiumUsers / totalUsers) * 100).toFixed(2) + '%' : '0%';
+
+    res.status(200).json({
+      success: true,
+      data: {
+        totalUsers,
+        newToday,
+        newThisWeek,
+        newThisMonth,
+        premiumUsers,
+        verifiedUsers,
+        activeToday,
+        activeThisWeek,
+        totalReports,
+        pendingReports,
+        totalRevenue,
+        revenueThisMonth,
+        conversionRate
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Failed to fetch stats", error: error.message });
+  }
+};
 // GET /api/admin/users
 exports.getAllUsers = async (req, res) => {
   try {

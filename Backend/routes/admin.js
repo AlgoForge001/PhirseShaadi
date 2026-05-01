@@ -6,6 +6,7 @@ const adminAuth = require('../middleware/adminAuth');
 // All routes here are protected by adminAuth
 router.use(adminAuth);
 
+router.get('/stats', adminController.getStats);
 router.get('/users', adminController.getAllUsers);
 router.put('/users/:id', adminController.updateUser);
 router.delete('/users/:id', adminController.deleteUser);
