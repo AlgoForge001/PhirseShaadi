@@ -470,6 +470,8 @@ const Chat = () => {
       </div>
     </div>
   );
+  <Footer />
 };
 
+import Footer from "../components/Footer";
 export default Chat;

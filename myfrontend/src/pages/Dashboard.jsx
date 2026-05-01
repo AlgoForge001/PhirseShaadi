@@ -2,14 +2,33 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Heart, Edit, ChevronRight, Zap, MapPin,
-  Briefcase, CheckCircle, Star, MessageCircle, 
-  Search, User, Bell, Sparkles
+  Briefcase, CheckCircle, Star, MessageCircle,
+  Search, User, Bell, Sparkles, TrendingUp, Eye
 } from "lucide-react";
 import api from "../utils/api";
 
 import Navbar from "../components/Navbar";
 import ProfileCard from "../components/ProfileCard";
 import "./Dashboard.css";
+
+const StatCard = ({ icon: Icon, iconClass, label, value, isLoading, onClick }) => (
+  <div className="mini-stat-card" onClick={onClick}>
+    <div className={`mini-icon ${iconClass}`}>
+      <Icon size={20} />
+    </div>
+    <div className="mini-data">
+      <span className="mini-label">{label}</span>
+      {isLoading ? (
+        <span className="mini-value skeleton-value" />
+      ) : (
+        <span className="mini-value">{value}</span>
+      )}
+    </div>
+    <div className="stat-arrow">
+      <ChevronRight size={14} />
+    </div>
+  </div>
+);
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -18,7 +37,16 @@ const Dashboard = () => {
   const [recommendations, setRecommendations] = useState([]);
   const [smartMatches, setSmartMatches] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [statsLoading, setStatsLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Dynamic stats state
+  const [stats, setStats] = useState({
+    notifications: null,
+    messages: null,
+    profileViews: null,
+    matches: null,
+  });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -29,24 +57,30 @@ const Dashboard = () => {
           api.get("/matches/recommended").catch(() => ({ data: { data: [] } })),
           api.get("/matches/smart-match").catch(() => ({ data: { data: [] } }))
         ]);
-        
+
         if (profileRes.data.profile) {
           setUserData(profileRes.data.profile);
-          setRecommendations(matchRes.data.data?.slice(0, 4) || []);
+          const matchData = matchRes.data.data || [];
+          setRecommendations(matchData.slice(0, 4));
+
+          // Set matches count from recommended data
+          setStats(prev => ({
+            ...prev,
+            matches: matchData.length,
+          }));
+
           setSmartMatches(smartMatchRes.data.data || []);
         } else {
-          // If no profile data, it's a new Clerk user
           navigate("/profile-creation");
         }
       } catch (err) {
         console.error("Dashboard fetch failed:", err);
         if (err.response?.status === 404) {
-          // Profile not found in MongoDB
           navigate("/profile-creation");
         } else if (err.response?.status === 401) {
-          setError("Session expired or authentication failed. Please re-login.");
+          setError("Session expired. Please re-login.");
         } else {
-          setError(`Failed to sync your dashboard: ${err.message || "Unknown error"}`);
+          setError(`Failed to load dashboard: ${err.message || "Unknown error"}`);
         }
       } finally {
         setLoading(false);
@@ -56,7 +90,71 @@ const Dashboard = () => {
     fetchData();
   }, []);
 
-  if (loading) return <div className="loading-screen">Loading your luxury experience...</div>;
+  // Fetch dynamic stats separately so cards animate in
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        setStatsLoading(true);
+
+        const [viewersRes, notifRes, chatRes] = await Promise.all([
+          api.get("/profile/viewers").catch(() => ({ data: { data: [] } })),
+          api.get("/notifications").catch(() => ({ data: { data: [] } })),
+          api.get("/chat/conversations").catch(() => ({ data: { data: [] } })),
+        ]);
+
+        const viewers = viewersRes.data.data || [];
+        const notifications = notifRes.data.data || [];
+        const chats = chatRes.data.data || [];
+
+        // Profile views: count unique viewers in last 30 days
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+        const recentViews = viewers.filter(v =>
+          v.viewedAt && new Date(v.viewedAt) >= thirtyDaysAgo
+        );
+
+        // Unread notifications
+        const unreadNotifs = notifications.filter(n => !n.isRead);
+
+        // Active chats (with unread messages)
+        const activeChats = chats.filter(c => c.unreadCount > 0);
+
+        setStats(prev => ({
+          ...prev,
+          notifications: unreadNotifs.length,
+          messages: activeChats.length,
+          profileViews: recentViews.length || viewers.length,
+        }));
+      } catch (err) {
+        console.error("Stats fetch error:", err);
+        // Don't show error - just leave as 0
+        setStats(prev => ({
+          ...prev,
+          notifications: prev.notifications ?? 0,
+          messages: prev.messages ?? 0,
+          profileViews: prev.profileViews ?? 0,
+        }));
+      } finally {
+        setStatsLoading(false);
+      }
+    };
+
+    fetchStats();
+  }, []);
+
+  const formatStatValue = (value, suffix = "") => {
+    if (value === null || value === undefined) return "—";
+    if (value === 0) return `0${suffix}`;
+    if (value >= 1000) return `${(value / 1000).toFixed(1)}k${suffix}`;
+    return `${value}${suffix}`;
+  };
+
+  if (loading) return (
+    <div className="loading-screen">
+      <div className="loading-pulse" />
+      Loading your experience...
+    </div>
+  );
 
   if (error || !userData) {
     return (
@@ -68,10 +166,53 @@ const Dashboard = () => {
     );
   }
 
+  const statCards = [
+    {
+      icon: Bell,
+      iconClass: "blue",
+      label: "Alerts",
+      value: stats.notifications !== null
+        ? (stats.notifications === 0 ? "All read" : `${stats.notifications} New`)
+        : "—",
+      isLoading: statsLoading,
+      onClick: () => navigate("/notifications"),
+    },
+    {
+      icon: MessageCircle,
+      iconClass: "purple",
+      label: "Messages",
+      value: stats.messages !== null
+        ? (stats.messages === 0 ? "No unread" : `${stats.messages} Active`)
+        : "—",
+      isLoading: statsLoading,
+      onClick: () => navigate("/chat"),
+    },
+    {
+      icon: Eye,
+      iconClass: "amber",
+      label: "Profile Views",
+      value: stats.profileViews !== null
+        ? formatStatValue(stats.profileViews, " Views")
+        : "—",
+      isLoading: statsLoading,
+      onClick: () => navigate("/profile-viewers"),
+    },
+    {
+      icon: Heart,
+      iconClass: "heart",
+      label: "Matches",
+      value: stats.matches !== null
+        ? formatStatValue(stats.matches, " Found")
+        : "—",
+      isLoading: false,
+      onClick: () => navigate("/search"),
+    },
+  ];
+
   return (
     <div className="dashboard-premium">
       <Navbar />
-      
+
       <main className="dashboard-container">
         {/* HERO SECTION */}
         <section className="dashboard-hero">
@@ -90,44 +231,22 @@ const Dashboard = () => {
           </div>
           <div className="hero-image-wrap">
             <div className="abstract-shape" />
-            {userData.photos?.[0]?.url ? (
-              <img src={userData.photos[0].url} alt="You" />
-            ) : (
-              <div className="profile-image-placeholder"><User size={40} /></div>
-            )}
+            {(() => {
+              const photo = userData.photos?.find(p => p.isPrimary) || userData.photos?.[0];
+              return photo?.url ? (
+                <img src={photo.url} alt="You" />
+              ) : (
+                <div className="profile-image-placeholder"><User size={40} /></div>
+              );
+            })()}
           </div>
         </section>
 
-        {/* QUICK STATS */}
+        {/* DYNAMIC QUICK STATS */}
         <section className="stats-grid-minimal">
-          <div className="mini-stat-card" onClick={() => navigate("/notifications")}>
-            <div className="mini-icon blue"><Bell size={20} /></div>
-            <div className="mini-data">
-              <span className="mini-label">Recent Alerts</span>
-              <span className="mini-value">5 New</span>
-            </div>
-          </div>
-          <div className="mini-stat-card" onClick={() => navigate("/chat")}>
-            <div className="mini-icon purple"><MessageCircle size={20} /></div>
-            <div className="mini-data">
-              <span className="mini-label">Messages</span>
-              <span className="mini-value">3 Active</span>
-            </div>
-          </div>
-          <div className="mini-stat-card" onClick={() => navigate("/profile-viewers")}>
-            <div className="mini-icon amber"><User size={20} /></div>
-            <div className="mini-data">
-              <span className="mini-label">Profile Views</span>
-              <span className="mini-value">24 Today</span>
-            </div>
-          </div>
-          <div className="mini-stat-card" onClick={() => navigate("/search")}>
-            <div className="mini-icon heart"><Heart size={20} /></div>
-            <div className="mini-data">
-              <span className="mini-label">New Matches</span>
-              <span className="mini-value">128 Total</span>
-            </div>
-          </div>
+          {statCards.map((card, i) => (
+            <StatCard key={i} {...card} />
+          ))}
         </section>
 
         {/* SMART AI MATCHES */}
@@ -140,7 +259,9 @@ const Dashboard = () => {
               </div>
               <span className="premium-tag">USP Exclusive</span>
             </div>
-            <p className="section-subtitle">Our AI has analyzed your bio and preferences to find these high-potential connections.</p>
+            <p className="section-subtitle">
+              Our AI has analyzed your bio and preferences to find these high-potential connections.
+            </p>
             <div className="matches-grid-premium">
               {smartMatches.map(profile => (
                 <ProfileCard key={profile._id} profile={profile} />
@@ -171,7 +292,7 @@ const Dashboard = () => {
           </div>
         </section>
 
-        {/* ACCOUNT STATUS / UPGRADE */}
+        {/* PREMIUM BANNER */}
         {!userData.isPremium && (
           <section className="premium-banner-minimal">
             <div className="banner-icon"><Star size={32} fill="#FFD700" color="#FFD700" /></div>
@@ -183,9 +304,52 @@ const Dashboard = () => {
           </section>
         )}
       </main>
+
+      {/* FOOTER */}
+      <footer className="lp-footer">
+        <div className="footer-content">
+          <div className="footer-column footer-brand-col">
+            <div className="footer-brand">
+              <Heart size={16} />
+              <h4>PhirseShaadi</h4>
+            </div>
+            <p>Making matrimony accessible and authentic for everyone. Your trusted partner in finding love.</p>
+          </div>
+          <div className="footer-column">
+            <h4>Quick Links</h4>
+            <ul>
+              <li><a href="/">Home</a></li>
+              <li><a href="/about">About</a></li>
+              <li><a href="#">Privacy Policy</a></li>
+              <li><a href="#">Terms of Service</a></li>
+            </ul>
+          </div>
+          <div className="footer-column">
+            <h4>Support</h4>
+            <ul>
+              <li><a href="#">Help Center</a></li>
+              <li><a href="#">Safety Tips</a></li>
+              <li><a href="#">FAQ</a></li>
+              <li><a href="#">Report Abuse</a></li>
+            </ul>
+          </div>
+          <div className="footer-column">
+            <h4>Follow Us</h4>
+            <div className="social-links">
+              <a href="#">Facebook</a>
+              <a href="#">Instagram</a>
+              <a href="#">Twitter</a>
+              <a href="#">LinkedIn</a>
+            </div>
+          </div>
+        </div>
+        <div className="footer-bottom">
+          <p>&copy; 2026 PhirseShaadi. All rights reserved.</p>
+          <p className="footer-tagline">Made with ❤️ for meaningful connections</p>
+        </div>
+      </footer>
     </div>
   );
 };
-
 
 export default Dashboard;
