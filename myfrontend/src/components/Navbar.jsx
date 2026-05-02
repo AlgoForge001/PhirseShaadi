@@ -5,6 +5,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useSocket } from "../context/SocketContext";
+import { normalizeImageUrl } from "../utils/imageUtils";
 
 import "./Navbar.css";
 
@@ -16,6 +17,7 @@ const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
+  const [imgFailed, setImgFailed] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -77,11 +79,14 @@ const Navbar = () => {
               onClick={() => setShowUserDropdown(!showUserDropdown)}
             >
               <div className="user-avatar">
-                {user?.photos?.[0]?.url ? (
-                  <img src={user.photos[0].url} alt="Profile" />
-                ) : (
-                  <User size={18} />
-                )}
+                {(() => {
+                  const photo = user?.photos?.[0];
+                  const url = normalizeImageUrl(photo?.url);
+                  if (url && !imgFailed) {
+                    return <img src={url} alt="Profile" onError={() => setImgFailed(true)} />;
+                  }
+                  return <User size={18} />;
+                })()}
               </div>
               <span className="user-name-text">{user?.name?.split(" ")[0] || "User"}</span>
             </button>
