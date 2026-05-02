@@ -1,17 +1,25 @@
 import React, { useEffect, useState } from 'react';
+import { 
+  Heart, CheckCircle, MessageSquare, Eye, 
+  CreditCard, Bell, Check, Trash2, Clock 
+} from 'lucide-react';
 import { getNotifications, markAllNotificationsRead, markNotificationRead } from '../utils/api';
 import { useSocket } from '../context/SocketContext';
 import { useNavigate } from 'react-router-dom';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 import './Notifications.css';
 
 const Notifications = () => {
   const [notifications, setLocalNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [loading, setLoading] = useState(true);
   const { setUnreadNotifications } = useSocket();
   const navigate = useNavigate();
 
   const fetchNotifications = async () => {
     try {
+      setLoading(true);
       const res = await getNotifications();
       if (res.data.success) {
         setLocalNotifications(res.data.notifications);
@@ -20,6 +28,8 @@ const Notifications = () => {
       }
     } catch (err) {
       console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -45,8 +55,8 @@ const Notifications = () => {
     if (!n.isRead) {
       try {
         await markNotificationRead(n._id);
-        setUnreadCount(prev => prev - 1);
-        setUnreadNotifications(prev => prev - 1);
+        setUnreadCount(prev => Math.max(0, prev - 1));
+        setUnreadNotifications(prev => Math.max(0, prev - 1));
         setLocalNotifications(prev => prev.map(item => item._id === n._id ? { ...item, isRead: true } : item));
       } catch (err) {
         console.error(err);
@@ -57,51 +67,86 @@ const Notifications = () => {
 
   const getIcon = (type) => {
     switch (type) {
-      case 'interest_received': return '❤️';
-      case 'interest_accepted': return '✅';
-      case 'new_message': return '💬';
-      case 'profile_viewed': return '👁️';
-      case 'payment_success': return '💰';
-      default: return '🔔';
+      case 'interest_received': return <Heart size={20} fill="#f43f5e" color="#f43f5e" />;
+      case 'interest_accepted': return <CheckCircle size={20} color="#10b981" />;
+      case 'new_message': return <MessageSquare size={20} color="#8b5cf6" />;
+      case 'profile_viewed': return <Eye size={20} color="#f59e0b" />;
+      case 'payment_success': return <CreditCard size={20} color="#c9952a" />;
+      default: return <Bell size={20} color="#6b3f69" />;
     }
   };
 
+  const formatTime = (dateString) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diff = Math.floor((now - date) / 1000);
+
+    if (diff < 60) return 'Just now';
+    if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+    if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+    return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+  };
+
   return (
-    <div className="notifications-page">
-      <div className="notifications-container">
-        <div className="notifications-header">
-          <h2>Notifications {unreadCount > 0 && <span className="unread-dot">{unreadCount}</span>}</h2>
-          {unreadCount > 0 && (
-            <button className="mark-read-btn" onClick={handleMarkAllRead}>Mark all as read</button>
-          )}
-        </div>
-        <div className="notifications-list">
-          {notifications.length > 0 ? (
-            notifications.map((n) => (
-              <div 
-                key={n._id} 
-                className={`notification-item ${!n.isRead ? 'unread' : ''}`}
-                onClick={() => handleNotificationClick(n)}
-              >
-                <div className="notification-icon">{getIcon(n.type)}</div>
-                <div className="notification-content">
-                  <p className="notification-msg">{n.message}</p>
-                  <span className="notification-time">{new Date(n.createdAt).toLocaleString()}</span>
-                </div>
-                {!n.isRead && <div className="unread-indicator"></div>}
-              </div>
-            ))
-          ) : (
-            <div className="no-notifications">
-              <p>No notifications yet!</p>
+    <div className="nt-page">
+      <Navbar />
+      
+      <main className="nt-container">
+        <div className="nt-card">
+          <div className="nt-header">
+            <div className="nt-title-wrap">
+              <h2>Alerts & Notifications</h2>
+              {unreadCount > 0 && <span className="nt-badge">{unreadCount} New</span>}
             </div>
-          )}
+            {unreadCount > 0 && (
+              <button className="nt-action-link" onClick={handleMarkAllRead}>
+                <Check size={16} /> Mark all as read
+              </button>
+            )}
+          </div>
+
+          <div className="nt-list">
+            {loading ? (
+              <div className="nt-loading">
+                <div className="nt-spinner" />
+                <p>Fetching your updates...</p>
+              </div>
+            ) : notifications.length > 0 ? (
+              notifications.map((n) => (
+                <div 
+                  key={n._id} 
+                  className={`nt-item ${!n.isRead ? 'unread' : ''}`}
+                  onClick={() => handleNotificationClick(n)}
+                >
+                  <div className={`nt-icon-wrap ${n.type}`}>
+                    {getIcon(n.type)}
+                  </div>
+                  <div className="nt-content">
+                    <p className="nt-msg">{n.message}</p>
+                    <div className="nt-meta">
+                      <Clock size={12} />
+                      <span>{formatTime(n.createdAt)}</span>
+                    </div>
+                  </div>
+                  {!n.isRead && <div className="nt-unread-dot"></div>}
+                </div>
+              ))
+            ) : (
+              <div className="nt-empty">
+                <div className="empty-icon-circle">
+                  <Bell size={32} />
+                </div>
+                <h3>All Caught Up!</h3>
+                <p>No new notifications at the moment. We'll alert you when something important happens.</p>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+      </main>
+
+      <Footer />
     </div>
   );
-  <Footer />
 };
 
-import Footer from "../components/Footer";
 export default Notifications;

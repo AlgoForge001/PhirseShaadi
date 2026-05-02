@@ -1,125 +1,232 @@
-.notifications-page {
-  padding: 40px;
-  background: #f8f9fa;
-  min-height: calc(100vh - 40px);
-  display: flex;
-  justify-content: center;
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --brand: #6b3f69;
+  --brand-dark: #4e2e4d;
+  --brand-light: #8b5a8f;
+  --brand-soft: #f5eff7;
+  --brand-mid: #e8d8eb;
+  --text: #1a1025;
+  --muted: #5a5168;
+  --muted-light: #8a8099;
+  --border: #e2d8e8;
+  --surface: #ffffff;
+  --surface-2: #faf6fb;
+  --shadow-sm: 0 2px 8px rgba(107, 63, 105, 0.05);
+  --shadow-md: 0 8px 24px rgba(107, 63, 105, 0.08);
 }
 
-.notifications-container {
-  width: 700px;
-  max-width: 100%;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-  overflow: hidden;
-}
-
-.notifications-header {
-  padding: 20px 25px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid #eee;
-}
-
-.notifications-header h2 {
-  font-size: 1.4rem;
-  color: #6B3F69;
-  display: flex;
-  align-items: center;
-}
-
-.unread-dot {
-  background: #ff4d4d;
-  color: white;
-  font-size: 0.8rem;
-  padding: 2px 8px;
-  border-radius: 12px;
-  margin-left: 10px;
-}
-
-.mark-read-btn {
-  background: none;
-  border: none;
-  color: #6B3F69;
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.mark-read-btn:hover {
-  text-decoration: underline;
-}
-
-.notifications-list {
+.nt-page {
+  min-height: 100vh;
+  background: var(--surface-2);
+  padding-top: 80px;
   display: flex;
   flex-direction: column;
 }
 
-.notification-item {
+.nt-container {
+  flex: 1;
+  max-width: 800px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 48px 24px;
+}
+
+.nt-card {
+  background: #fff;
+  border-radius: 24px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+
+.nt-header {
+  padding: 32px;
   display: flex;
-  padding: 20px 25px;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+}
+
+.nt-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.nt-header h2 {
+  font-family: "DM Serif Display", serif;
+  font-size: 24px;
+  color: var(--text);
+  margin: 0;
+}
+
+.nt-badge {
+  background: var(--brand);
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 99px;
+  letter-spacing: 0.5px;
+}
+
+.nt-action-link {
+  background: transparent;
+  border: none;
+  color: var(--brand);
+  font-weight: 700;
+  font-size: 14px;
   cursor: pointer;
-  border-bottom: 1px solid #f9f9f9;
-  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 10px;
+  transition: all 0.2s;
+}
+
+.nt-action-link:hover {
+  background: var(--brand-soft);
+}
+
+/* ─── LIST ─── */
+.nt-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.nt-item {
+  display: flex;
+  padding: 24px 32px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--surface-2);
+  transition: all 0.2s ease;
   align-items: center;
   position: relative;
 }
 
-.notification-item:hover {
-  background: #fafafa;
+.nt-item:last-child {
+  border-bottom: none;
 }
 
-.notification-item.unread {
-  background: #fdf5fc;
+.nt-item:hover {
+  background: var(--surface-2);
 }
 
-.notification-icon {
-  font-size: 1.5rem;
-  margin-right: 20px;
-  background: #eee;
-  width: 45px;
-  height: 45px;
+.nt-item.unread {
+  background: linear-gradient(to right, var(--brand-soft) 0%, transparent 100%);
+}
+
+.nt-icon-wrap {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
+  margin-right: 20px;
+  flex-shrink: 0;
+  background: #f1f5f9;
 }
 
-.unread.notification-item .notification-icon {
-  background: #e9ecef;
-}
+/* Custom background colors per type */
+.nt-icon-wrap.interest_received { background: #fff1f2; }
+.nt-icon-wrap.interest_accepted { background: #ecfdf5; }
+.nt-icon-wrap.new_message      { background: #f5f3ff; }
+.nt-icon-wrap.profile_viewed   { background: #fffbeb; }
+.nt-icon-wrap.payment_success  { background: #fefce8; }
 
-.notification-content {
+.nt-content {
   flex: 1;
 }
 
-.notification-msg {
-  margin: 0 0 5px 0;
-  font-size: 1rem;
-  color: #333;
+.nt-msg {
+  margin: 0 0 6px 0;
+  font-size: 15px;
+  color: var(--text);
+  line-height: 1.5;
 }
 
-.unread .notification-msg {
-  font-weight: 600;
+.unread .nt-msg {
+  font-weight: 700;
 }
 
-.notification-time {
-  font-size: 0.8rem;
-  color: #999;
+.nt-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--muted-light);
 }
 
-.unread-indicator {
+.nt-unread-dot {
   width: 10px;
   height: 10px;
-  background: #6B3F69;
+  background: var(--brand);
   border-radius: 50%;
-  margin-left: 15px;
+  margin-left: 20px;
+  box-shadow: 0 0 0 4px var(--brand-soft);
 }
 
-.no-notifications {
-  padding: 50px;
+/* ─── STATES ─── */
+.nt-loading {
+  padding: 80px 0;
   text-align: center;
-  color: #aaa;
+  color: var(--muted);
+}
+
+.nt-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--brand-soft);
+  border-top-color: var(--brand);
+  border-radius: 50%;
+  margin: 0 auto 16px;
+  animation: spin 0.8s linear infinite;
+}
+
+.nt-empty {
+  padding: 80px 40px;
+  text-align: center;
+}
+
+.empty-icon-circle {
+  width: 80px;
+  height: 80px;
+  background: var(--surface-2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+  color: var(--brand-mid);
+}
+
+.nt-empty h3 {
+  font-family: "DM Serif Display", serif;
+  font-size: 22px;
+  color: var(--text);
+  margin-bottom: 12px;
+}
+
+.nt-empty p {
+  color: var(--muted);
+  font-size: 15px;
+  max-width: 320px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 640px) {
+  .nt-container { padding: 24px 16px; }
+  .nt-header { padding: 24px; }
+  .nt-item { padding: 20px 24px; }
+  .nt-icon-wrap { width: 40px; height: 40px; margin-right: 16px; }
+  .nt-msg { font-size: 14px; }
 }

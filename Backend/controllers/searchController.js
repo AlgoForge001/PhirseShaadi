@@ -17,7 +17,7 @@ exports.searchUsers = async (req, res) => {
       page = 1, limit = 10
     } = req.query;
 
-    const currentUser = await User.findById(req.user.userId).select('blockedUsers');
+    const currentUser = await User.findById(req.user.userId).select('blockedUsers gender');
     if (!currentUser) {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
@@ -57,7 +57,15 @@ exports.searchUsers = async (req, res) => {
     if (education) query.education = education;
     if (jobType) query.jobType = jobType;
     if (income) query.income = income;
-    if (gender) query.gender = new RegExp(`^${gender}$`, 'i');
+    
+    // Gender Filter: Use provided gender OR default to opposite
+    if (gender) {
+      query.gender = new RegExp(`^${gender}$`, 'i');
+    } else {
+      const oppositeGenderRegex = getOppositeGenderRegex(currentUser.gender);
+      if (oppositeGenderRegex) query.gender = oppositeGenderRegex;
+    }
+
     if (manglik) query.manglik = manglik;
 
     // Pagination & Execution
@@ -286,7 +294,7 @@ exports.getRecentlyActive = async (req, res) => {
     const oneDayAgo = new Date();
     oneDayAgo.setHours(oneDayAgo.getHours() - 24);
 
-    const user = await User.findById(req.user.userId).select('blockedUsers');
+    const user = await User.findById(req.user.userId).select('blockedUsers gender');
 
     // ✅ FIX: Correctly merge $ne and $nin
     const idQuery = { $ne: req.user.userId };
@@ -295,6 +303,13 @@ exports.getRecentlyActive = async (req, res) => {
     }
 
     const query = { _id: idQuery, lastActive: { $gte: oneDayAgo } };
+
+    if (user) {
+      const oppositeGenderRegex = getOppositeGenderRegex(user.gender);
+      if (oppositeGenderRegex) {
+        query.gender = oppositeGenderRegex;
+      }
+    }
 
     const matches = await User.find(query)
       .select('-password -otp -otpExpiry')
