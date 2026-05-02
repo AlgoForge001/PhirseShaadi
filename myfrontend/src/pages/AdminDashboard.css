@@ -132,6 +132,7 @@ body {
 
 .sub-nav-actions {
   display: flex;
+  flex-direction: row;
   align-items: center;
   gap: 12px;
 }
@@ -593,23 +594,25 @@ body {
 
 .search-icon {
   position: absolute;
-  left: 16px;
+  left: 12px;
   top: 50%;
   transform: translateY(-50%);
   color: var(--color-ink-muted-48);
 }
 
 .search-input, .filter-select {
+  box-sizing: border-box;
   background: var(--color-canvas);
   color: var(--color-ink);
   border: 1px solid var(--color-hairline);
   border-radius: var(--rounded-pill);
-  padding: 12px 20px 12px 40px;
-  font-size: 17px;
+  padding: 0 16px 0 36px;
+  font-size: 14px;
   font-family: var(--font-text);
-  height: 44px;
+  height: 32px;
   outline: none;
   transition: border-color 0.2s;
+  line-height: 30px;
 }
 
 .filter-select {
