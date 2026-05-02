@@ -15,6 +15,7 @@ router.get('/stats/plan-distribution', adminController.getPlanDistribution);
 router.get('/activity', adminController.getActivity);
 
 router.get('/users', adminController.getAllUsers);
+router.get('/users/:userId/detail', adminController.getUserDetail);
 router.put('/users/:id', adminController.updateUser);
 router.delete('/users/:id', adminController.deleteUser);
 router.post('/users/:id/toggle-verify', adminController.toggleVerify);

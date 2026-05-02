@@ -1,5 +1,7 @@
 const User = require('../models/User');
 const Report = require('../models/Report');
+const Interest = require('../models/Interest');
+const Conversation = require('../models/Conversation');
 
 // TASK 1 — Update GET /api/admin/stats
 exports.getStats = async (req, res) => {
@@ -188,6 +190,126 @@ exports.getAllUsers = async (req, res) => {
     res.status(200).json({ success: true, count: users.length, data: users });
   } catch (error) {
     res.status(500).json({ success: false, message: "Failed to fetch users", error: error.message });
+  }
+};
+
+// GET /api/admin/users/:userId/detail
+exports.getUserDetail = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const [user, interestsSent, interestsReceived, conversations, reports] = await Promise.all([
+      User.findById(userId).select('-password -otp').populate('verifiedBy', 'name'),
+      Interest.find({ from: userId }).populate('to', 'name photos').sort({ createdAt: -1 }).limit(5),
+      Interest.find({ to: userId }).populate('from', 'name photos').sort({ createdAt: -1 }).limit(5),
+      Conversation.find({ participants: userId }).populate('participants', 'name photos').sort({ updatedAt: -1 }).limit(5),
+      Report.find({ reportedUser: userId }).populate('reportedBy', 'name').sort({ createdAt: -1 })
+    ]);
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    // Helper to calculate age from dateOfBirth
+    let age = null;
+    if (user.dateOfBirth) {
+      const dob = new Date(user.dateOfBirth);
+      const diff = Date.now() - dob.getTime();
+      age = Math.abs(new Date(diff).getUTCFullYear() - 1970);
+    }
+
+    // Activity stats (Mocking aggregate counts or fetching actual, here we just count some from DB if needed, but we can do simple counts or mock if not available)
+    const stats = {
+      totalInterestsSent: await Interest.countDocuments({ from: userId }),
+      totalInterestsReceived: await Interest.countDocuments({ to: userId }),
+      totalInterestsAccepted: await Interest.countDocuments({ $or: [{ from: userId, status: 'accepted' }, { to: userId, status: 'accepted' }] }),
+      totalShortlisted: 0, // Mock or add shortlist count if Shortlist model exists
+      totalProfileViews: 0, // Mock
+      totalMessagesSent: 0, // Mock or fetch from Message model
+      totalConversations: await Conversation.countDocuments({ participants: userId })
+    };
+
+    const userDetail = {
+      // Basic account info
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      phone: user.phone,
+      gender: user.gender,
+      dateOfBirth: user.dateOfBirth,
+      age,
+      religion: user.religion,
+      community: user.community,
+      motherTongue: user.motherTongue,
+      role: user.role,
+      isActive: user.isActive,
+      isVerified: user.isVerified,
+      isPremium: user.isPremium,
+      banReason: user.banReason,
+      bannedAt: user.bannedAt,
+      verifiedAt: user.verifiedAt,
+      verifiedBy: user.verifiedBy,
+      premiumExpiry: user.premiumExpiry,
+      createdAt: user.createdAt,
+      lastActive: user.lastActive,
+
+      // Profile info
+      height: user.height,
+      weight: user.weight,
+      about: user.about,
+      city: user.city,
+      state: user.state,
+      country: user.country,
+      education: user.education,
+      educationDetail: user.educationDetail,
+      jobType: user.jobType,
+      jobTitle: user.jobTitle,
+      company: user.company,
+      income: user.income,
+      fatherName: user.fatherName,
+      fatherOccupation: user.fatherOccupation,
+      motherName: user.motherName,
+      motherOccupation: user.motherOccupation,
+      siblings: user.siblings,
+      familyType: user.familyType,
+      familyStatus: user.familyStatus,
+      birthTime: user.birthTime,
+      birthPlace: user.birthPlace,
+      manglik: user.manglik,
+      gotra: user.gotra,
+      profileComplete: user.profileComplete || 0,
+      photos: user.photos || [],
+
+      // Partner preferences
+      partnerPreferences: user.partnerPreferences || {},
+
+      // Activity stats
+      stats,
+
+      // Recent activity
+      recentInterestsSent: interestsSent.map(i => ({ toUser: i.to, status: i.status, createdAt: i.createdAt })),
+      recentInterestsReceived: interestsReceived.map(i => ({ fromUser: i.from, status: i.status, createdAt: i.createdAt })),
+      recentChats: conversations.map(c => {
+        const otherUser = c.participants.find(p => p._id.toString() !== userId.toString());
+        return {
+          withUser: otherUser,
+          lastMessage: c.lastMessage,
+          lastMessageTime: c.updatedAt
+        };
+      }),
+
+      // Reports about this user
+      reportsAgainst: reports.map(r => ({
+        reportedBy: r.reportedBy,
+        reason: r.reason,
+        status: r.status,
+        createdAt: r.createdAt
+      })),
+      totalReportsAgainst: reports.length
+    };
+
+    res.status(200).json({ success: true, data: userDetail });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Failed to fetch user detail", error: error.message });
   }
 };
 

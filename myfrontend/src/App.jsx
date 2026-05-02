@@ -22,6 +22,7 @@ import FamilyMembers from "./components/FamilyMembers";
 import FamilyShortlist from "./components/FamilyShortlist";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminUsers from "./pages/AdminUsers";
+import AdminUserDetail from "./pages/admin/AdminUserDetail";
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { SocketProvider } from './context/SocketContext'
 import Chatbot from './components/Chatbot'
@@ -77,11 +78,19 @@ const AppRouter = () => {
   if (loading) return <div className="loading-screen">Loading...</div>
 
   // Specific check for Admin Dashboard & Users (No Sidebar)
-  if (location.pathname === '/admin-dashboard' || location.pathname === '/admin-users') {
+  const isAdminRoute = location.pathname === '/admin-dashboard' || 
+                       location.pathname === '/admin-users' || 
+                       location.pathname.startsWith('/admin/users/');
+                       
+  if (isAdminRoute) {
     if (!isLoggedIn || user?.role !== 'admin') return <Navigate to="/login" />;
     return (
       <>
-        {location.pathname === '/admin-dashboard' ? <AdminDashboard /> : <AdminUsers />}
+        <Routes>
+          <Route path="/admin-dashboard" element={<AdminDashboard />} />
+          <Route path="/admin-users" element={<AdminUsers />} />
+          <Route path="/admin/users/:userId" element={<AdminUserDetail />} />
+        </Routes>
         <Chatbot />
       </>
     );

@@ -233,7 +233,7 @@ const AdminUsers = () => {
             </thead>
             <tbody>
               {filteredUsers.map(user => (
-                <tr key={user._id}>
+                <tr key={user._id} onClick={() => navigate(`/admin/users/${user._id}`)}>
                   <td>
                     <div className="user-info-cell">
                       <div className="user-avatar">
@@ -264,25 +264,25 @@ const AdminUsers = () => {
                   <td style={{ textAlign: 'right' }}>
                     <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', alignItems: 'center' }}>
                       {user.isVerified ? (
-                        <button className="button-pearl-capsule" onClick={() => handleUnverify(user._id)}>
+                        <button className="button-pearl-capsule" onClick={(e) => { e.stopPropagation(); handleUnverify(user._id); }}>
                           Unverify
                         </button>
                       ) : (
-                        <button className="button-pearl-capsule" onClick={() => handleVerify(user._id)}>
+                        <button className="button-pearl-capsule" onClick={(e) => { e.stopPropagation(); handleVerify(user._id); }}>
                           Verify
                         </button>
                       )}
                       {user.isActive !== false ? (
-                        <button className="button-pearl-capsule" onClick={() => handleBanClick(user)}>
+                        <button className="button-pearl-capsule" onClick={(e) => { e.stopPropagation(); handleBanClick(user); }}>
                           Ban
                         </button>
                       ) : (
-                        <button className="button-pearl-capsule" onClick={() => handleUnban(user._id)} disabled={unbanningId === user._id}>
+                        <button className="button-pearl-capsule" onClick={(e) => { e.stopPropagation(); handleUnban(user._id); }} disabled={unbanningId === user._id}>
                           {unbanningId === user._id ? "..." : "Unban"}
                         </button>
                       )}
-                      <button className="button-pearl-capsule" onClick={() => handleEditClick(user)}>Edit</button>
-                      <button className="button-icon-circular delete" onClick={() => handleDelete(user._id)}>
+                      <button className="button-pearl-capsule" onClick={(e) => { e.stopPropagation(); handleEditClick(user); }}>Edit</button>
+                      <button className="button-icon-circular delete" onClick={(e) => { e.stopPropagation(); handleDelete(user._id); }}>
                         <Trash2 size={14} />
                       </button>
                     </div>

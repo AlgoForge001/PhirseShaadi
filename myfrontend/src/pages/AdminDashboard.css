@@ -380,6 +380,15 @@ body {
   border-collapse: collapse;
 }
 
+.admin-table tbody tr {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.admin-table tbody tr:hover {
+  background-color: var(--color-canvas-parchment);
+}
+
 .admin-table th {
   text-align: left;
   font-size: 14px;
