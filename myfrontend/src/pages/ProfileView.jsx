@@ -7,6 +7,7 @@ import {
   Phone, MessageCircle, Shield, Share2, Clock
 } from "lucide-react";
 import api from "../utils/api";
+import { normalizeImageUrl } from "../utils/imageUtils";
 
 import Navbar from "../components/Navbar";
 import "./ProfileView.css";
@@ -20,6 +21,11 @@ const ProfileView = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [activePhoto, setActivePhoto] = useState(0);
+  const [imgFailed, setImgFailed] = useState({});
+
+  const setImgError = (url) => {
+    setImgFailed(prev => ({ ...prev, [url]: true }));
+  };
 
   // States
   const [interestStatus, setInterestStatus] = useState({ sent: false, received: false, status: null });
@@ -106,11 +112,26 @@ const ProfileView = () => {
             {/* LEFT: PHOTO EXPERIENCE */}
             <div className="pv-photo-experience">
               <div className="pv-main-carousel">
-                {profile.photos?.[activePhoto] ? (
-                  <img src={profile.photos[activePhoto].url} alt="" className="pv-active-img" />
-                ) : (
-                  <div className="pv-placeholder"><Users size={80} /></div>
-                )}
+                {(() => {
+                  const photo = profile.photos?.[activePhoto];
+                  const url = normalizeImageUrl(photo?.url);
+                  
+                  if (url && !imgFailed[url]) {
+                    return (
+                      <img 
+                        src={url} 
+                        alt={profile.name} 
+                        className="pv-active-img" 
+                        onError={() => setImgError(url)}
+                      />
+                    );
+                  }
+                  return (
+                    <div className="pv-placeholder">
+                      <Users size={80} />
+                    </div>
+                  );
+                })()}
                 
                 {profile.photos?.length > 1 && (
                   <>
@@ -126,9 +147,16 @@ const ProfileView = () => {
               </div>
 
               <div className="pv-photo-dots">
-                {profile.photos?.map((_, i) => (
-                  <span key={i} className={`pv-dot ${activePhoto === i ? "active" : ""}`} onClick={() => setActivePhoto(i)} />
-                ))}
+                {profile.photos?.map((p, i) => {
+                  const url = normalizeImageUrl(p?.url);
+                  return (
+                    <span 
+                      key={i} 
+                      className={`pv-dot ${activePhoto === i ? "active" : ""}`} 
+                      onClick={() => setActivePhoto(i)} 
+                    />
+                  );
+                })}
               </div>
             </div>
 
