@@ -264,25 +264,25 @@ const AdminUsers = () => {
                   <td style={{ textAlign: 'right' }}>
                     <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', alignItems: 'center' }}>
                       {user.isVerified ? (
-                        <button className="button-pearl-capsule" style={{ color: '#c2410c' }} onClick={() => handleUnverify(user._id)}>
+                        <button className="button-pearl-capsule" onClick={() => handleUnverify(user._id)}>
                           Unverify
                         </button>
                       ) : (
-                        <button className="button-pearl-capsule" style={{ color: '#166534' }} onClick={() => handleVerify(user._id)}>
+                        <button className="button-pearl-capsule" onClick={() => handleVerify(user._id)}>
                           Verify
                         </button>
                       )}
                       {user.isActive !== false ? (
-                        <button className="button-pearl-capsule" style={{ color: '#991b1b' }} onClick={() => handleBanClick(user)}>
+                        <button className="button-pearl-capsule" onClick={() => handleBanClick(user)}>
                           Ban
                         </button>
                       ) : (
-                        <button className="button-pearl-capsule" style={{ color: '#166534' }} onClick={() => handleUnban(user._id)} disabled={unbanningId === user._id}>
+                        <button className="button-pearl-capsule" onClick={() => handleUnban(user._id)} disabled={unbanningId === user._id}>
                           {unbanningId === user._id ? "..." : "Unban"}
                         </button>
                       )}
                       <button className="button-pearl-capsule" onClick={() => handleEditClick(user)}>Edit</button>
-                      <button className="button-icon-circular delete" onClick={() => handleDelete(user._id)} style={{ width: '32px', height: '32px' }}>
+                      <button className="button-icon-circular delete" onClick={() => handleDelete(user._id)}>
                         <Trash2 size={14} />
                       </button>
                     </div>
@@ -311,7 +311,6 @@ const AdminUsers = () => {
                 <select 
                   value={banReason} 
                   onChange={(e) => setBanReason(e.target.value)} 
-                  style={{ width: '100%', padding: '8px 12px', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none' }}
                 >
                   <option value="Fake Profile">Fake Profile</option>
                   <option value="Spam / Scam">Spam / Scam</option>
@@ -321,9 +320,9 @@ const AdminUsers = () => {
                 </select>
               </div>
             </div>
-            <div className="modal-footer" style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
-              <button onClick={() => setShowBanModal(false)} style={{ padding: '8px 16px', borderRadius: '6px', border: 'none', background: '#f1f5f9', color: '#475569', cursor: 'pointer', fontWeight: '500' }}>Cancel</button>
-              <button onClick={handleConfirmBan} disabled={banning} style={{ padding: '8px 16px', borderRadius: '6px', border: 'none', background: '#EF4444', color: 'white', cursor: banning ? 'not-allowed' : 'pointer', fontWeight: '500', opacity: banning ? 0.7 : 1 }}>
+            <div className="modal-footer">
+              <button className="button-pearl-capsule" onClick={() => setShowBanModal(false)} style={{ padding: '11px 22px', fontSize: '17px' }}>Cancel</button>
+              <button className="button-primary" onClick={handleConfirmBan} disabled={banning} style={{ opacity: banning ? 0.7 : 1 }}>
                 {banning ? "Banning..." : "Confirm Ban"}
               </button>
             </div>
