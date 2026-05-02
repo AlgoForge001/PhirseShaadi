@@ -176,10 +176,19 @@ const AdminUserDetail = () => {
             </button>
             <h1 className="user-name-title">{data.name}</h1>
             <div className="status-badges">
-              {data.isActive !== false ? <span className="badge active"><Check size={12} /> Active</span> : <span className="badge banned"><Ban size={12} /> Banned</span>}
-              {data.isVerified ? <span className="badge verified"><Shield size={12} /> Verified</span> : <span className="badge unverified">Unverified</span>}
-              {data.isPremium ? <span className="badge premium"><Crown size={12} /> Premium</span> : <span className="badge free">Free</span>}
-              <span className="badge role">{data.role === 'admin' ? 'Admin' : 'User'}</span>
+              <span className="badge">
+                <span style={{ color: data.isActive !== false ? '#10b981' : '#dc2626' }}>●</span>
+                {data.isActive !== false ? 'Active' : 'Banned'}
+              </span>
+              <span className="badge">
+                <span style={{ color: data.isVerified ? '#0066cc' : '#7a7a7a' }}>●</span>
+                {data.isVerified ? 'Verified' : 'Unverified'}
+              </span>
+              <span className="badge">
+                <span style={{ color: data.isPremium ? '#f59e0b' : '#7a7a7a' }}>●</span>
+                {data.isPremium ? 'Premium' : 'Free'}
+              </span>
+              <span className="badge">{data.role === 'admin' ? 'Admin' : 'User'}</span>
             </div>
           </div>
           <div className="top-bar-right">
@@ -195,8 +204,8 @@ const AdminUserDetail = () => {
               <button className="button-pearl-capsule" onClick={handleUnban} disabled={actionLoading}>Unban</button>
             )}
             <button className="button-pearl-capsule" onClick={() => showToast("Premium granting coming soon")} disabled={actionLoading}>Give Premium</button>
-            <button className="button-icon-circular delete" style={{ background: '#fee2e2', color: '#dc2626' }} onClick={handleDelete} disabled={actionLoading}>
-              <Trash2 size={16} />
+            <button className="button-pearl-capsule" style={{ color: '#dc2626' }} onClick={handleDelete} disabled={actionLoading}>
+              Delete
             </button>
           </div>
         </div>
@@ -421,7 +430,10 @@ const AdminUserDetail = () => {
                           <div className="activity-name">{i.toUser?.name || 'Deleted User'}</div>
                           <div className="activity-time">{new Date(i.createdAt).toLocaleDateString()}</div>
                         </div>
-                        <span className={`badge ${i.status === 'accepted' ? 'verified' : i.status === 'rejected' ? 'banned' : 'free'}`}>{i.status}</span>
+                        <span className="badge" style={{ alignSelf: 'flex-start', marginTop: '4px' }}>
+                          <span style={{ color: i.status === 'accepted' ? '#10b981' : i.status === 'rejected' ? '#dc2626' : '#7a7a7a' }}>●</span>
+                          {i.status}
+                        </span>
                       </div>
                     )) : <p className="empty-state">No interests sent</p>}
                   </div>
@@ -436,7 +448,10 @@ const AdminUserDetail = () => {
                           <div className="activity-name">{i.fromUser?.name || 'Deleted User'}</div>
                           <div className="activity-time">{new Date(i.createdAt).toLocaleDateString()}</div>
                         </div>
-                        <span className={`badge ${i.status === 'accepted' ? 'verified' : i.status === 'rejected' ? 'banned' : 'free'}`}>{i.status}</span>
+                        <span className="badge" style={{ alignSelf: 'flex-start', marginTop: '4px' }}>
+                          <span style={{ color: i.status === 'accepted' ? '#10b981' : i.status === 'rejected' ? '#dc2626' : '#7a7a7a' }}>●</span>
+                          {i.status}
+                        </span>
                       </div>
                     )) : <p className="empty-state">No interests received</p>}
                   </div>
