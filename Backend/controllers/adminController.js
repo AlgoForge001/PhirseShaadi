@@ -2,6 +2,7 @@ const User = require('../models/User');
 const Report = require('../models/Report');
 const Interest = require('../models/Interest');
 const Conversation = require('../models/Conversation');
+const Message = require('../models/Message');
 
 // TASK 1 — Update GET /api/admin/stats
 exports.getStats = async (req, res) => {
@@ -290,7 +291,9 @@ exports.getUserDetail = async (req, res) => {
       recentInterestsReceived: interestsReceived.map(i => ({ fromUser: i.from, status: i.status, createdAt: i.createdAt })),
       recentChats: conversations.map(c => {
         const otherUser = c.participants.find(p => p._id.toString() !== userId.toString());
+        const conversationId = [userId.toString(), otherUser?._id.toString()].sort().join('_');
         return {
+          conversationId,
           withUser: otherUser,
           lastMessage: c.lastMessage,
           lastMessageTime: c.updatedAt
@@ -416,5 +419,31 @@ exports.unverifyUser = async (req, res) => {
     res.status(200).json({ success: true, message: "Verification removed", data: user });
   } catch (error) {
     res.status(500).json({ success: false, message: "Failed to unverify user", error: error.message });
+  }
+};
+
+// GET /api/admin/conversations/:conversationId/messages
+exports.getConversationMessages = async (req, res) => {
+  try {
+    const { conversationId } = req.params;
+
+    const messages = await Message.find({ conversationId })
+      .populate('from', 'name photos')
+      .populate('to', 'name photos')
+      .sort({ createdAt: 1 });
+
+    // Get the two participants from first message
+    const participants = messages.length > 0
+      ? { user1: messages[0].from, user2: messages[0].to }
+      : null;
+
+    res.status(200).json({
+      success: true,
+      count: messages.length,
+      participants,
+      data: messages
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Failed to fetch messages", error: error.message });
   }
 };

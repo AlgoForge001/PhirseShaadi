@@ -18,6 +18,11 @@ const AdminUserDetail = () => {
   const [banReason, setBanReason] = useState('Fake Profile');
   const [toast, setToast] = useState({ show: false, message: '', type: '' });
 
+  // Chat viewer state
+  const [showChatModal, setShowChatModal] = useState(false);
+  const [chatMessages, setChatMessages] = useState([]);
+  const [chatLoading, setChatLoading] = useState(false);
+  const [chatWith, setChatWith] = useState(null);
   const fetchUserDetail = async () => {
     try {
       setLoading(true);
@@ -111,6 +116,22 @@ const AdminUserDetail = () => {
     }
   };
 
+  const handleViewChat = async (conversationId, withUser) => {
+    setChatWith(withUser);
+    setChatMessages([]);
+    setShowChatModal(true);
+    setChatLoading(true);
+    try {
+      const res = await api.get(`/admin/conversations/${conversationId}/messages`);
+      if (res.data.success) setChatMessages(res.data.data);
+    } catch (err) {
+      showToast('Failed to load chat messages', 'error');
+      setShowChatModal(false);
+    } finally {
+      setChatLoading(false);
+    }
+  };
+
   if (loading) return (
     <div className="loader-container">
       <div className="spinner"></div>
@@ -139,6 +160,66 @@ const AdminUserDetail = () => {
       {toast.show && (
         <div style={{ position: 'fixed', top: '20px', right: '20px', zIndex: 1000, background: toast.type === 'error' ? '#ef4444' : '#10b981', color: 'white', padding: '12px 24px', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
           {toast.message}
+        </div>
+      )}
+
+      {/* Chat Viewer Modal */}
+      {showChatModal && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(10px)', zIndex: 1050, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ background: '#fff', borderRadius: '18px', width: '560px', maxWidth: '95vw', maxHeight: '80vh', display: 'flex', flexDirection: 'column', overflow: 'hidden', boxShadow: 'rgba(0,0,0,0.22) 3px 5px 30px 0' }}>
+            {/* Header */}
+            <div style={{ padding: '20px 24px', borderBottom: '1px solid #e0e0e0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#fff' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div style={{ width: 40, height: 40, borderRadius: '50%', background: '#f5f5f7', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0 }}>
+                  {chatWith?.photos?.[0]?.url
+                    ? <img src={chatWith.photos[0].url} style={{ width: 40, height: 40, objectFit: 'cover' }} alt="" />
+                    : <User size={20} color="#7a7a7a" />}
+                </div>
+                <div>
+                  <div style={{ fontWeight: 600, fontSize: '17px', color: '#1d1d1f' }}>{data?.name} &amp; {chatWith?.name || 'User'}</div>
+                  <div style={{ fontSize: '13px', color: '#7a7a7a' }}>{chatMessages.length} messages</div>
+                </div>
+              </div>
+              <button onClick={() => setShowChatModal(false)} style={{ background: 'none', border: 'none', fontSize: '28px', cursor: 'pointer', color: '#7a7a7a', lineHeight: 1, padding: '0 4px' }}>&times;</button>
+            </div>
+
+            {/* Messages */}
+            <div style={{ flex: 1, overflowY: 'auto', padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: '12px', background: '#f5f5f7' }}>
+              {chatLoading ? (
+                <div style={{ textAlign: 'center', color: '#7a7a7a', padding: '40px' }}>
+                  <div className="spinner" style={{ margin: '0 auto 12px' }} />
+                  Loading messages...
+                </div>
+              ) : chatMessages.length === 0 ? (
+                <div style={{ textAlign: 'center', color: '#7a7a7a', padding: '40px', background: '#fff', borderRadius: '12px' }}>No messages found in this conversation.</div>
+              ) : chatMessages.map((msg, i) => {
+                const isMine = msg.from?._id?.toString() === userId;
+                return (
+                  <div key={i} style={{ display: 'flex', flexDirection: isMine ? 'row-reverse' : 'row', alignItems: 'flex-end', gap: '8px' }}>
+                    <div style={{ width: 28, height: 28, borderRadius: '50%', background: '#e0e0e0', overflow: 'hidden', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      {msg.from?.photos?.[0]?.url
+                        ? <img src={msg.from.photos[0].url} style={{ width: 28, height: 28, objectFit: 'cover' }} alt="" />
+                        : <User size={14} color="#7a7a7a" />}
+                    </div>
+                    <div style={{ maxWidth: '65%' }}>
+                      <div style={{
+                        background: isMine ? '#0066cc' : '#ffffff',
+                        color: isMine ? '#ffffff' : '#1d1d1f',
+                        padding: '10px 14px',
+                        borderRadius: isMine ? '18px 18px 4px 18px' : '18px 18px 18px 4px',
+                        fontSize: '14px',
+                        lineHeight: '1.5',
+                        boxShadow: '0 1px 2px rgba(0,0,0,0.08)'
+                      }}>{msg.text}</div>
+                      <div style={{ fontSize: '11px', color: '#7a7a7a', marginTop: '4px', textAlign: isMine ? 'right' : 'left' }}>
+                        {msg.from?.name} &middot; {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         </div>
       )}
 
@@ -477,7 +558,7 @@ const AdminUserDetail = () => {
                         </div>
                         <div className="activity-time" style={{ marginTop: '4px' }}>{new Date(c.lastMessageTime).toLocaleString()}</div>
                       </div>
-                      <button className="button-pearl-capsule" onClick={() => window.alert('Chat viewer coming soon')}>
+                      <button className="button-pearl-capsule" onClick={() => handleViewChat(c.conversationId, c.withUser)}>
                         <MessageSquare size={14} style={{ marginRight: '6px' }} /> View Chat
                       </button>
                     </div>
