@@ -27,98 +27,76 @@ import { AuthProvider, useAuth } from './context/AuthContext'
 import { SocketProvider } from './context/SocketContext'
 import Chatbot from './components/Chatbot'
 
-// ─── Admin Protected Wrapper ───────────────────────────────────────────────────
-const AdminLayout = () => {
-  const { isLoggedIn, user } = useAuth()
-  if (!isLoggedIn || user?.role !== 'admin') return <Navigate to="/login" replace />
-  return (
-    <>
-      <Routes>
-        <Route path="/admin-dashboard" element={<AdminDashboard />} />
-        <Route path="/admin-users" element={<AdminUsers />} />
-        <Route path="/admin-users/:userId" element={<AdminUserDetail />} />
-      </Routes>
-      <Chatbot />
-    </>
-  )
-}
+const ADMIN_PATHS = ['/admin-dashboard', '/admin-users']
+const PUBLIC_PATHS = ['/', '/home', '/login', '/register', '/about', '/otp-verify', '/google-success']
 
-// ─── Main App Router ──────────────────────────────────────────────────────────
 const AppRouter = () => {
   const { isLoggedIn, loading, user } = useAuth()
   const location = useLocation()
 
   if (loading) return <div className="loading-screen">Loading...</div>
 
-  // All admin paths — includes hyphenated /admin-* and slash /admin/*
-  const isAdminRoute = location.pathname === '/admin-dashboard'
-    || location.pathname === '/admin-users'
-    || location.pathname.startsWith('/admin-users/')
-    || location.pathname.startsWith('/admin/');
+  const path = location.pathname
+  const isAdmin = user?.role === 'admin'
 
-  // Redirect admin to admin dashboard if they visit /dashboard
-  if (isLoggedIn && user?.role === 'admin' && location.pathname === '/dashboard') {
-    return <Navigate to="/admin-dashboard" replace />
-  }
+  // Is this an admin route?
+  const isAdminRoute = ADMIN_PATHS.includes(path)
+    || path.startsWith('/admin-users/')
+    || path.startsWith('/admin/')
 
-  // Serve admin layout for all admin routes
-  if (isAdminRoute) {
-    if (!isLoggedIn || user?.role !== 'admin') return <Navigate to="/login" replace />
-    return <AdminLayout />
-  }
+  // Is this a public route?
+  const isPublicRoute = PUBLIC_PATHS.includes(path)
 
-  // Public routes
-  const publicPaths = ['/', '/home', '/login', '/register', '/about', '/otp-verify', '/google-success']
-  const isPublicRoute = publicPaths.includes(location.pathname)
-
-  if (isPublicRoute) {
-    return (
-      <>
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/home" element={<LandingPage />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/otp-verify" element={<OtpVerify />} />
-          <Route path="/google-success" element={<GoogleSuccess />} />
-          <Route path="/about" element={<About />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-        <Chatbot />
-      </>
-    )
-  }
-
-  // Private routes (with Sidebar)
-  if (!isLoggedIn) return <Navigate to="/login" replace />
+  // Show sidebar only on private (non-admin, non-public) routes
+  const showSidebar = isLoggedIn && !isPublicRoute && !isAdminRoute
 
   return (
-    <>
-      <div style={{ display: 'flex' }}>
-        <Sidebar />
-        <div className="main-content" style={{ flex: 1 }}>
-          <Routes>
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/profile-creation" element={<ProfileCreation />} />
-            <Route path="/search" element={<SearchBrowse />} />
-            <Route path="/upload-photos" element={<UploadPhotos />} />
-            <Route path="/my-profile" element={<MyProfile />} />
-            <Route path="/edit-profile" element={<EditProfile />} />
-            <Route path="/profile/:id" element={<ProfileView />} />
-            <Route path="/chat" element={<Chat />} />
-            <Route path="/chat/:id" element={<Chat />} />
-            <Route path="/interests" element={<Interests />} />
-            <Route path="/notifications" element={<Notifications />} />
-            <Route path="/privacy" element={<PrivacySettings />} />
-            <Route path="/profile-viewers" element={<ProfileViewers />} />
-            <Route path="/family-members" element={<FamilyMembers />} />
-            <Route path="/family-shortlist" element={<FamilyShortlist />} />
-            <Route path="*" element={<Navigate to="/dashboard" replace />} />
-          </Routes>
-        </div>
+    <div style={{ display: 'flex', minHeight: '100vh' }}>
+      {showSidebar && <Sidebar />}
+      <div style={{ flex: 1 }}>
+        <Routes>
+          {/* ── Public Routes ─────────────────────────────── */}
+          <Route path="/"               element={<LandingPage />} />
+          <Route path="/home"           element={<LandingPage />} />
+          <Route path="/login"          element={<Login />} />
+          <Route path="/register"       element={<Register />} />
+          <Route path="/otp-verify"     element={<OtpVerify />} />
+          <Route path="/google-success" element={<GoogleSuccess />} />
+          <Route path="/about"          element={<About />} />
+
+          {/* ── Private User Routes ────────────────────────── */}
+          <Route path="/dashboard"       element={isLoggedIn ? (isAdmin ? <Navigate to="/admin-dashboard" replace /> : <Dashboard />) : <Navigate to="/login" replace />} />
+          <Route path="/profile-creation" element={isLoggedIn ? <ProfileCreation /> : <Navigate to="/login" replace />} />
+          <Route path="/search"           element={isLoggedIn ? <SearchBrowse /> : <Navigate to="/login" replace />} />
+          <Route path="/upload-photos"    element={isLoggedIn ? <UploadPhotos /> : <Navigate to="/login" replace />} />
+          <Route path="/my-profile"       element={isLoggedIn ? <MyProfile /> : <Navigate to="/login" replace />} />
+          <Route path="/edit-profile"     element={isLoggedIn ? <EditProfile /> : <Navigate to="/login" replace />} />
+          <Route path="/profile/:id"      element={isLoggedIn ? <ProfileView /> : <Navigate to="/login" replace />} />
+          <Route path="/chat"             element={isLoggedIn ? <Chat /> : <Navigate to="/login" replace />} />
+          <Route path="/chat/:id"         element={isLoggedIn ? <Chat /> : <Navigate to="/login" replace />} />
+          <Route path="/interests"        element={isLoggedIn ? <Interests /> : <Navigate to="/login" replace />} />
+          <Route path="/notifications"    element={isLoggedIn ? <Notifications /> : <Navigate to="/login" replace />} />
+          <Route path="/privacy"          element={isLoggedIn ? <PrivacySettings /> : <Navigate to="/login" replace />} />
+          <Route path="/profile-viewers"  element={isLoggedIn ? <ProfileViewers /> : <Navigate to="/login" replace />} />
+          <Route path="/family-members"   element={isLoggedIn ? <FamilyMembers /> : <Navigate to="/login" replace />} />
+          <Route path="/family-shortlist" element={isLoggedIn ? <FamilyShortlist /> : <Navigate to="/login" replace />} />
+
+          {/* ── Admin Routes ───────────────────────────────── */}
+          <Route path="/admin-dashboard"       element={(isLoggedIn && isAdmin) ? <AdminDashboard /> : <Navigate to="/login" replace />} />
+          <Route path="/admin-users"           element={(isLoggedIn && isAdmin) ? <AdminUsers /> : <Navigate to="/login" replace />} />
+          <Route path="/admin-users/:userId"   element={(isLoggedIn && isAdmin) ? <AdminUserDetail /> : <Navigate to="/login" replace />} />
+          <Route path="/admin/users/:userId"   element={(isLoggedIn && isAdmin) ? <AdminUserDetail /> : <Navigate to="/login" replace />} />
+
+          {/* ── Fallback ────────────────────────────────────── */}
+          <Route path="*" element={
+            isLoggedIn
+              ? (isAdmin ? <Navigate to="/admin-dashboard" replace /> : <Navigate to="/dashboard" replace />)
+              : <Navigate to="/" replace />
+          } />
+        </Routes>
+        <Chatbot />
       </div>
-      <Chatbot />
-    </>
+    </div>
   )
 }
 
