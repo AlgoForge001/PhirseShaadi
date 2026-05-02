@@ -195,7 +195,7 @@ const UploadPhotos = () => {
         <div className="upload-left-content">
           <div className="upload-logo" onClick={() => navigate("/")}>
             <Heart size={22} fill="#fff" color="#fff" />
-            <span>PhirseShaadi</span>
+            <span>MarriageSphere</span>
           </div>
 
           <div className="upload-left-icon">

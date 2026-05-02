@@ -9,8 +9,7 @@ import { useAuth } from '../context/AuthContext';
 import api, { getConversations, getChatHistory, checkChatAccess } from '../utils/api';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import './Chat.css';
-
+import './Chatbot.css';
 // ── SVG Icons ────────────────────────────────────────────────────────────────
 
 const EnvelopeIcon = ({ size = 44, stroke = '#6B3F69', strokeWidth = 1.5 }) => (

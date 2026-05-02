@@ -27,13 +27,13 @@ const LandingPage = () => {
   const faqItems = [
     {
       id: 1,
-      question: "What makes PhirseShaadi different from other matrimonial sites?",
+      question: "What makes MarriageSphere different from other matrimonial sites?",
       answer:
-        "PhirseShaadi combines intelligent matchmaking with verified profiles and strong privacy controls. Our smart filters help you find partners based on location, values, and lifestyle preferences. We focus on meaningful connections for both individuals and families, with a transparent and secure environment.",
+        "MarriageSphere combines intelligent matchmaking with verified profiles and strong privacy controls. Our smart filters help you find partners based on location, values, and lifestyle preferences. We focus on meaningful connections for both individuals and families, with a transparent and secure environment.",
     },
     {
       id: 2,
-      question: "How are profiles verified on PhirseShaadi?",
+      question: "How are profiles verified on MarriageSphere?",
       answer:
         "All profiles go through a verification process to ensure authenticity. Members can add photos, complete their profile information, and optional background checks are available. This helps build trust and ensures you're connecting with genuine people.",
     },
@@ -51,7 +51,7 @@ const LandingPage = () => {
     },
     {
       id: 5,
-      question: "Is my personal information safe on PhirseShaadi?",
+      question: "Is my personal information safe on MarriageSphere?",
       answer:
         "Your safety and privacy are our top priorities. We use secure encryption for all data, don't share information with third parties, and put you in control of what's visible. Messages are private, and you decide which contact details to share.",
     },
@@ -68,7 +68,7 @@ const LandingPage = () => {
       names: "Priya & Rahul",
       location: "Mumbai",
       quote:
-        "We never thought an online platform could lead to something so real. PhirseShaadi helped us find each other effortlessly.",
+        "We never thought an online platform could lead to something so real. MarriageSphere helped us find each other effortlessly.",
       rating: 5,
     },
     {
@@ -97,10 +97,11 @@ const LandingPage = () => {
       <header className="lp-nav">
         <div className="lp-wrap nav-inner">
           <div className="brand" onClick={() => navigate("/")}>
-            <div className="brand-icon">
-              <Heart size={16} />
-            </div>
-            <span>PhirseShaadi</span>
+            <img
+              src="/Media.jpg"
+              alt="MarriageSphere"
+              className="lp-navbar-logo-img"
+            />
           </div>
 
           <nav className="nav-links">
@@ -125,13 +126,18 @@ const LandingPage = () => {
 
       {/* ── HERO ── */}
       <section className="hero">
-        <div className="hero-decoration hero-decoration--1" />
-        <div className="hero-decoration hero-decoration--2" />
+        {/* Full-width background image */}
+        <div
+          className="hero-bg"
+          style={{ backgroundImage: `url(${couplesImg})` }}
+        />
+        {/* Gradient overlay */}
+        <div className="hero-overlay" />
 
         <div className="lp-wrap hero-content-wrap">
           <div className="hero-copy">
             <div className="hero-kicker">
-              <Sparkles size={14} />
+              <Sparkles size={12} />
               <span>India's Most Trusted Matrimonial Platform</span>
             </div>
 
@@ -140,6 +146,11 @@ const LandingPage = () => {
               find your <span className="hero-highlight">life partner</span>
             </h1>
 
+            {/* Gold decorative divider */}
+            <div className="hero-divider">
+              <Heart size={14} className="hero-divider-icon" fill="currentColor" />
+            </div>
+
             <p className="hero-lead">
               Verified profiles, intelligent matching, and complete privacy
               control — everything you need to find the one who truly matters.
@@ -147,13 +158,13 @@ const LandingPage = () => {
 
             <div className="hero-badges">
               <span className="hero-badge">
-                <ShieldCheck size={14} /> Verified Profiles
+                <ShieldCheck size={13} /> Verified Profiles
               </span>
               <span className="hero-badge">
-                <Users size={14} /> Smart Matching
+                <Users size={13} /> Smart Matching
               </span>
               <span className="hero-badge">
-                <Lock size={14} /> Privacy Protected
+                <Lock size={13} /> Privacy Protected
               </span>
             </div>
 
@@ -165,20 +176,12 @@ const LandingPage = () => {
                 Start Your Journey <ArrowRight size={16} />
               </button>
               <button
-                className="btn ghost hero-secondary-btn"
+                className="btn hero-secondary-btn"
                 onClick={() => navigate("/login")}
               >
                 Already a Member?
               </button>
             </div>
-          </div>
-
-          <div className="hero-image-wrap">
-            <img
-              src={couplesImg}
-              alt="Happy couple"
-              className="hero-image"
-            />
           </div>
         </div>
       </section>
@@ -186,11 +189,12 @@ const LandingPage = () => {
       {/* ── WHY CHOOSE ── */}
       <section className="why-choose">
         <div className="lp-wrap">
-          <div className="section-header">
+          <div style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", marginBottom: "56px" }}>
             <span className="section-eyebrow">Why Us</span>
             <h2 className="section-title">
               Everything You Need to Find <em>The One</em>
             </h2>
+            <span className="section-title-underline" />
             <p className="section-subtitle">
               Built with care, security, and the latest technology to make your
               journey smooth and joyful.
@@ -233,11 +237,12 @@ const LandingPage = () => {
       {/* ── HOW IT WORKS ── */}
       <section className="steps">
         <div className="lp-wrap">
-          <div className="section-header">
+          <div style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", marginBottom: "56px" }}>
             <span className="section-eyebrow">How It Works</span>
             <h2 className="section-title">
               Three Simple Steps to <em>Your Story</em>
             </h2>
+            <span className="section-title-underline" />
             <p className="section-subtitle">
               Getting started is easy. Create your profile, discover matches, and
               begin a beautiful conversation.
@@ -276,39 +281,18 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* ── TRUST METRICS ── */}
-      <section className="trust-strip">
-        <div className="lp-wrap trust-grid">
-          <div className="trust-item">
-            <strong>50L+</strong>
-            <p>Active Members</p>
-          </div>
-          <div className="trust-item">
-            <strong>10L+</strong>
-            <p>Success Stories</p>
-          </div>
-          <div className="trust-item">
-            <strong>4.8 ★</strong>
-            <p>Member Rating</p>
-          </div>
-          <div className="trust-item">
-            <strong>100%</strong>
-            <p>Privacy Control</p>
-          </div>
-        </div>
-      </section>
-
       {/* ── SUCCESS STORIES ── */}
       <section className="stories-section">
         <div className="lp-wrap">
-          <div className="section-header">
+          <div style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", marginBottom: "56px" }}>
             <span className="section-eyebrow">Love Stories</span>
             <h2 className="section-title">
               Real People, <em>Real Love</em>
             </h2>
+            <span className="section-title-underline" />
             <p className="section-subtitle">
               Thousands of couples have found their soulmate through
-              PhirseShaadi. Here are some of their stories.
+              MarriageSphere. Here are some of their stories.
             </p>
           </div>
 
@@ -337,11 +321,12 @@ const LandingPage = () => {
       {/* ── FAQ ── */}
       <section className="faq-section">
         <div className="lp-wrap">
-          <div className="section-header">
+          <div style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", marginBottom: "56px" }}>
             <span className="section-eyebrow">FAQ</span>
             <h2 className="section-title">
               Got Questions? <em>We've Got Answers</em>
             </h2>
+            <span className="section-title-underline" />
           </div>
 
           <div className="faq-container">
@@ -378,7 +363,7 @@ const LandingPage = () => {
             <h3>Ready to Start Your Journey?</h3>
             <p>
               Join thousands of happy members finding their perfect match on
-              PhirseShaadi. Your love story starts here.
+              MarriageSphere. Your love story starts here.
             </p>
             <button
               className="btn solid cta-button"
@@ -405,7 +390,7 @@ const LandingPage = () => {
           <div className="footer-column footer-brand-col">
             <div className="footer-brand">
               <Heart size={16} />
-              <h4>PhirseShaadi</h4>
+              <h4>MarriageSphere</h4>
             </div>
             <p>
               Making matrimony accessible and authentic for everyone. Your
@@ -441,7 +426,7 @@ const LandingPage = () => {
           </div>
         </div>
         <div className="footer-bottom">
-          <p>&copy; 2026 PhirseShaadi. All rights reserved.</p>
+          <p>&copy; 2026 MarriageSphere. All rights reserved.</p>
           <p className="footer-tagline">Made with ❤️ for meaningful connections</p>
         </div>
       </footer>

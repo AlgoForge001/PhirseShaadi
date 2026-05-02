@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link, NavLink } from "react-router-dom";
 import {
-  Heart, Bell, MessageCircle, User,
-  Search, Menu, X, Settings
+  Bell, User, Menu, X, Settings
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useSocket } from "../context/SocketContext";
+
 import "./Navbar.css";
 
 
@@ -35,10 +35,11 @@ const Navbar = () => {
       <div className="navbar-container">
         {/* LOGO */}
         <div className="navbar-logo" onClick={() => navigate("/dashboard")}>
-          <div className="logo-icon">
-            <Heart size={24} fill="#6B3F69" color="#6B3F69" />
-          </div>
-          <span>PhirseShaadi</span>
+          <img
+            src="/Media.jpg"
+            alt="MarriageSphere"
+            className="navbar-logo-img"
+          />
         </div>
 
         {/* DESKTOP NAV */}

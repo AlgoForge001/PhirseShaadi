@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Heart, Target, Users, Leaf } from "lucide-react";
+import { Heart, Target, Users, Leaf, Sparkles, ArrowRight, ShieldCheck } from "lucide-react";
+import couplesImg from "../couples.jpg";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 import "./About.css";
 
 const About = () => {
@@ -10,86 +13,99 @@ const About = () => {
   const cards = [
     {
       id: 1,
-      icon: <Target size={40} />,
+      icon: <Target size={28} />,
       title: "Our Mission",
       shortDesc: "What we aim to achieve",
-      fullDesc: `Our mission at PhirseShaadi is to revolutionize the matrimonial experience by creating a safe, transparent, and inclusive platform where genuine connections are fostered. We believe that finding a life partner should be a respectful and joyful journey. Through advanced technology and rigorous verification processes, we empower individuals and families to find their perfect match while maintaining the values and traditions that matter most to them.`
+      fullDesc: `Our mission at MarriageSphere is to revolutionize the matrimonial experience by creating a safe, transparent, and inclusive platform where genuine connections are fostered. We believe that finding a life partner should be a respectful and joyful journey. Through advanced technology and rigorous verification processes, we empower individuals and families to find their perfect match while maintaining the values and traditions that matter most to them.`
     },
     {
       id: 2,
-      icon: <Heart size={40} />,
+      icon: <Heart size={28} />,
       title: "Our Vision",
       shortDesc: "Where we're headed",
       fullDesc: `Our vision is to become the world's most trusted matrimonial platform. We aspire to build a world where meaningful relationships are built on mutual respect, shared values, and genuine compatibility. By leveraging technology and human-centered design, we aim to create a seamless experience that helps people find not just a spouse, but a true life partner.`
     },
     {
       id: 3,
-      icon: <Users size={40} />,
+      icon: <Users size={28} />,
       title: "About Us",
       shortDesc: "Who we are",
-      fullDesc: `PhirseShaadi is a modern matrimonial platform founded with the vision of transforming the way people find their life partners. Our team comprises experienced professionals from diverse backgrounds—engineers, developers, and matrimonial experts—all united by a single goal: to help people find genuine, lasting connections. Every feature on our platform is designed with our users in mind, ensuring that your journey to finding your perfect match is smooth, safe, and successful.`
+      fullDesc: `MarriageSphere is a modern matrimonial platform founded with the vision of transforming the way people find their life partners. Our team comprises experienced professionals from diverse backgrounds—engineers, developers, and matrimonial experts—all united by a single goal: to help people find genuine, lasting connections. Every feature on our platform is designed with our users in mind, ensuring that your journey to finding your perfect match is smooth, safe, and successful.`
     },
     {
       id: 4,
-      icon: <Leaf size={40} />,
+      icon: <Leaf size={28} />,
       title: "We Care",
       shortDesc: "Our commitment to you",
-      fullDesc: `At PhirseShaadi, we care deeply about our community and the impact we make. We are committed to protecting your privacy and data security with industry-leading encryption and strict confidentiality policies. We actively work against fraud and deception by verifying every profile. Our customer support team is available to help you with any questions or concerns. Your trust is our most valuable asset, and we work tirelessly to earn and maintain it every single day.`
+      fullDesc: `At MarriageSphere, we care deeply about our community and the impact we make. We are committed to protecting your privacy and data security with industry-leading encryption and strict confidentiality policies. We actively work against fraud and deception by verifying every profile. Our customer support team is available to help you with any questions or concerns. Your trust is our most valuable asset, and we work tirelessly to earn and maintain it every single day.`
     }
   ];
 
   const selectedCardData = cards.find(card => card.id === selectedCard);
 
   return (
-    <div className="about-page">
-      {/* Navigation */}
-      <nav className="about-navbar">
-        <div className="navbar-container">
-          <div className="navbar-logo" onClick={() => navigate("/")}>
-            <Heart size={24} fill="#fff" color="#fff" />
-            <span>PhirseShaadi</span>
-          </div>
-          <button className="nav-btn" onClick={() => navigate("/register")}>Get Started</button>
-        </div>
-      </nav>
+    <div className="lp about-page">
+      <Navbar />
 
-      {/* Hero Section - IMPROVED */}
-      <section className="about-hero">
-        <div className="hero-content">
-          <h1>About PhirseShaadi</h1>
-          <p className="hero-tagline">Building Meaningful Connections, Creating Happy Families</p>
-          <p className="hero-description">
-            We are more than just a matrimonial platform. We are a community dedicated to helping people find genuine, 
-            lasting connections based on mutual respect, shared values, and true compatibility. Our journey began with a 
-            simple belief: everyone deserves the chance to find their perfect life partner in a safe, transparent, and 
-            respectful environment.
-          </p>
-        </div>
-        <div className="hero-decoration">
-          <div className="deco-blob blob-1"></div>
-          <div className="deco-blob blob-2"></div>
+      {/* Hero Section */}
+      <section className="about-hero hero">
+        <div className="hero-overlay" />
+        <div className="lp-wrap hero-content-wrap">
+          <div className="hero-copy">
+            <div className="hero-kicker">
+              <Sparkles size={12} />
+              <span>Building Meaningful Connections</span>
+            </div>
+
+            <h1 className="hero-main-title">
+              About <span className="hero-highlight">MarriageSphere</span>
+            </h1>
+
+            <div className="hero-divider">
+              <Heart size={14} className="hero-divider-icon" fill="currentColor" />
+            </div>
+
+            <p className="hero-lead">
+              Creating Happy Families through verified profiles, intelligent matching, and a simple belief that everyone deserves their perfect life partner.
+            </p>
+
+            <div className="hero-cta-group">
+              <button
+                className="btn solid hero-primary-btn"
+                onClick={() => navigate("/register")}
+              >
+                Join Our Community <ArrowRight size={16} />
+              </button>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* Cards & Display Section */}
-      <section className="about-cards">
-        <div className="cards-container">
-          <h2 className="section-title">Our Story</h2>
-          
-          {/* Cards Grid */}
-          <div className="cards-grid">
+      {/* Our Story Section */}
+      <section className="about-cards why-choose">
+        <div className="lp-wrap">
+          <div style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", marginBottom: "56px" }}>
+            <span className="section-eyebrow">Our Story</span>
+            <h2 className="section-title">
+              The Journey of <em>MarriageSphere</em>
+            </h2>
+            <span className="section-title-underline" />
+            <p className="section-subtitle">
+              Learn about our mission, vision, and deep commitment to helping you find a genuine, lasting connection.
+            </p>
+          </div>
+
+          <div className="cards-grid features-grid">
             {cards.map((card) => (
               <div
                 key={card.id}
-                className={`card ${selectedCard === card.id ? "active" : ""}`}
+                className={`card feature-card ${selectedCard === card.id ? "active" : ""}`}
                 onClick={() => setSelectedCard(card.id)}
               >
-                <div className="card-icon">{card.icon}</div>
-                <h3>{card.title}</h3>
-                <p className="card-short">{card.shortDesc}</p>
-                <div className={`card-indicator ${selectedCard === card.id ? "active" : ""}`}>
-                  {selectedCard === card.id ? "✓ Selected" : "Click to read"}
-                </div>
+                <div className="feature-icon-wrap">{card.icon}</div>
+                <h4>{card.title}</h4>
+                <p>{card.shortDesc}</p>
+                <div className="card-click-hint">Click to read more</div>
               </div>
             ))}
           </div>
@@ -108,23 +124,37 @@ const About = () => {
       </section>
 
       {/* Values Section */}
-      <section className="about-values">
-        <div className="values-container">
-          <h2>Our Core Values</h2>
-          <div className="values-grid">
-            <div className="value-card">
+      <section className="about-values steps">
+        <div className="lp-wrap">
+          <div style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", marginBottom: "56px" }}>
+            <span className="section-eyebrow">Core Values</span>
+            <h2 className="section-title">
+              What We <em>Stand For</em>
+            </h2>
+            <span className="section-title-underline" />
+            <p className="section-subtitle">
+              Our principles guide everything we do, ensuring a safe and successful experience for every member.
+            </p>
+          </div>
+
+          <div className="values-grid steps-grid">
+            <div className="value-card step-card">
+              <div className="step-icon"><Target size={24} /></div>
               <h4>Trust & Transparency</h4>
               <p>We believe in complete honesty and openness in all our operations and interactions with our community.</p>
             </div>
-            <div className="value-card">
+            <div className="value-card step-card">
+              <div className="step-icon"><Users size={24} /></div>
               <h4>Inclusivity</h4>
               <p>We celebrate diversity and welcome people from all backgrounds, religions, and communities.</p>
             </div>
-            <div className="value-card">
+            <div className="value-card step-card">
+              <div className="step-icon"><Sparkles size={24} /></div>
               <h4>Innovation</h4>
               <p>We continuously improve our platform using technology to enhance user experience.</p>
             </div>
-            <div className="value-card">
+            <div className="value-card step-card">
+              <div className="step-icon"><ShieldCheck size={24} /></div>
               <h4>Safety First</h4>
               <p>Protecting our users' privacy and security is our top priority in everything we do.</p>
             </div>
@@ -133,13 +163,22 @@ const About = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="about-cta">
-        <div className="cta-container">
-          <h2>Ready to Find Your Perfect Match?</h2>
-          <p>Join us in finding genuine connections</p>
-          <button className="cta-btn" onClick={() => navigate("/register")}>
-            Get Started Today
-          </button>
+      <section className="final-cta">
+        <div className="lp-wrap final-cta-inner">
+          <div className="cta-content">
+            <Heart size={28} className="cta-heart-icon" />
+            <h3>Ready to Start Your Journey?</h3>
+            <p>
+              Join thousands of happy members finding their perfect match on
+              MarriageSphere. Your love story starts here.
+            </p>
+            <button
+              className="btn solid cta-button"
+              onClick={() => navigate("/register")}
+            >
+              Create Free Profile <ArrowRight size={16} />
+            </button>
+          </div>
         </div>
       </section>
 
@@ -148,5 +187,4 @@ const About = () => {
   );
 };
 
-import Footer from "../components/Footer";
 export default About;
