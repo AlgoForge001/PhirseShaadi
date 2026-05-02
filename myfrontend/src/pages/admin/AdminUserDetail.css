@@ -320,6 +320,7 @@
   border-radius: var(--rounded-md, 11px);
   border: none !important; /* Override the dashed pink border from global css */
   border-style: none !important;
+  display: block;
 }
 
 /* Reports */

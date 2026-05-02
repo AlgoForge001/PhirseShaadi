@@ -356,9 +356,13 @@ const AdminUserDetail = () => {
                     <h3>Personal</h3>
                     <div className="info-row"><span className="info-label">Height</span><span className="info-value">{data.height || '--'}</span></div>
                     <div className="info-row"><span className="info-label">Weight</span><span className="info-value">{data.weight || '--'}</span></div>
-                    <div style={{ marginTop: '16px' }}>
-                      <span className="info-label">About</span>
-                      <div className="about-box">{data.about || <span className="empty-state">No about text provided.</span>}</div>
+                    <div style={{ marginTop: '24px' }}>
+                      <span className="info-label" style={{ display: 'block', marginBottom: '12px' }}>About</span>
+                      {data.about ? (
+                        <div className="about-box">{data.about}</div>
+                      ) : (
+                        <div className="empty-state" style={{ padding: '24px' }}>No about text provided.</div>
+                      )}
                     </div>
                   </div>
 
