@@ -165,7 +165,7 @@ const OtpVerify = () => {
         <div className="otp-left-content">
           <div className="otp-logo" onClick={() => navigate("/")}>
             <Heart size={22} fill="#fff" color="#fff" />
-            <span>PhirseShaadi</span>
+            <span>MarriageSphere</span>
           </div>
           <div className="otp-shield">
             <Shield size={64} color="rgba(255,255,255,0.9)" />

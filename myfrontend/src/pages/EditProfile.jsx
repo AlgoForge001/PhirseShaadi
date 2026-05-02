@@ -368,7 +368,7 @@ const EditProfile = () => {
       <div className="ep-header">
         <div className="ep-logo" onClick={() => navigate("/")}>
           <Heart size={20} fill="#6B3F69" color="#6B3F69" />
-          <span>PhirseShaadi</span>
+          <span>MarriageSphere</span>
         </div>
         <div className="ep-progress">
           <div className="ep-progress-bar">

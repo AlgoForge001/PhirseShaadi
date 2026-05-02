@@ -63,8 +63,6 @@ const PrivateLayout = () => (
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </div>
-    {/* Floating AI Chatbot — visible on all private pages */}
-    <Chatbot />
   </div>
 )
 
@@ -80,7 +78,12 @@ const AppRouter = () => {
   // Specific check for Admin Dashboard (No Sidebar)
   if (location.pathname === '/admin-dashboard') {
     if (!isLoggedIn || user?.role !== 'admin') return <Navigate to="/login" />;
-    return <AdminDashboard />;
+    return (
+      <>
+        <AdminDashboard />
+        <Chatbot />
+      </>
+    );
   }
 
   // Redirect admin away from the regular user dashboard
@@ -88,7 +91,12 @@ const AppRouter = () => {
     return <Navigate to="/admin-dashboard" replace />;
   }
 
-  return isPublicRoute ? <PublicLayout /> : <PrivateLayout />
+  return (
+    <>
+      {isPublicRoute ? <PublicLayout /> : <PrivateLayout />}
+      <Chatbot />
+    </>
+  );
 }
 
 

@@ -124,7 +124,7 @@ const Login = () => {
         <div className="login-left-content">
           <div className="login-logo" onClick={() => navigate("/")}>
             <Heart size={22} fill="#fff" color="#fff" />
-            <span>PhirseShaadi</span>
+            <span>MarriageSphere</span>
           </div>
           <h2>Welcome Back!</h2>
           <p>Sign in to continue your journey towards finding your perfect life partner.</p>

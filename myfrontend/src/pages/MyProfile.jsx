@@ -92,7 +92,6 @@ const MyProfile = () => {
   const [galleryOpen, setGalleryOpen] = useState(false);
   const [galleryStart, setGalleryStart] = useState(0);
   const [viewers, setViewers] = useState([]);
-  const [activeTab, setActiveTab] = useState("about");
   const fileInputRef = useRef(null);
   const cvInputRef = useRef(null);
   const [uploading, setUploading] = useState(false);
@@ -127,6 +126,7 @@ const MyProfile = () => {
   const displayName = profile.name || profile.fullName || "Member";
   const location = [profile.city, profile.state].filter(Boolean).join(", ") || null;
 
+<<<<<<< HEAD
   const tabs = [
     { id: "about",  label: "About"   },
     { id: "career", label: "Career"  },
@@ -134,6 +134,8 @@ const MyProfile = () => {
     { id: "faith",  label: "Faith"   },
     { id: "photos", label: "Photos"  },  ];
 
+=======
+>>>>>>> b6bfef8cb0ca8f7d0dbc9d9fa389db9c58534714
   return (
     <div className="mp-page">
       <Navbar />
@@ -267,127 +269,110 @@ const MyProfile = () => {
                   <button className="btn-ghost" onClick={() => navigate("/privacy")}><IconLock /> Privacy</button>
                 </div>
               </div>
-
-              {/* Tab nav — exactly like the reference */}
-              <div className="tab-nav">
-                {tabs.map(t => (
-                  <button key={t.id} className={`tab-btn ${activeTab === t.id ? "tab-active" : ""}`} onClick={() => setActiveTab(t.id)}>
-                    {t.label}
-                  </button>
-                ))}
-              </div>
             </div>
 
-            {/* Tab content */}
+            {/* ── All sections stacked (no tabs) ── */}
             <div className="tab-content">
 
-              {activeTab === "about" && (
-                <>
-                  {/* About */}
-                  <div className="content-block">
-                    <div className="block-label">ABOUT ME</div>
-                    {profile.about
-                      ? <p className="about-text">{profile.about}</p>
-                      : <p className="about-empty">No bio added yet. <span className="add-link" onClick={() => navigate("/profile-creation")}>Add one →</span></p>
-                    }
-                  </div>
+              {/* About Me */}
+              <div className="content-block">
+                <div className="block-label">ABOUT ME</div>
+                {profile.about
+                  ? <p className="about-text">{profile.about}</p>
+                  : <p className="about-empty">No bio added yet. <span className="add-link" onClick={() => navigate("/profile-creation")}>Add one →</span></p>
+                }
+              </div>
 
-                  {/* Basic info */}
-                  <div className="content-block">
-                    <div className="block-label">BASIC INFORMATION</div>
-                    <div className="info-table">
-                      <InfoRow label="Date of Birth"   value={formatDOB(profile.dob)} />
-                      <InfoRow label="Age"             value={age ? `${age} years` : null} />
-                      <InfoRow label="Height"          value={profile.height} />
-                      <InfoRow label="Weight"          value={profile.weight} />
-                      <InfoRow label="Marital Status"  value={profile.maritalStatus} />
-                      <InfoRow label="Mother Tongue"   value={profile.motherTongue} />
-                      <InfoRow label="Body Type"       value={profile.bodyType} />
-                      <InfoRow label="Complexion"      value={profile.complexion} />
-                      <InfoRow label="Physical Status" value={profile.physicalStatus} />
-                      <InfoRow label="Diet"            value={profile.diet} />
-                      <InfoRow label="Drinking"        value={profile.drinking} />
-                      <InfoRow label="Smoking"         value={profile.smoking} />
+              {/* Basic Information */}
+              <div className="content-block">
+                <div className="block-label">BASIC INFORMATION</div>
+                <div className="info-table">
+                  <InfoRow label="Date of Birth"   value={formatDOB(profile.dob)} />
+                  <InfoRow label="Age"             value={age ? `${age} years` : null} />
+                  <InfoRow label="Height"          value={profile.height} />
+                  <InfoRow label="Weight"          value={profile.weight} />
+                  <InfoRow label="Marital Status"  value={profile.maritalStatus} />
+                  <InfoRow label="Mother Tongue"   value={profile.motherTongue} />
+                  <InfoRow label="Body Type"       value={profile.bodyType} />
+                  <InfoRow label="Complexion"      value={profile.complexion} />
+                  <InfoRow label="Physical Status" value={profile.physicalStatus} />
+                  <InfoRow label="Diet"            value={profile.diet} />
+                  <InfoRow label="Drinking"        value={profile.drinking} />
+                  <InfoRow label="Smoking"         value={profile.smoking} />
+                </div>
+              </div>
+
+              {/* Career & Education */}
+              <div className="content-block">
+                <div className="block-label">CAREER & EDUCATION</div>
+                <div className="info-table">
+                  <InfoRow label="Education"     value={profile.education} />
+                  <InfoRow label="Profession"    value={profile.occupation} />
+                  <InfoRow label="Company"       value={profile.companyName} />
+                  <InfoRow label="Employed In"   value={profile.employedIn} />
+                  <InfoRow label="Annual Income" value={profile.annualIncome} />
+                  <InfoRow label="Work Location" value={profile.workLocation} />
+                </div>
+              </div>
+
+              {/* Family Details */}
+              <div className="content-block">
+                <div className="block-label">FAMILY DETAILS</div>
+                <div className="info-table">
+                  <InfoRow label="Family Type"         value={profile.familyType} />
+                  <InfoRow label="Family Values"       value={profile.familyValues} />
+                  <InfoRow label="Family Status"       value={profile.familyStatus} />
+                  <InfoRow label="Father's Occupation" value={profile.fatherOccupation} />
+                  <InfoRow label="Mother's Occupation" value={profile.motherOccupation} />
+                  <InfoRow label="Siblings"            value={profile.siblings} />
+                  <InfoRow label="Living With Family"  value={profile.livingWithFamily} />
+                </div>
+              </div>
+
+              {/* Faith & Horoscope */}
+              <div className="content-block">
+                <div className="block-label">FAITH & HOROSCOPE</div>
+                <div className="info-table">
+                  <InfoRow label="Religion"      value={profile.religion} />
+                  <InfoRow label="Date of Birth" value={formatDOB(profile.dob)} />
+                  <InfoRow label="Birth Place"   value={profile.birthPlace} />
+                  <InfoRow label="Birth Time"    value={profile.birthTime} />
+                  <InfoRow label="Manglik"       value={profile.manglik} />
+                  <InfoRow label="Rashi"         value={profile.rashi} />
+                  <InfoRow label="Nakshatra"     value={profile.nakshatra} />
+                  <InfoRow label="Gotra"         value={profile.gotra} />
+                </div>
+              </div>
+
+              {/* Photos */}
+              <div className="content-block">
+                <div className="block-label">PHOTOS</div>
+                <div className="photos-grid">
+                  {photos.map((p, i) => {
+                    const u = typeof p === "string" ? p : p?.url;
+                    return (
+                      <div key={i} className={`photo-cell ${p.isPrimary ? "photo-primary" : ""}`} onClick={() => { setGalleryStart(i); setGalleryOpen(true); }}>
+                        <img src={u} alt={`Photo ${i + 1}`} />
+                        {p.isPrimary && <div className="photo-primary-tag">Primary</div>}
+                        <div className="photo-hover"><IconEye /></div>
+                      </div>
+                    );
+                  })}
+                  {photos.length < 10 && (
+                    <div className="photo-add" onClick={() => fileInputRef.current?.click()}>
+                      <IconCamera />
+                      <span>Add Photo</span>
+                      <span className="photo-add-count">{photos.length}/10</span>
                     </div>
-                  </div>
-                </>
-              )}
-
-              {activeTab === "career" && (
-                <div className="content-block">
-                  <div className="block-label">CAREER & EDUCATION</div>
-                  <div className="info-table">
-                    <InfoRow label="Education"     value={profile.education} />
-                    <InfoRow label="Profession"    value={profile.occupation} />
-                    <InfoRow label="Company"       value={profile.companyName} />
-                    <InfoRow label="Employed In"   value={profile.employedIn} />
-                    <InfoRow label="Annual Income" value={profile.annualIncome} />
-                    <InfoRow label="Work Location" value={profile.workLocation} />
-                  </div>
+                  )}
+                  {photos.length === 0 && (
+                    <div className="photos-empty">
+                      <p>No photos yet</p>
+                      <button onClick={() => fileInputRef.current?.click()}>Upload First Photo</button>
+                    </div>
+                  )}
                 </div>
-              )}
-
-              {activeTab === "family" && (
-                <div className="content-block">
-                  <div className="block-label">FAMILY DETAILS</div>
-                  <div className="info-table">
-                    <InfoRow label="Family Type"         value={profile.familyType} />
-                    <InfoRow label="Family Values"       value={profile.familyValues} />
-                    <InfoRow label="Family Status"       value={profile.familyStatus} />
-                    <InfoRow label="Father's Occupation" value={profile.fatherOccupation} />
-                    <InfoRow label="Mother's Occupation" value={profile.motherOccupation} />
-                    <InfoRow label="Siblings"            value={profile.siblings} />
-                    <InfoRow label="Living With Family"  value={profile.livingWithFamily} />
-                  </div>
-                </div>
-              )}
-
-              {activeTab === "faith" && (
-                <div className="content-block">
-                  <div className="block-label">FAITH & HOROSCOPE</div>
-                  <div className="info-table">
-                    <InfoRow label="Religion"      value={profile.religion} />
-                    <InfoRow label="Date of Birth" value={formatDOB(profile.dob)} />
-                    <InfoRow label="Birth Place"   value={profile.birthPlace} />
-                    <InfoRow label="Birth Time"    value={profile.birthTime} />
-                    <InfoRow label="Manglik"       value={profile.manglik} />
-                    <InfoRow label="Rashi"         value={profile.rashi} />
-                    <InfoRow label="Nakshatra"     value={profile.nakshatra} />
-                    <InfoRow label="Gotra"         value={profile.gotra} />
-                  </div>
-                </div>
-              )}
-
-              {activeTab === "photos" && (
-                <div className="content-block">
-                  <div className="block-label">PHOTOS</div>
-                  <div className="photos-grid">
-                    {photos.map((p, i) => {
-                      const u = typeof p === "string" ? p : p?.url;
-                      return (
-                        <div key={i} className={`photo-cell ${p.isPrimary ? "photo-primary" : ""}`} onClick={() => { setGalleryStart(i); setGalleryOpen(true); }}>
-                          <img src={u} alt={`Photo ${i + 1}`} />
-                          {p.isPrimary && <div className="photo-primary-tag">Primary</div>}
-                          <div className="photo-hover"><IconEye /></div>
-                        </div>
-                      );
-                    })}
-                    {photos.length < 10 && (
-                      <div className="photo-add" onClick={() => fileInputRef.current?.click()}>
-                        <IconCamera />
-                        <span>Add Photo</span>
-                        <span className="photo-add-count">{photos.length}/10</span>
-                      </div>
-                    )}
-                    {photos.length === 0 && (
-                      <div className="photos-empty">
-                        <p>No photos yet</p>
-                        <button onClick={() => fileInputRef.current?.click()}>Upload First Photo</button>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
+              </div>
 
             </div>
           </div>

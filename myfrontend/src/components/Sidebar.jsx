@@ -55,7 +55,7 @@ const Sidebar = () => {
         {/* LOGO */}
         <div className="app-sidebar-logo" onClick={() => { navigate("/dashboard"); setOpen(false); }}>
           <Heart size={20} fill="#6B3F69" color="#6B3F69" />
-          <span>PhirseShaadi</span>
+          <span>MarriageSphere</span>
         </div>
 
         {/* LABEL */}

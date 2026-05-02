@@ -37,7 +37,7 @@ const ProfileViewers = () => {
         <div className="promo-card">
           <i className="premium-icon">⭐</i>
           <h2>Premium Feature</h2>
-          <p>Upgrade to PhirseShaadi Premium to see who viewed your profile and get 10x more responses!</p>
+          <p>Upgrade to MarriageSphere Premium to see who viewed your profile and get 10x more responses!</p>
           <button className="upgrade-btn">Upgrade Now</button>
         </div>
       </div>
