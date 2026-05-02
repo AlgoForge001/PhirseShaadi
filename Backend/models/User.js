@@ -201,6 +201,15 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  verifiedAt: {
+    type: Date,
+    default: null
+  },
+  verifiedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    default: null
+  },
   isPremium: {
     type: Boolean,
     default: false
@@ -209,6 +218,18 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: ['user', 'admin'],
     default: 'user'
+  },
+  isActive: {
+    type: Boolean,
+    default: true
+  },
+  banReason: {
+    type: String,
+    default: null
+  },
+  bannedAt: {
+    type: Date,
+    default: null
   },
   otp: {
     type: String

@@ -10,49 +10,35 @@ exports.getStats = async (req, res) => {
     const weekAgo = new Date();
     weekAgo.setDate(today.getDate() - 7);
     
-    const monthAgo = new Date();
-    monthAgo.setMonth(today.getMonth() - 1);
-
-    const totalUsers = await User.countDocuments({ role: 'user' });
-    const newToday = await User.countDocuments({ role: 'user', createdAt: { $gte: today } });
-    const newThisWeek = await User.countDocuments({ role: 'user', createdAt: { $gte: weekAgo } });
-    const newThisMonth = await User.countDocuments({ role: 'user', createdAt: { $gte: monthAgo } });
+    const totalUsers = await User.countDocuments();
+    const activeUsers = await User.countDocuments({ isActive: true });
+    // Handle both false and null/missing if needed, but per instructions just isActive: false
+    // Since isActive wasn't there before, maybe some are undefined. We'll use isActive: false or we just follow instruction exactly.
+    const bannedUsers = await User.countDocuments({ isActive: false });
+    const verifiedUsers = await User.countDocuments({ isVerified: true });
+    const unverifiedUsers = await User.countDocuments({ isVerified: false });
+    const maleUsers = await User.countDocuments({ gender: 'Male' });
+    const femaleUsers = await User.countDocuments({ gender: 'Female' });
     
-    const premiumUsers = await User.countDocuments({ role: 'user', isPremium: true });
-    const verifiedUsers = await User.countDocuments({ role: 'user', isVerified: true });
-    
-    const activeToday = await User.countDocuments({ role: 'user', lastActive: { $gte: today } });
-    const activeThisWeek = await User.countDocuments({ role: 'user', lastActive: { $gte: weekAgo } });
-
-    const totalReports = await Report.countDocuments();
-    const pendingReports = await Report.countDocuments({ status: 'pending' });
-
-    // Payment model missing, using 0 for now as placeholder
-    const totalRevenue = 0;
-    const revenueThisMonth = 0;
-
-    const conversionRate = totalUsers > 0 ? ((premiumUsers / totalUsers) * 100).toFixed(1) + '%' : '0%';
+    const newToday = await User.countDocuments({ createdAt: { $gte: today } });
+    const newThisWeek = await User.countDocuments({ createdAt: { $gte: weekAgo } });
 
     res.status(200).json({
       success: true,
       data: {
         totalUsers,
-        newToday,
-        newThisWeek,
-        newThisMonth,
-        premiumUsers,
+        activeUsers,
+        bannedUsers,
         verifiedUsers,
-        activeToday,
-        activeThisWeek,
-        totalReports,
-        pendingReports,
-        totalRevenue,
-        revenueThisMonth,
-        conversionRate
+        unverifiedUsers,
+        maleUsers,
+        femaleUsers,
+        newToday,
+        newThisWeek
       }
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Failed to fetch stats", error: error.message });
+    res.status(500).json({ message: "Failed to fetch stats", error: error.message });
   }
 };
 
@@ -239,5 +225,74 @@ exports.toggleVerify = async (req, res) => {
     res.status(200).json({ success: true, message: `User verified status: ${user.isVerified}`, data: user });
   } catch (error) {
     res.status(500).json({ success: false, message: "Operation failed", error: error.message });
+  }
+};
+
+// PUT /api/admin/ban-user/:userId
+exports.banUser = async (req, res) => {
+  try {
+    const { reason } = req.body;
+    const user = await User.findById(req.params.userId);
+    if (!user) return res.status(404).json({ success: false, message: "User not found" });
+
+    user.isActive = false;
+    user.banReason = reason || null;
+    user.bannedAt = new Date();
+    await user.save();
+
+    res.status(200).json({ success: true, message: "User banned successfully", data: user });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Failed to ban user", error: error.message });
+  }
+};
+
+// PUT /api/admin/unban-user/:userId
+exports.unbanUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId);
+    if (!user) return res.status(404).json({ success: false, message: "User not found" });
+
+    user.isActive = true;
+    user.banReason = null;
+    user.bannedAt = null;
+    await user.save();
+
+    res.status(200).json({ success: true, message: "User unbanned successfully", data: user });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Failed to unban user", error: error.message });
+  }
+};
+
+// PUT /api/admin/verify-user/:userId
+exports.verifyUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId);
+    if (!user) return res.status(404).json({ success: false, message: "User not found" });
+
+    user.isVerified = true;
+    user.verifiedAt = new Date();
+    user.verifiedBy = req.user?.userId || req.user?._id || req.user?.id || null;
+    await user.save();
+
+    res.status(200).json({ success: true, message: "User verified successfully", data: user });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Failed to verify user", error: error.message });
+  }
+};
+
+// PUT /api/admin/unverify-user/:userId
+exports.unverifyUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId);
+    if (!user) return res.status(404).json({ success: false, message: "User not found" });
+
+    user.isVerified = false;
+    user.verifiedAt = null;
+    user.verifiedBy = null;
+    await user.save();
+
+    res.status(200).json({ success: true, message: "Verification removed", data: user });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Failed to unverify user", error: error.message });
   }
 };

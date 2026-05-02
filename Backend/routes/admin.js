@@ -19,4 +19,9 @@ router.put('/users/:id', adminController.updateUser);
 router.delete('/users/:id', adminController.deleteUser);
 router.post('/users/:id/toggle-verify', adminController.toggleVerify);
 
+router.put('/ban-user/:userId', adminController.banUser);
+router.put('/unban-user/:userId', adminController.unbanUser);
+router.put('/verify-user/:userId', adminController.verifyUser);
+router.put('/unverify-user/:userId', adminController.unverifyUser);
+
 module.exports = router;
