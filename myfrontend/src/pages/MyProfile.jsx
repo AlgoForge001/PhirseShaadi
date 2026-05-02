@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../utils/api";
+import { normalizeImageUrl } from "../utils/imageUtils";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import "./MyProfile.css";
@@ -95,8 +96,16 @@ const MyProfile = () => {
   const fileInputRef = useRef(null);
   const cvInputRef = useRef(null);
   const [uploading, setUploading] = useState(false);
+<<<<<<< HEAD
   const [cvFile, setCvFile] = useState(null);
   const [uploadingCv, setUploadingCv] = useState(false);
+=======
+  const [imgFailed, setImgFailed] = useState({}); // Track multiple image failures by URL or ID
+
+  const setImgError = (id) => {
+    setImgFailed(prev => ({ ...prev, [id]: true }));
+  };
+>>>>>>> fdfb97b2381f76cdd533f1557ff5af4780da7e80
 
   const fetchProfile = async () => {
     try { setLoading(true); const res = await api.get("/profile/me"); setProfile(res.data.profile); }
@@ -149,10 +158,13 @@ const MyProfile = () => {
                 onClick={() => photos.length > 0 && (setGalleryStart(0), setGalleryOpen(true))}
                 style={{ cursor: photos.length > 0 ? "pointer" : "default" }}
               >
-                {primaryPhotoUrl
-                  ? <img src={primaryPhotoUrl} alt={displayName} />
-                  : <div className="sidebar-photo-placeholder"><IconUser /></div>
-                }
+                {(() => {
+                  const url = normalizeImageUrl(primaryPhotoUrl);
+                  if (url && !imgFailed[url]) {
+                    return <img src={url} alt={displayName} onError={() => setImgError(url)} />;
+                  }
+                  return <div className="sidebar-photo-placeholder"><IconUser /></div>;
+                })()}
                 <button
                   className="sidebar-upload-btn"
                   onClick={e => { e.stopPropagation(); fileInputRef.current?.click(); }}
@@ -168,10 +180,19 @@ const MyProfile = () => {
               {photos.length > 1 && (
                 <div className="thumb-row">
                   {photos.slice(0, 4).map((p, i) => {
-                    const u = typeof p === "string" ? p : p?.url;
+                    const originalUrl = typeof p === "string" ? p : p?.url;
+                    const u = normalizeImageUrl(originalUrl);
                     return (
                       <div key={i} className={`thumb ${p.isPrimary ? "thumb-active" : ""}`} onClick={() => { setGalleryStart(i); setGalleryOpen(true); }}>
+<<<<<<< HEAD
                         <img src={u} alt="" />                      </div>
+=======
+                        {u && !imgFailed[u] 
+                          ? <img src={u} alt="" onError={() => setImgError(u)} />
+                          : <div className="thumb-placeholder"><IconUser /></div>
+                        }
+                      </div>
+>>>>>>> fdfb97b2381f76cdd533f1557ff5af4780da7e80
                     );
                   })}
                   {photos.length > 4 && (
@@ -218,11 +239,15 @@ const MyProfile = () => {
                 <div className="sb-section-label">RECENT VIEWERS</div>
                 <div className="viewer-list">
                   {viewers.slice(0, 5).map((v, i) => {
-                    const vp = getPrimaryPhoto(v.userId?.photos);
+                    const originalUrl = getPrimaryPhoto(v.userId?.photos);
+                    const vp = normalizeImageUrl(originalUrl);
                     return (
                       <div key={i} className="viewer-item" onClick={() => navigate(`/profile/${v.userId?._id}`)}>
                         <div className="viewer-av">
-                          {vp ? <img src={vp} alt="" /> : <span>{(v.userId?.name || "M")[0].toUpperCase()}</span>}
+                          {vp && !imgFailed[vp] 
+                            ? <img src={vp} alt="" onError={() => setImgError(vp)} /> 
+                            : <span>{(v.userId?.name || "M")[0].toUpperCase()}</span>
+                          }
                         </div>
                         <div className="viewer-info">
                           <span className="viewer-name">{v.userId?.name || "Member"}</span>
@@ -345,10 +370,17 @@ const MyProfile = () => {
                 <div className="block-label">PHOTOS</div>
                 <div className="photos-grid">
                   {photos.map((p, i) => {
-                    const u = typeof p === "string" ? p : p?.url;
+                    const originalUrl = typeof p === "string" ? p : p?.url;
+                    const u = normalizeImageUrl(originalUrl);
+                    const failed = u && imgFailed[u];
+
                     return (
                       <div key={i} className={`photo-cell ${p.isPrimary ? "photo-primary" : ""}`} onClick={() => { setGalleryStart(i); setGalleryOpen(true); }}>
-                        <img src={u} alt={`Photo ${i + 1}`} />
+                        {u && !failed ? (
+                          <img src={u} alt={`Photo ${i + 1}`} onError={() => setImgError(u)} />
+                        ) : (
+                          <div className="photo-placeholder"><IconUser /></div>
+                        )}
                         {p.isPrimary && <div className="photo-primary-tag">Primary</div>}
                         <div className="photo-hover"><IconEye /></div>
                       </div>

@@ -6,6 +6,7 @@ import {
   Search, User, Bell, Sparkles, TrendingUp, Eye
 } from "lucide-react";
 import api from "../utils/api";
+import { normalizeImageUrl } from "../utils/imageUtils";
 
 import Navbar from "../components/Navbar";
 import ProfileCard from "../components/ProfileCard";
@@ -39,6 +40,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [statsLoading, setStatsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [imgFailed, setImgFailed] = useState(false);
 
   // Dynamic stats state
   const [stats, setStats] = useState({
@@ -88,7 +90,7 @@ const Dashboard = () => {
     };
 
     fetchData();
-  }, []);
+  }, [navigate]);
 
   // Fetch dynamic stats separately so cards animate in
   useEffect(() => {
@@ -233,10 +235,22 @@ const Dashboard = () => {
             <div className="abstract-shape" />
             {(() => {
               const photo = userData.photos?.find(p => p.isPrimary) || userData.photos?.[0];
-              return photo?.url ? (
-                <img src={photo.url} alt="You" />
-              ) : (
-                <div className="profile-image-placeholder"><User size={40} /></div>
+              const normalizedUrl = normalizeImageUrl(photo?.url);
+              
+              if (!normalizedUrl || imgFailed) {
+                return (
+                  <div className="profile-image-placeholder">
+                    <User size={40} />
+                  </div>
+                );
+              }
+
+              return (
+                <img 
+                  src={normalizedUrl} 
+                  alt={userData.name} 
+                  onError={() => setImgFailed(true)}
+                />
               );
             })()}
           </div>
