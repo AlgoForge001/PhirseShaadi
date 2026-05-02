@@ -14,6 +14,13 @@ const Chatbot = () => {
     }
   ]);
 
+  // Global listener to open chatbot from anywhere
+  useEffect(() => {
+    const handleOpenChat = () => setIsOpen(true);
+    window.addEventListener('open-chatbot', handleOpenChat);
+    return () => window.removeEventListener('open-chatbot', handleOpenChat);
+  }, []);
+
   const suggestions = [
     "How it works?",
     "How to find matches?",
@@ -58,10 +65,16 @@ const Chatbot = () => {
     }
   };
 
+  const toggleChat = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsOpen(!isOpen);
+  };
+
   return (
-    <div className={`floating-chatbot ${isOpen ? 'open' : ''}`}>
+    <div className={`floating-chatbot ${isOpen ? 'open' : ''}`} onClick={(e) => e.stopPropagation()}>
       {!isOpen ? (
-        <button className="chatbot-toggle" onClick={() => setIsOpen(true)}>
+        <button type="button" className="chatbot-toggle" onClick={toggleChat}>
           <MessageSquare size={24} />
           <span className="toggle-label">Help</span>
         </button>
@@ -78,7 +91,7 @@ const Chatbot = () => {
               </div>
             </div>
             <div className="header-actions">
-              <button onClick={() => setIsOpen(false)} title="Close">
+              <button type="button" onClick={() => setIsOpen(false)} title="Close">
                 <X size={18} />
               </button>
             </div>
