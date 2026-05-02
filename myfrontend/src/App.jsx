@@ -10,8 +10,9 @@ import ProfileCreation from './pages/ProfileCreation'
 import SearchBrowse from './pages/SearchBrowse'
 import UploadPhotos from './pages/UploadPhotos'
 import MyProfile from './pages/MyProfile'
-import EditProfile from './pages/EditProfile'
 import ProfileView from './pages/ProfileView'
+import EditProfile from './pages/EditProfile'
+import Dashboard from './pages/Dashboard'
 import Chat from './pages/Chat'
 import Notifications from './pages/Notifications'
 import PrivacySettings from './pages/PrivacySettings'
@@ -26,35 +27,54 @@ import { AuthProvider, useAuth } from './context/AuthContext'
 import { SocketProvider } from './context/SocketContext'
 import Chatbot from './components/Chatbot'
 
+// ─── Admin Protected Wrapper ───────────────────────────────────────────────────
+const AdminLayout = () => {
+  const { isLoggedIn, user } = useAuth()
+  if (!isLoggedIn || user?.role !== 'admin') return <Navigate to="/login" replace />
+  return (
+    <>
+      <Routes>
+        <Route path="/admin-dashboard" element={<AdminDashboard />} />
+        <Route path="/admin-users" element={<AdminUsers />} />
+        <Route path="/admin-users/:userId" element={<AdminUserDetail />} />
+      </Routes>
+      <Chatbot />
+    </>
+  )
+}
+
+// ─── Main App Router ──────────────────────────────────────────────────────────
 const AppRouter = () => {
   const { isLoggedIn, loading, user } = useAuth()
   const location = useLocation()
 
   if (loading) return <div className="loading-screen">Loading...</div>
 
-  const publicPaths = ['/', '/home', '/login', '/register', '/about', '/otp-verify', '/google-success']
-  const isPublicRoute = publicPaths.includes(location.pathname)
-  const isAdminRoute = location.pathname.startsWith('/admin')
+  // All admin paths — includes hyphenated /admin-* and slash /admin/*
+  const isAdminRoute = location.pathname === '/admin-dashboard'
+    || location.pathname === '/admin-users'
+    || location.pathname.startsWith('/admin-users/')
+    || location.pathname.startsWith('/admin/');
 
-  // Check for Admin access on admin routes
-  if (isAdminRoute && (!isLoggedIn || user?.role !== 'admin')) {
-    return <Navigate to="/login" replace />
-  }
-
-  // Redirect admin from dashboard to admin-dashboard
+  // Redirect admin to admin dashboard if they visit /dashboard
   if (isLoggedIn && user?.role === 'admin' && location.pathname === '/dashboard') {
     return <Navigate to="/admin-dashboard" replace />
   }
 
-  // Determine if we should show the sidebar (Private user routes only)
-  const showSidebar = isLoggedIn && !isPublicRoute && !isAdminRoute;
+  // Serve admin layout for all admin routes
+  if (isAdminRoute) {
+    if (!isLoggedIn || user?.role !== 'admin') return <Navigate to="/login" replace />
+    return <AdminLayout />
+  }
 
-  return (
-    <div className="app-container" style={{ display: 'flex', minHeight: '100vh' }}>
-      {showSidebar && <Sidebar />}
-      <div className="main-content" style={{ flex: 1, position: 'relative' }}>
+  // Public routes
+  const publicPaths = ['/', '/home', '/login', '/register', '/about', '/otp-verify', '/google-success']
+  const isPublicRoute = publicPaths.includes(location.pathname)
+
+  if (isPublicRoute) {
+    return (
+      <>
         <Routes>
-          {/* Public Routes */}
           <Route path="/" element={<LandingPage />} />
           <Route path="/home" element={<LandingPage />} />
           <Route path="/login" element={<Login />} />
@@ -62,50 +82,44 @@ const AppRouter = () => {
           <Route path="/otp-verify" element={<OtpVerify />} />
           <Route path="/google-success" element={<GoogleSuccess />} />
           <Route path="/about" element={<About />} />
-
-          {/* User Private Routes */}
-          <Route path="/dashboard" element={<DashboardGuard><Dashboard /></DashboardGuard>} />
-          <Route path="/profile-creation" element={<ProtectedRoute><ProfileCreation /></ProtectedRoute>} />
-          <Route path="/search" element={<ProtectedRoute><SearchBrowse /></ProtectedRoute>} />
-          <Route path="/upload-photos" element={<ProtectedRoute><UploadPhotos /></ProtectedRoute>} />
-          <Route path="/my-profile" element={<ProtectedRoute><MyProfile /></ProtectedRoute>} />
-          <Route path="/edit-profile" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
-          <Route path="/profile/:id" element={<ProtectedRoute><ProfileView /></ProtectedRoute>} />
-          <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
-          <Route path="/chat/:id" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
-          <Route path="/interests" element={<ProtectedRoute><Interests /></ProtectedRoute>} />
-          <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
-          <Route path="/privacy" element={<ProtectedRoute><PrivacySettings /></ProtectedRoute>} />
-          <Route path="/profile-viewers" element={<ProtectedRoute><ProfileViewers /></ProtectedRoute>} />
-          <Route path="/family-members" element={<ProtectedRoute><FamilyMembers /></ProtectedRoute>} />
-          <Route path="/family-shortlist" element={<ProtectedRoute><FamilyShortlist /></ProtectedRoute>} />
-
-          {/* Admin Routes */}
-          <Route path="/admin-dashboard" element={<AdminDashboard />} />
-          <Route path="/admin-users" element={<AdminUsers />} />
-          <Route path="/admin-users/:userId" element={<AdminUserDetail />} />
-          <Route path="/admin/users/:userId" element={<AdminUserDetail />} />
-
-          {/* Fallback */}
-          <Route path="*" element={<Navigate to={isLoggedIn ? (user?.role === 'admin' ? "/admin-dashboard" : "/dashboard") : "/"} replace />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
         <Chatbot />
-      </div>
-    </div>
-  )
-}
+      </>
+    )
+  }
 
-// Helper components for route protection
-const ProtectedRoute = ({ children }) => {
-  const { isLoggedIn } = useAuth()
-  return isLoggedIn ? children : <Navigate to="/login" replace />
-}
-
-const DashboardGuard = ({ children }) => {
-  const { isLoggedIn, user } = useAuth()
+  // Private routes (with Sidebar)
   if (!isLoggedIn) return <Navigate to="/login" replace />
-  if (user?.role === 'admin') return <Navigate to="/admin-dashboard" replace />
-  return children
+
+  return (
+    <>
+      <div style={{ display: 'flex' }}>
+        <Sidebar />
+        <div className="main-content" style={{ flex: 1 }}>
+          <Routes>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/profile-creation" element={<ProfileCreation />} />
+            <Route path="/search" element={<SearchBrowse />} />
+            <Route path="/upload-photos" element={<UploadPhotos />} />
+            <Route path="/my-profile" element={<MyProfile />} />
+            <Route path="/edit-profile" element={<EditProfile />} />
+            <Route path="/profile/:id" element={<ProfileView />} />
+            <Route path="/chat" element={<Chat />} />
+            <Route path="/chat/:id" element={<Chat />} />
+            <Route path="/interests" element={<Interests />} />
+            <Route path="/notifications" element={<Notifications />} />
+            <Route path="/privacy" element={<PrivacySettings />} />
+            <Route path="/profile-viewers" element={<ProfileViewers />} />
+            <Route path="/family-members" element={<FamilyMembers />} />
+            <Route path="/family-shortlist" element={<FamilyShortlist />} />
+            <Route path="*" element={<Navigate to="/dashboard" replace />} />
+          </Routes>
+        </div>
+      </div>
+      <Chatbot />
+    </>
+  )
 }
 
 function App() {

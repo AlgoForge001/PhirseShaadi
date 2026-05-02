@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   Users, Search, Trash2, Shield, User, ChevronDown, XCircle, LogOut,
   UserCheck, Ban, ShieldCheck, Clock, UserPlus, Calendar, Check
@@ -233,17 +233,17 @@ const AdminUsers = () => {
             </thead>
             <tbody>
               {filteredUsers.map(user => (
-                <tr key={user._id} onClick={() => navigate(`/admin-users/${user._id}`)}>
+                <tr key={user._id} onClick={() => navigate(`/admin/users/${user._id}`)}>
                   <td>
-                    <Link to={`/admin-users/${user._id}`} className="user-info-cell" style={{ textDecoration: 'none', color: 'inherit' }}>
+                    <div className="user-info-cell">
                       <div className="user-avatar">
                         {user.photos?.[0]?.url ? <img src={user.photos[0].url} alt="" /> : <User size={18} />}
                       </div>
                       <div>
-                        <div className="user-name" style={{ fontWeight: 600, color: 'var(--color-primary)' }}>{user.name}</div>
+                        <div className="user-name">{user.name}</div>
                         <div className="user-id">{user._id.slice(-6)}</div>
                       </div>
-                    </Link>
+                    </div>
                   </td>
                   <td>
                     <div className="contact-cell">
@@ -281,9 +281,6 @@ const AdminUsers = () => {
                           {unbanningId === user._id ? "..." : "Unban"}
                         </button>
                       )}
-                      <button className="button-pearl-capsule" onClick={(e) => { e.stopPropagation(); navigate(`/admin-users/${user._id}`); }} style={{ background: '#f5f5f7' }}>
-                        View
-                      </button>
                       <button className="button-pearl-capsule" onClick={(e) => { e.stopPropagation(); handleEditClick(user); }}>Edit</button>
                       <button className="button-icon-circular delete" onClick={(e) => { e.stopPropagation(); handleDelete(user._id); }}>
                         <Trash2 size={14} />
