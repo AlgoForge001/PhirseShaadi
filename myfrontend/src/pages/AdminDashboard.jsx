@@ -138,41 +138,35 @@ const AdminDashboard = () => {
           <StatCard 
             title="Total Users" 
             value={formatNumber(stats?.totalUsers)} 
-            icon={<UsersIcon size={20} color="#3B82F6" />}
+            icon={<UsersIcon size={16} />}
             trend="+12% vs yesterday"
             trendUp={true}
-            color="blue"
           />
           <StatCard 
             title="New Today" 
             value={formatNumber(stats?.newToday)} 
-            icon={<TrendingUp size={20} color="#10B981" />}
-            color="green"
+            icon={<TrendingUp size={16} />}
           />
           <StatCard 
             title="Premium Users" 
             value={formatNumber(stats?.premiumUsers)} 
-            icon={<Crown size={20} color="#F59E0B" />}
-            subValue={`${stats?.conversionRate} Conversion`}
-            color="gold"
+            icon={<Crown size={16} />}
+            subValue={`${stats?.conversionRate || '0%'} Conversion`}
           />
           <StatCard 
             title="Verified Users" 
             value={formatNumber(stats?.verifiedUsers)} 
-            icon={<ShieldCheck size={20} color="#8B5CF6" />}
-            color="purple"
+            icon={<ShieldCheck size={16} />}
           />
           <StatCard 
             title="Active Today" 
             value={formatNumber(stats?.activeToday)} 
-            icon={<Activity size={20} color="#14B8A6" />}
-            color="teal"
+            icon={<Activity size={16} />}
           />
           <StatCard 
-            title="Revenue (Month)" 
-            value={formatCurrency(stats?.revenueThisMonth)} 
-            icon={<TrendingUp size={20} color="#10B981" />}
-            color="green"
+            title="Revenue" 
+            value={formatCurrency(stats?.revenueThisMonth || 0)} 
+            icon={<TrendingUp size={16} />}
           />
         </div>
 
@@ -310,13 +304,13 @@ const AdminDashboard = () => {
   );
 };
 
-const StatCard = ({ title, value, icon, trend, trendUp, color, subValue }) => (
-  <div className={`stat-card border-${color}`}>
-    <div className="stat-card-header">
-      <span className="stat-card-title">{title}</span>
+const StatCard = ({ title, value, icon, trend, trendUp, subValue }) => (
+  <div className="stat-card">
+    <div className="stat-card-icon">
       {icon}
     </div>
     <div className="stat-card-value">{value}</div>
+    <div className="stat-card-title">{title}</div>
     {trend && (
       <div className={`stat-card-trend ${trendUp ? 'up' : 'down'}`}>
         {trendUp ? <TrendingUp size={12} /> : <TrendingDown size={12} />}

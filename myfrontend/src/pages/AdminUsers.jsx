@@ -202,22 +202,22 @@ const AdminUsers = () => {
         {loadingStats ? (
           <div className="stats-grid">
             {[...Array(9)].map((_, i) => (
-              <div key={i} style={{ height: '120px', backgroundColor: '#f5f5f7', borderRadius: '18px', animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite' }} />
+              <div key={i} style={{ height: '80px', backgroundColor: '#f5f5f7', borderRadius: '11px', animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite' }} />
             ))}
           </div>
         ) : stats ? (
           <div className="stats-grid">
-            <StatCard title="Total Users" value={stats.totalUsers || 0} icon={<Users size={20} />} className="border-blue" />
-            <StatCard title="Active Users" value={stats.activeUsers || 0} icon={<UserCheck size={20} />} className="border-green" />
-            <StatCard title="Banned Users" value={stats.bannedUsers || 0} icon={<Ban size={20} />} className="border-red" />
+            <StatCard title="Total Users" value={stats.totalUsers || 0} icon={<Users size={16} />} />
+            <StatCard title="Active Users" value={stats.activeUsers || 0} icon={<UserCheck size={16} />} />
+            <StatCard title="Banned Users" value={stats.bannedUsers || 0} icon={<Ban size={16} />} />
             
-            <StatCard title="Verified Profiles" value={stats.verifiedUsers || 0} icon={<ShieldCheck size={20} />} className="border-green" />
-            <StatCard title="Pending Verification" value={stats.unverifiedUsers || 0} icon={<Clock size={20} />} className="border-gold" />
-            <StatCard title="Joined Today" value={stats.newToday || 0} icon={<UserPlus size={20} />} className="border-purple" />
+            <StatCard title="Verified" value={stats.verifiedUsers || 0} icon={<ShieldCheck size={16} />} />
+            <StatCard title="Pending" value={stats.unverifiedUsers || 0} icon={<Clock size={16} />} />
+            <StatCard title="Today" value={stats.newToday || 0} icon={<UserPlus size={16} />} />
             
-            <StatCard title="Male Users" value={stats.maleUsers || 0} icon={<User size={20} />} className="border-blue" />
-            <StatCard title="Female Users" value={stats.femaleUsers || 0} icon={<User size={20} />} className="border-pink" />
-            <StatCard title="Joined This Week" value={stats.newThisWeek || 0} icon={<Calendar size={20} />} className="border-teal" />
+            <StatCard title="Male" value={stats.maleUsers || 0} icon={<User size={16} />} />
+            <StatCard title="Female" value={stats.femaleUsers || 0} icon={<User size={16} />} />
+            <StatCard title="This Week" value={stats.newThisWeek || 0} icon={<Calendar size={16} />} />
           </div>
         ) : null}
 
@@ -360,8 +360,8 @@ const AdminUsers = () => {
   );
 };
 
-const StatCard = ({ title, value, icon, className }) => (
-  <div className={`stat-card ${className}`}>
+const StatCard = ({ title, value, icon }) => (
+  <div className="stat-card">
     <div className="stat-card-icon">
       {icon}
     </div>
