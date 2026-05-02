@@ -7,6 +7,13 @@ const adminAuth = require('../middleware/adminAuth');
 router.use(adminAuth);
 
 router.get('/stats', adminController.getStats);
+router.get('/stats/daily-registrations', adminController.getDailyRegistrations);
+router.get('/stats/religion-distribution', adminController.getReligionDistribution);
+router.get('/stats/city-distribution', adminController.getCityDistribution);
+router.get('/stats/monthly-revenue', adminController.getMonthlyRevenue);
+router.get('/stats/plan-distribution', adminController.getPlanDistribution);
+router.get('/activity', adminController.getActivity);
+
 router.get('/users', adminController.getAllUsers);
 router.put('/users/:id', adminController.updateUser);
 router.delete('/users/:id', adminController.deleteUser);

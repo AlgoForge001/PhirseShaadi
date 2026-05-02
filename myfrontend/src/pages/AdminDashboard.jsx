@@ -1,32 +1,62 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
-  Users, Search, Trash2, CheckCircle, XCircle, 
-  Shield, User, ChevronDown
+  Users, UserCheck, Crown, Shield, Activity, 
+  TrendingUp, TrendingDown, MapPin, PieChart as PieIcon, 
+  BarChart as BarIcon, Calendar, ArrowRight, LogOut,
+  LayoutDashboard, Users as UsersIcon, ShieldCheck
 } from "lucide-react";
+import { 
+  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, 
+  ResponsiveContainer, PieChart, Pie, Cell, Legend,
+  BarChart, Bar, ResponsiveContainer as RespCont
+} from 'recharts';
 import api from "../utils/api";
 import "./AdminDashboard.css";
 
+const COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#8B5CF6', '#EF4444', '#14B8A6'];
+
 const AdminDashboard = () => {
   const navigate = useNavigate();
-  const [users, setUsers] = useState([]);
+  const [activeView, setActiveView] = useState("dashboard");
+  const [stats, setStats] = useState(null);
+  const [dailyData, setDailyData] = useState([]);
+  const [religionData, setReligionData] = useState([]);
+  const [cityData, setCityData] = useState([]);
+  const [revenueData, setRevenueData] = useState([]);
+  const [planData, setPlanData] = useState([]);
+  const [activity, setActivity] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filter, setFilter] = useState("all");
-  const [editUser, setEditUser] = useState(null);
-  const [showEditModal, setShowEditModal] = useState(false);
 
   useEffect(() => {
-    fetchUsers();
+    fetchAllData();
   }, []);
 
-  const fetchUsers = async () => {
+  const fetchAllData = async () => {
     try {
       setLoading(true);
-      const res = await api.get("/admin/users");
-      setUsers(res.data.data);
+      const [
+        statsRes, dailyRes, religionRes, 
+        cityRes, revenueRes, planRes, activityRes
+      ] = await Promise.all([
+        api.get("/admin/stats"),
+        api.get("/admin/stats/daily-registrations"),
+        api.get("/admin/stats/religion-distribution"),
+        api.get("/admin/stats/city-distribution"),
+        api.get("/admin/stats/monthly-revenue"),
+        api.get("/admin/stats/plan-distribution"),
+        api.get("/admin/activity")
+      ]);
+
+      setStats(statsRes.data.data);
+      setDailyData(dailyRes.data.data);
+      setReligionData(religionRes.data.data);
+      setCityData(cityRes.data.data);
+      setRevenueData(revenueRes.data.data);
+      setPlanData(planRes.data.data);
+      setActivity(activityRes.data.data);
     } catch (err) {
-      console.error("Failed to fetch users", err);
+      console.error("Failed to fetch dashboard data", err);
       if (err.response?.status === 403) navigate("/login");
     } finally {
       setLoading(false);
@@ -39,50 +69,24 @@ const AdminDashboard = () => {
     navigate("/login");
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this user? This action cannot be undone.")) return;
-    try {
-      await api.delete(`/admin/users/${id}`);
-      setUsers(users.filter(u => u._id !== id));
-    } catch (err) {
-      alert("Failed to delete user");
-    }
+  const formatCurrency = (val) => {
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      maximumFractionDigits: 0
+    }).format(val);
   };
 
-  const handleToggleVerify = async (id) => {
-    try {
-      const res = await api.post(`/admin/users/${id}/toggle-verify`);
-      setUsers(users.map(u => u._id === id ? { ...u, isVerified: res.data.data.isVerified } : u));
-    } catch (err) {
-      alert("Failed to toggle verification");
-    }
+  const formatNumber = (val) => {
+    return new Intl.NumberFormat('en-IN').format(val);
   };
 
-  const handleEditClick = (user) => {
-    setEditUser({ ...user });
-    setShowEditModal(true);
-  };
-
-  const handleUpdateUser = async () => {
-    try {
-      await api.put(`/admin/users/${editUser._id}`, editUser);
-      setUsers(users.map(u => u._id === editUser._id ? editUser : u));
-      setShowEditModal(false);
-      alert("User updated successfully");
-    } catch (err) {
-      alert("Update failed");
-    }
-  };
-
-  const filteredUsers = users.filter(u => {
-    const matchesSearch = u.name?.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                          u.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          u.phone?.includes(searchTerm);
-    
-    if (filter === "verified") return matchesSearch && u.isVerified;
-    if (filter === "unverified") return matchesSearch && !u.isVerified;
-    return matchesSearch;
-  });
+  if (loading) return (
+    <div className="admin-loading-screen">
+      <div className="spinner"></div>
+      <p>Loading Analytics...</p>
+    </div>
+  );
 
   return (
     <div className="admin-layout">
@@ -94,8 +98,22 @@ const AdminDashboard = () => {
             <span>Shaadi Admin</span>
           </div>
           <div className="global-nav-links">
-            <button className="nav-link">Users</button>
-            <button className="nav-link" onClick={handleLogout}>Log Out</button>
+            <button 
+              className={`nav-link ${activeView === 'dashboard' ? 'active' : ''}`}
+              onClick={() => setActiveView('dashboard')}
+            >
+              Dashboard
+            </button>
+            <button 
+              className={`nav-link ${activeView === 'users' ? 'active' : ''}`}
+              onClick={() => navigate('/admin-users')} // Placeholder or state change
+            >
+              Users
+            </button>
+            <button className="nav-link" onClick={handleLogout}>
+              <LogOut size={14} style={{ marginRight: 4 }} />
+              Log Out
+            </button>
           </div>
         </div>
       </nav>
@@ -103,185 +121,225 @@ const AdminDashboard = () => {
       {/* SUB NAV FROSTED */}
       <div className="sub-nav-frosted">
         <div className="sub-nav-content">
-          <h1 className="sub-nav-title">Users</h1>
+          <h1 className="sub-nav-title">Dashboard & Analytics</h1>
           <div className="sub-nav-actions">
-            <div className="search-input-wrapper">
-              <Search size={14} className="search-icon" />
-              <input 
-                type="text" 
-                className="search-input"
-                placeholder="Search users..." 
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-            <div className="filter-wrapper">
-              <select className="filter-select" value={filter} onChange={(e) => setFilter(e.target.value)}>
-                <option value="all">All</option>
-                <option value="verified">Verified</option>
-                <option value="unverified">Unverified</option>
-              </select>
-              <ChevronDown size={14} className="filter-icon" />
+            <div className="date-filter-pill">
+              <Calendar size={14} />
+              <span>This Month</span>
+              <ChevronDown size={14} />
             </div>
           </div>
         </div>
       </div>
 
-      {/* MAIN CONTENT */}
       <main className="admin-main">
-        {loading ? (
-          <div className="admin-loading">
-            <div className="spinner"></div>
-          </div>
-        ) : (
-          <div className="store-utility-card">
-            <div className="table-responsive">
-              <table className="admin-table">
-                <thead>
-                  <tr>
-                    <th>Profile</th>
-                    <th>Contact</th>
-                    <th>Details</th>
-                    <th>Status</th>
-                    <th className="text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredUsers.map(user => (
-                    <tr key={user._id}>
-                      <td>
-                        <div className="user-info-cell">
-                          <div className="user-avatar">
-                            {user.photos?.[0]?.url ? (
-                              <img src={user.photos[0].url} alt="" />
-                            ) : (
-                              <User size={18} color="#1d1d1f" />
-                            )}
-                          </div>
-                          <div>
-                            <div className="user-name">{user.name}</div>
-                            <div className="user-id">ID: {user._id.slice(-6)}</div>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <div className="contact-cell">
-                          <div className="cell-email">{user.email}</div>
-                          <div className="cell-phone">{user.phone}</div>
-                        </div>
-                      </td>
-                      <td>
-                        <div className="details-cell">
-                          <span>{user.gender} • {user.religion}</span>
-                          <span>{user.city}, {user.state}</span>
-                        </div>
-                      </td>
-                      <td>
-                        <button 
-                          className={`status-chip ${user.isVerified ? 'verified' : 'unverified'}`}
-                          onClick={() => handleToggleVerify(user._id)}
-                        >
-                          {user.isVerified ? "Verified" : "Unverified"}
-                        </button>
-                      </td>
-                      <td>
-                        <div className="admin-actions">
-                          <button className="button-pearl-capsule" onClick={() => handleEditClick(user)}>
-                            Edit
-                          </button>
-                          <button className="button-icon-circular delete" onClick={() => handleDelete(user._id)}>
-                            <Trash2 size={14} />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            {filteredUsers.length === 0 && (
-              <div className="admin-empty">
-                <Users size={32} color="#cccccc" />
-                <p>No users found matching your criteria.</p>
-              </div>
-            )}
-          </div>
-        )}
-      </main>
+        {/* SECTION 1 — TOP STATS ROW */}
+        <div className="stats-grid">
+          <StatCard 
+            title="Total Users" 
+            value={formatNumber(stats?.totalUsers)} 
+            icon={<UsersIcon size={20} color="#3B82F6" />}
+            trend="+12% vs yesterday"
+            trendUp={true}
+            color="blue"
+          />
+          <StatCard 
+            title="New Today" 
+            value={formatNumber(stats?.newToday)} 
+            icon={<TrendingUp size={20} color="#10B981" />}
+            color="green"
+          />
+          <StatCard 
+            title="Premium Users" 
+            value={formatNumber(stats?.premiumUsers)} 
+            icon={<Crown size={20} color="#F59E0B" />}
+            subValue={`${stats?.conversionRate} Conversion`}
+            color="gold"
+          />
+          <StatCard 
+            title="Verified Users" 
+            value={formatNumber(stats?.verifiedUsers)} 
+            icon={<ShieldCheck size={20} color="#8B5CF6" />}
+            color="purple"
+          />
+          <StatCard 
+            title="Active Today" 
+            value={formatNumber(stats?.activeToday)} 
+            icon={<Activity size={20} color="#14B8A6" />}
+            color="teal"
+          />
+          <StatCard 
+            title="Revenue (Month)" 
+            value={formatCurrency(stats?.revenueThisMonth)} 
+            icon={<TrendingUp size={20} color="#10B981" />}
+            color="green"
+          />
+        </div>
 
-      {/* EDIT MODAL */}
-      {showEditModal && editUser && (
-        <div className="admin-modal-overlay">
-          <div className="admin-modal">
-            <div className="modal-header">
-              <h2>Edit Profile</h2>
-              <button className="modal-close" onClick={() => setShowEditModal(false)}>
-                <XCircle size={20} color="#1d1d1f" />
-              </button>
+        {/* SECTION 2 — CHARTS ROW */}
+        <div className="charts-grid">
+          <ChartCard title="Daily Registrations (30 Days)">
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={dailyData}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+                <XAxis dataKey="date" hide />
+                <YAxis axisLine={false} tickLine={false} />
+                <Tooltip 
+                  contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="count" 
+                  stroke="#3B82F6" 
+                  strokeWidth={3} 
+                  dot={{ r: 4, fill: '#3B82F6', strokeWidth: 2, stroke: '#fff' }} 
+                  activeDot={{ r: 6 }} 
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </ChartCard>
+
+          <ChartCard title="Religion Distribution">
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={religionData}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={60}
+                  outerRadius={80}
+                  paddingAngle={5}
+                  dataKey="count"
+                  nameKey="religion"
+                >
+                  {religionData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip />
+                <Legend layout="vertical" align="right" verticalAlign="middle" />
+              </PieChart>
+            </ResponsiveContainer>
+          </ChartCard>
+        </div>
+
+        {/* SECTION 3 — SECOND CHARTS ROW */}
+        <div className="charts-grid">
+          <ChartCard title="Top 10 Cities">
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={cityData} layout="vertical">
+                <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#f0f0f0" />
+                <XAxis type="number" hide />
+                <YAxis dataKey="city" type="category" width={80} axisLine={false} tickLine={false} />
+                <Tooltip />
+                <Bar dataKey="count" fill="#14B8A6" radius={[0, 4, 4, 0]} barSize={20} />
+              </BarChart>
+            </ResponsiveContainer>
+          </ChartCard>
+
+          <ChartCard title="Monthly Revenue (12 Months)">
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={revenueData}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+                <XAxis dataKey="month" hide />
+                <YAxis axisLine={false} tickLine={false} />
+                <Tooltip />
+                <Bar dataKey="revenue" fill="#10B981" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </ChartCard>
+        </div>
+
+        <div className="dashboard-footer-grid">
+          {/* SECTION 4 — PLAN DISTRIBUTION */}
+          <div className="table-card">
+            <div className="card-header">
+              <h3 className="card-title">Plan Distribution</h3>
             </div>
-            <div className="modal-body">
-              <div className="modal-grid">
-                <div className="modal-input">
-                  <label>Full Name</label>
-                  <input 
-                    type="text" 
-                    value={editUser.name} 
-                    onChange={(e) => setEditUser({...editUser, name: e.target.value})}
-                  />
-                </div>
-                <div className="modal-input">
-                  <label>Email</label>
-                  <input 
-                    type="email" 
-                    value={editUser.email} 
-                    onChange={(e) => setEditUser({...editUser, email: e.target.value})}
-                  />
-                </div>
-                <div className="modal-input">
-                  <label>Phone</label>
-                  <input 
-                    type="text" 
-                    value={editUser.phone} 
-                    onChange={(e) => setEditUser({...editUser, phone: e.target.value})}
-                  />
-                </div>
-                <div className="modal-input">
-                  <label>Religion</label>
-                  <input 
-                    type="text" 
-                    value={editUser.religion} 
-                    onChange={(e) => setEditUser({...editUser, religion: e.target.value})}
-                  />
-                </div>
-                <div className="modal-input">
-                  <label>City</label>
-                  <input 
-                    type="text" 
-                    value={editUser.city} 
-                    onChange={(e) => setEditUser({...editUser, city: e.target.value})}
-                  />
-                </div>
-                <div className="modal-input">
-                  <label>Role</label>
-                  <select 
-                    value={editUser.role} 
-                    onChange={(e) => setEditUser({...editUser, role: e.target.value})}
-                  >
-                    <option value="user">User</option>
-                    <option value="admin">Admin</option>
-                  </select>
-                </div>
-              </div>
+            <table className="distribution-table">
+              <thead>
+                <tr>
+                  <th>Plan</th>
+                  <th>Users</th>
+                  <th>Revenue</th>
+                  <th>% Share</th>
+                </tr>
+              </thead>
+              <tbody>
+                {planData.map((plan, idx) => (
+                  <tr key={idx}>
+                    <td>{plan.plan}</td>
+                    <td>{plan.count}</td>
+                    <td>{formatCurrency(plan.revenue)}</td>
+                    <td>
+                      <div className="progress-cell">
+                        <span>0%</span>
+                        <div className="progress-bar-bg">
+                          <div className="progress-bar-fill" style={{ width: '0%' }}></div>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* SECTION 5 — RECENT ACTIVITY FEED */}
+          <div className="activity-card">
+            <div className="card-header">
+              <h3 className="card-title">Recent Activity</h3>
             </div>
-            <div className="modal-footer">
-              <button className="button-secondary-pill" onClick={() => setShowEditModal(false)}>Cancel</button>
-              <button className="button-primary" onClick={handleUpdateUser}>Save</button>
+            <div className="activity-feed">
+              {activity.map((item, idx) => (
+                <div className="activity-item" key={idx}>
+                  <div className={`activity-icon-wrap ${item.type}`}>
+                    {item.type === 'registration' ? <UserIcon size={14} /> : <Shield size={14} />}
+                  </div>
+                  <div className="activity-content">
+                    <p className="activity-msg">{item.message}</p>
+                    <span className="activity-time">{new Date(item.date).toLocaleString()}</span>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
-      )}
+      </main>
     </div>
   );
 };
+
+const StatCard = ({ title, value, icon, trend, trendUp, color, subValue }) => (
+  <div className={`stat-card border-${color}`}>
+    <div className="stat-card-header">
+      <span className="stat-card-title">{title}</span>
+      {icon}
+    </div>
+    <div className="stat-card-value">{value}</div>
+    {trend && (
+      <div className={`stat-card-trend ${trendUp ? 'up' : 'down'}`}>
+        {trendUp ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
+        <span>{trend}</span>
+      </div>
+    )}
+    {subValue && <div className="stat-card-subtext">{subValue}</div>}
+  </div>
+);
+
+const ChartCard = ({ title, children }) => (
+  <div className="chart-card">
+    <h3 className="chart-card-title">{title}</h3>
+    <div className="chart-container">
+      {children}
+    </div>
+  </div>
+);
+
+const ChevronDown = ({ size, style }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={style}>
+    <polyline points="6 9 12 15 18 9" />
+  </svg>
+);
 
 export default AdminDashboard;

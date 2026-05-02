@@ -126,16 +126,12 @@ const MyProfile = () => {
   const displayName = profile.name || profile.fullName || "Member";
   const location = [profile.city, profile.state].filter(Boolean).join(", ") || null;
 
-<<<<<<< HEAD
   const tabs = [
     { id: "about",  label: "About"   },
     { id: "career", label: "Career"  },
     { id: "family", label: "Family"  },
     { id: "faith",  label: "Faith"   },
     { id: "photos", label: "Photos"  },  ];
-
-=======
->>>>>>> b6bfef8cb0ca8f7d0dbc9d9fa389db9c58534714
   return (
     <div className="mp-page">
       <Navbar />
