@@ -6,29 +6,33 @@ import './Chatbot.css';
 const Chatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
-    { role: 'assistant', content: 'Hi! I am your MarriageSphere Assistant. How can I help you today? 💕' }
+    { 
+      role: 'assistant', 
+      content: 'Hi! I am your MarriageSphere AI Assistant. I can help you find matches, understand how the platform works, or answer any other questions you have. How can I help you today? 💕' 
+    }
   ]);
-  const [input, setInput] = useState('');
-  const [loading, setLoading] = useState(false);
-  const messagesEndRef = useRef(null);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  const suggestions = [
+    "How it works?",
+    "How to find matches?",
+    "How to send interest?",
+    "Is my data safe?",
+    "Privacy settings",
+    "Premium features"
+  ];
+
+  const handleSuggestionClick = (suggestion) => {
+    handleSend(null, suggestion);
   };
 
-  useEffect(() => {
-    if (isOpen) {
-      scrollToBottom();
-    }
-  }, [messages, isOpen]);
+  const handleSend = async (e, textOverride = null) => {
+    if (e) e.preventDefault();
+    const messageText = textOverride || input;
+    if (!messageText.trim() || loading) return;
 
-  const handleSend = async (e) => {
-    e.preventDefault();
-    if (!input.trim() || loading) return;
-
-    const userMessage = { role: 'user', content: input };
+    const userMessage = { role: 'user', content: messageText };
     setMessages(prev => [...prev, userMessage]);
-    setInput('');
+    if (!textOverride) setInput('');
     setLoading(true);
 
     try {
@@ -86,6 +90,20 @@ const Chatbot = () => {
                 </div>
               </div>
             ))}
+            
+            {!loading && messages.length === 1 && (
+              <div className="chatbot-suggestions">
+                <p>Common Questions:</p>
+                <div className="suggestions-grid">
+                  {suggestions.map((s, i) => (
+                    <button key={i} onClick={() => handleSuggestionClick(s)}>
+                      {s}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {loading && (
               <div className="message-row assistant">
                 <div className="message-bubble typing">
@@ -96,7 +114,7 @@ const Chatbot = () => {
             <div ref={messagesEndRef} />
           </div>
 
-          <form className="chatbot-input" onSubmit={handleSend}>
+          <form className="chatbot-input" onSubmit={(e) => handleSend(e)}>
             <input
               type="text"
               placeholder="Ask me anything..."
