@@ -132,7 +132,6 @@ exports.register = async (req, res) => {
     if (!emailSent) {
       console.warn(`[WARN] OTP email failed to send for ${email}, but registration continues.`);
     }
-    console.log(`[DEV] OTP for ${email}: ${otp}`);
 
     // 7. Generate Token
     const token = jwt.sign(
@@ -168,40 +167,6 @@ exports.login = async (req, res) => {
       return res.status(400).json({ success: false, message: "Email/Phone and Password are required" });
     }
 
-    // Admin Override (Special case for site owner)
-    if (identifier.toLowerCase() === "shaadi@gmail.com" && password === "phirseshaadi") {
-      let adminUser = await User.findOne({ email: identifier });
-      if (!adminUser) {
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash("phirseshaadi", salt);
-        adminUser = new User({
-          name: "MarriageSphere Admin",
-          email: "shaadi@gmail.com",
-          phone: "0000000000",
-          password: hashedPassword,
-          role: "admin",
-          isVerified: true
-        });
-        await adminUser.save();
-      } else if (adminUser.role !== 'admin') {
-        adminUser.role = 'admin';
-        await adminUser.save();
-      }
-
-      const token = jwt.sign(
-        { userId: adminUser._id.toString(), email: adminUser.email, role: 'admin' },
-        process.env.JWT_SECRET,
-        { expiresIn: '7d' }
-      );
-
-      return res.status(200).json({
-        success: true,
-        message: "Admin Login successful",
-        token,
-        user: { name: "Admin", email: adminUser.email, role: 'admin' }
-      });
-    }
-
     // 1. Find user by email or phone
     const user = await User.findOne({
       $or: [{ email: identifier }, { phone: identifier }]
@@ -210,7 +175,17 @@ exports.login = async (req, res) => {
       return res.status(404).json({ success: false, message: "Email or Phone not found" });
     }
 
-    // 2. Compare password
+    // 2. Check if user account is banned
+    if (!user.isActive) {
+      return res.status(403).json({ success: false, message: "Your account has been suspended. Contact support for help." });
+    }
+
+    // 3. Check if email is verified (skip for admin accounts)
+    if (!user.isVerified && user.role !== 'admin') {
+      return res.status(403).json({ success: false, message: "Please verify your email first", requireVerification: true, email: user.email });
+    }
+
+    // 4. Compare password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({ success: false, message: "Wrong password" });
@@ -267,7 +242,6 @@ exports.sendOTP = async (req, res) => {
     if (!emailSent) {
       console.warn(`[WARN] OTP resend email failed to send for ${user.email}, but process continues.`);
     }
-    console.log(`[DEV] OTP for ${identifier}: ${otp}`);
 
     res.status(200).json({ success: true, message: "OTP sent successfully" });
 

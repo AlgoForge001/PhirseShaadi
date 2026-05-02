@@ -72,7 +72,9 @@ exports.getProfileById = async (req, res) => {
 // PUT /api/profile/basic
 exports.updateBasic = async (req, res) => {
   try {
-    const updates = req.body;
+    const updates = { ...req.body };
+    const forbidden = ['role', 'isVerified', 'isPremium', 'isActive', 'password', 'otp', 'otpExpiry', 'reports', 'blockedUsers'];
+    forbidden.forEach(f => delete updates[f]);
     const user = await User.findByIdAndUpdate(
       req.user.userId,
       { $set: updates },
@@ -89,7 +91,9 @@ exports.updateBasic = async (req, res) => {
 // PUT /api/profile/education
 exports.updateEducation = async (req, res) => {
   try {
-    const updates = req.body;
+    const updates = { ...req.body };
+    const forbidden = ['role', 'isVerified', 'isPremium', 'isActive', 'password', 'otp', 'otpExpiry', 'reports', 'blockedUsers'];
+    forbidden.forEach(f => delete updates[f]);
     const user = await User.findByIdAndUpdate(
       req.user.userId,
       { $set: updates },
@@ -106,7 +110,9 @@ exports.updateEducation = async (req, res) => {
 // PUT /api/profile/family
 exports.updateFamily = async (req, res) => {
   try {
-    const updates = req.body;
+    const updates = { ...req.body };
+    const forbidden = ['role', 'isVerified', 'isPremium', 'isActive', 'password', 'otp', 'otpExpiry', 'reports', 'blockedUsers'];
+    forbidden.forEach(f => delete updates[f]);
     const user = await User.findByIdAndUpdate(
       req.user.userId,
       { $set: updates },
@@ -123,7 +129,9 @@ exports.updateFamily = async (req, res) => {
 // PUT /api/profile/horoscope
 exports.updateHoroscope = async (req, res) => {
   try {
-    const updates = req.body;
+    const updates = { ...req.body };
+    const forbidden = ['role', 'isVerified', 'isPremium', 'isActive', 'password', 'otp', 'otpExpiry', 'reports', 'blockedUsers'];
+    forbidden.forEach(f => delete updates[f]);
     const user = await User.findByIdAndUpdate(
       req.user.userId,
       { $set: updates },
@@ -174,7 +182,7 @@ exports.uploadPhoto = async (req, res) => {
     const userId = req.user.userId;
 
     // ✅ FIX: Use BACKEND_URL (no VITE_ prefix — this is backend env)
-    const BACKEND_URL = process.env.BACKEND_URL || 'https://phirseshaadi.onrender.com';
+    const BACKEND_URL = (process.env.BACKEND_URL || 'https://phirseshaadi.onrender.com').replace(/\/$/, '');
     const publicId = req.file.filename;
     const url = `${BACKEND_URL}/uploads/${publicId}`;
 
@@ -300,7 +308,7 @@ exports.getProfileViewers = async (req, res) => {
     res.status(200).json({ success: true, data: viewers });
   } catch (error) {
     console.error("Get Profile Viewers Error:", error.message);
-    res.status(200).json({ success: true, data: [] });
+    res.status(500).json({ success: false, data: [], message: "Server error" });
   }
 };
 

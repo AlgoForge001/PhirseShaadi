@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const jwt = require('jsonwebtoken');
 require('./config/passport'); // Will be removed later if not used anywhere else
 
 const app = express();
@@ -97,20 +98,39 @@ const Message = require('./models/Message');
 const Conversation = require('./models/Conversation');
 const Interest = require('./models/Interest');
 
+// Socket.io Authentication Middleware — verify JWT before allowing connection
+io.use((socket, next) => {
+  const token = socket.handshake.auth.token;
+  if (!token) {
+    return next(new Error('Authentication error: No token provided'));
+  }
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    socket.userId = decoded.userId;
+    next();
+  } catch (err) {
+    return next(new Error('Authentication error: Invalid token'));
+  }
+});
+
 // Socket.io Logic
 io.on('connection', (socket) => {
-  console.log('User connected:', socket.id);
+  console.log('User connected:', socket.id, '| userId:', socket.userId);
 
-  // User joins with their userId
-  socket.on('join', (userId) => {
-    onlineUsers.set(userId, socket.id);
-    console.log(`User ${userId} joined with socket ${socket.id}`);
+  // Auto-register user using the authenticated userId (not client-provided)
+  onlineUsers.set(socket.userId, socket.id);
+
+  // Legacy join handler — still uses authenticated userId, ignores client arg
+  socket.on('join', () => {
+    onlineUsers.set(socket.userId, socket.id);
   });
 
   // Task 4: message:send Socket Event
   socket.on('message:send', async (data) => {
     try {
-      const { from, to, text } = data;
+      // Use authenticated userId as sender, not client-provided 'from'
+      const from = socket.userId;
+      const { to, text } = data;
 
       // Safety: Check for phone numbers or emails (Personal Info Protection)
       const phoneRegex = /\b\d{10}\b/;

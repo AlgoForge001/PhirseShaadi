@@ -210,10 +210,10 @@ exports.getUserDetail = async (req, res) => {
       return res.status(404).json({ success: false, message: "User not found" });
     }
 
-    // Helper to calculate age from dateOfBirth
+    // Helper to calculate age from dob
     let age = null;
-    if (user.dateOfBirth) {
-      const dob = new Date(user.dateOfBirth);
+    if (user.dob) {
+      const dob = new Date(user.dob);
       const diff = Date.now() - dob.getTime();
       age = Math.abs(new Date(diff).getUTCFullYear() - 1970);
     }
@@ -236,7 +236,7 @@ exports.getUserDetail = async (req, res) => {
       email: user.email,
       phone: user.phone,
       gender: user.gender,
-      dateOfBirth: user.dateOfBirth,
+      dob: user.dob,
       age,
       religion: user.religion,
       community: user.community,
@@ -319,7 +319,13 @@ exports.getUserDetail = async (req, res) => {
 // PUT /api/admin/users/:id
 exports.updateUser = async (req, res) => {
   try {
-    const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const allowedFields = ['name', 'email', 'phone', 'isVerified', 'isPremium', 'isActive', 'role'];
+    const updates = {};
+    allowedFields.forEach(f => {
+      if (req.body[f] !== undefined) updates[f] = req.body[f];
+    });
+
+    const updatedUser = await User.findByIdAndUpdate(req.params.id, updates, { new: true });
     if (!updatedUser) return res.status(404).json({ success: false, message: "User not found" });
     res.status(200).json({ success: true, message: "User updated successfully", data: updatedUser });
   } catch (error) {

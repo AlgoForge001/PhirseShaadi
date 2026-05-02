@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { io } from 'socket.io-client';
 import { useAuth } from './AuthContext';
 
@@ -15,7 +15,8 @@ export const useSocket = () => {
 
 export const SocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
-  const { user, isLoggedIn } = useAuth();
+  const socketRef = useRef(null);
+  const { user, token, isLoggedIn } = useAuth();
   const [notifications, setNotifications] = useState([]);
   const [unreadNotifications, setUnreadNotifications] = useState(0);
   const defaultSocketUrl = import.meta.env.PROD
@@ -24,14 +25,17 @@ export const SocketProvider = ({ children }) => {
   const socketUrl = import.meta.env.VITE_SOCKET_URL || defaultSocketUrl;
 
   useEffect(() => {
-    if (isLoggedIn && user) {
-      // Connect to socket
-      const newSocket = io(socketUrl);
+    if (isLoggedIn && user && token) {
+      // Connect to socket WITH authentication token
+      const newSocket = io(socketUrl, {
+        auth: { token }
+      });
+      socketRef.current = newSocket;
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setSocket(newSocket);
 
-      // Join room
-      newSocket.emit('join', user._id);
+      // Join room (server uses authenticated userId, this is just a signal)
+      newSocket.emit('join');
 
       // Listen for basic events
       newSocket.on('notification:new', (notification) => {
@@ -44,16 +48,24 @@ export const SocketProvider = ({ children }) => {
         }
       });
 
+      // Handle auth errors from server
+      newSocket.on('connect_error', (err) => {
+        console.error('Socket connection error:', err.message);
+      });
+
       return () => {
         newSocket.close();
+        socketRef.current = null;
       };
     } else {
-      if (socket) {
-        socket.close();
+      // Cleanup when logged out — use ref to avoid stale closure
+      if (socketRef.current) {
+        socketRef.current.close();
+        socketRef.current = null;
         setSocket(null);
       }
     }
-  }, [isLoggedIn, user, socketUrl]);
+  }, [isLoggedIn, user, token, socketUrl]);
 
   return (
     <SocketContext.Provider value={{ socket, notifications, setNotifications, unreadNotifications, setUnreadNotifications }}>

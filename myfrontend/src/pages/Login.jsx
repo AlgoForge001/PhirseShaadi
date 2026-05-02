@@ -113,7 +113,7 @@ const Login = () => {
 
   const handleForgotPassword = () => {
     // TODO [BACKEND]: POST /api/auth/forgot-password
-    navigate("/forgot-password");
+    alert("Password reset is coming soon! Please contact support for help.");
   };
 
   return (

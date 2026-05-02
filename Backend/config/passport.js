@@ -28,7 +28,6 @@ passport.use(new GoogleStrategy({
           name: name,
           fullName: name,
           email: email,
-          phone: `google-${profile.id}`,
           password: hashedPassword,
           isVerified: true // Google accounts are usually verified
         });

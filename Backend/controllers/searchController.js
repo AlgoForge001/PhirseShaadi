@@ -89,7 +89,7 @@ exports.searchUsers = async (req, res) => {
 
   } catch (error) {
     console.error("Search Error:", error.message);
-    res.status(200).json({ success: true, count: 0, data: [] });
+    res.status(500).json({ success: false, count: 0, data: [], message: "Server error" });
   }
 };
 
@@ -174,7 +174,7 @@ exports.getRecommendedMatches = async (req, res) => {
 
   } catch (error) {
     console.error("Recommended Matches Error:", error.message);
-    res.status(200).json({ success: true, count: 0, data: [] });
+    res.status(500).json({ success: false, count: 0, data: [], message: "Server error" });
   }
 };
 
@@ -248,7 +248,7 @@ exports.getSameCityMatches = async (req, res) => {
     });
   } catch (error) {
     console.error('Same City Matches Error:', error.message);
-    res.status(200).json({ success: true, count: 0, data: [] });
+    res.status(500).json({ success: false, count: 0, data: [], message: "Server error" });
   }
 };
 
@@ -284,7 +284,7 @@ exports.getNewJoins = async (req, res) => {
     res.status(200).json({ success: true, count: matches.length, data: matches });
   } catch (error) {
     console.error("New Joins Error:", error.message);
-    res.status(200).json({ success: true, count: 0, data: [] });
+    res.status(500).json({ success: false, count: 0, data: [], message: "Server error" });
   }
 };
 
@@ -319,7 +319,7 @@ exports.getRecentlyActive = async (req, res) => {
     res.status(200).json({ success: true, count: matches.length, data: matches });
   } catch (error) {
     console.error("Recently Active Error:", error.message);
-    res.status(200).json({ success: true, count: 0, data: [] });
+    res.status(500).json({ success: false, count: 0, data: [], message: "Server error" });
   }
 };
 
@@ -383,6 +383,6 @@ exports.getSmartMatches = async (req, res) => {
 
   } catch (error) {
     console.error("Smart Match Error:", error.message);
-    res.status(200).json({ success: true, count: 0, data: [] });
+    res.status(500).json({ success: false, count: 0, data: [], message: "Server error" });
   }
 };

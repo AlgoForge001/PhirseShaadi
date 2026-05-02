@@ -30,7 +30,7 @@ const userSchema = new mongoose.Schema({
   },
   phone: {
     type: String,
-    required: [true, "Phone number is required"],
+    sparse: true,
     unique: true
   },
   profileFor: {
@@ -236,9 +236,6 @@ const userSchema = new mongoose.Schema({
   },
   otpExpiry: {
     type: Date
-  },
-  income: {
-    type: String
   },
   jobType: {
     type: String

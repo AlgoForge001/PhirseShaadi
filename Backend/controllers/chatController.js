@@ -19,7 +19,7 @@ exports.getConversations = async (req, res) => {
     });
   } catch (error) {
     console.error("Get Conversations Error (mock fallback):", error.message);
-    res.status(200).json({ success: true, count: 0, data: [] });
+    res.status(500).json({ success: false, count: 0, data: [], message: "Server error" });
   }
 };
 
@@ -60,7 +60,7 @@ exports.getChatHistory = async (req, res) => {
 
   } catch (error) {
     console.error("Get Chat History Error (mock fallback):", error.message);
-    res.status(200).json({ success: true, count: 0, data: [] });
+    res.status(500).json({ success: false, count: 0, data: [], message: "Server error" });
   }
 };
 
