@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import api from '../../../utils/api';
+import api from '../../utils/api';
 import { ChevronLeft, Check, Ban, Crown, Trash2, Shield, AlertTriangle, User, MessageSquare } from 'lucide-react';
 import './AdminUserDetail.css';
 
@@ -134,7 +134,7 @@ const AdminUserDetail = () => {
 
   return (
     <div className="admin-layout" style={{ backgroundColor: '#f5f5f7', minHeight: '100vh', paddingBottom: '40px' }}>
-      
+
       {/* Toast */}
       {toast.show && (
         <div style={{ position: 'fixed', top: '20px', right: '20px', zIndex: 1000, background: toast.type === 'error' ? '#ef4444' : '#10b981', color: 'white', padding: '12px 24px', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
@@ -176,19 +176,19 @@ const AdminUserDetail = () => {
             </button>
             <h1 className="user-name-title">{data.name}</h1>
             <div className="status-badges">
-              {data.isActive !== false ? <span className="badge active"><Check size={12}/> Active</span> : <span className="badge banned"><Ban size={12}/> Banned</span>}
-              {data.isVerified ? <span className="badge verified"><Shield size={12}/> Verified</span> : <span className="badge unverified">Unverified</span>}
-              {data.isPremium ? <span className="badge premium"><Crown size={12}/> Premium</span> : <span className="badge free">Free</span>}
+              {data.isActive !== false ? <span className="badge active"><Check size={12} /> Active</span> : <span className="badge banned"><Ban size={12} /> Banned</span>}
+              {data.isVerified ? <span className="badge verified"><Shield size={12} /> Verified</span> : <span className="badge unverified">Unverified</span>}
+              {data.isPremium ? <span className="badge premium"><Crown size={12} /> Premium</span> : <span className="badge free">Free</span>}
               <span className="badge role">{data.role === 'admin' ? 'Admin' : 'User'}</span>
             </div>
           </div>
           <div className="top-bar-right">
             {data.isVerified ? (
-               <button className="button-pearl-capsule" onClick={handleUnverify} disabled={actionLoading}>Unverify</button>
+              <button className="button-pearl-capsule" onClick={handleUnverify} disabled={actionLoading}>Unverify</button>
             ) : (
-               <button className="button-pearl-capsule" onClick={handleVerify} disabled={actionLoading}>Verify</button>
+              <button className="button-pearl-capsule" onClick={handleVerify} disabled={actionLoading}>Verify</button>
             )}
-            
+
             {data.isActive !== false ? (
               <button className="button-pearl-capsule" onClick={() => setShowBanModal(true)} disabled={actionLoading}>Ban</button>
             ) : (
@@ -203,10 +203,10 @@ const AdminUserDetail = () => {
 
         {/* 2-COLUMN MAIN CONTENT */}
         <div className="detail-content">
-          
+
           {/* LEFT COLUMN */}
           <div className="left-column">
-            
+
             {/* CARD 1 */}
             <div className="detail-card">
               <div className="profile-header">
@@ -327,11 +327,11 @@ const AdminUserDetail = () => {
 
           {/* RIGHT COLUMN */}
           <div className="right-column">
-            
+
             <div className="tabs-header">
               {['profile', 'family', 'preferences', 'activity', 'chats'].map(tab => (
-                <button 
-                  key={tab} 
+                <button
+                  key={tab}
                   className={`tab-btn ${activeTab === tab ? 'active' : ''}`}
                   onClick={() => setActiveTab(tab)}
                 >
@@ -352,7 +352,7 @@ const AdminUserDetail = () => {
                       <div className="about-box">{data.about || <span className="empty-state">No about text provided.</span>}</div>
                     </div>
                   </div>
-                  
+
                   <div className="content-section">
                     <h3>Education & Job</h3>
                     <div className="info-row"><span className="info-label">Education</span><span className="info-value">{data.education || '--'}</span></div>
@@ -415,7 +415,7 @@ const AdminUserDetail = () => {
                     {data.recentInterestsSent?.length > 0 ? data.recentInterestsSent.map((i, idx) => (
                       <div className="activity-row" key={idx}>
                         <div className="photo-placeholder" style={{ width: 40, height: 40 }}>
-                           {i.toUser?.photos?.[0]?.url ? <img src={i.toUser.photos[0].url} className="activity-user-img" alt=""/> : <User size={20}/>}
+                          {i.toUser?.photos?.[0]?.url ? <img src={i.toUser.photos[0].url} className="activity-user-img" alt="" /> : <User size={20} />}
                         </div>
                         <div className="activity-details">
                           <div className="activity-name">{i.toUser?.name || 'Deleted User'}</div>
@@ -430,7 +430,7 @@ const AdminUserDetail = () => {
                     {data.recentInterestsReceived?.length > 0 ? data.recentInterestsReceived.map((i, idx) => (
                       <div className="activity-row" key={idx}>
                         <div className="photo-placeholder" style={{ width: 40, height: 40 }}>
-                           {i.fromUser?.photos?.[0]?.url ? <img src={i.fromUser.photos[0].url} className="activity-user-img" alt=""/> : <User size={20}/>}
+                          {i.fromUser?.photos?.[0]?.url ? <img src={i.fromUser.photos[0].url} className="activity-user-img" alt="" /> : <User size={20} />}
                         </div>
                         <div className="activity-details">
                           <div className="activity-name">{i.fromUser?.name || 'Deleted User'}</div>
@@ -449,7 +449,7 @@ const AdminUserDetail = () => {
                   {data.recentChats?.length > 0 ? data.recentChats.map((c, idx) => (
                     <div className="activity-row" key={idx} style={{ padding: '16px 0' }}>
                       <div className="photo-placeholder" style={{ width: 48, height: 48 }}>
-                        {c.withUser?.photos?.[0]?.url ? <img src={c.withUser.photos[0].url} className="activity-user-img" style={{ width: 48, height: 48 }} alt=""/> : <User size={24}/>}
+                        {c.withUser?.photos?.[0]?.url ? <img src={c.withUser.photos[0].url} className="activity-user-img" style={{ width: 48, height: 48 }} alt="" /> : <User size={24} />}
                       </div>
                       <div className="activity-details">
                         <div className="activity-name">{c.withUser?.name || 'Deleted User'}</div>
@@ -459,7 +459,7 @@ const AdminUserDetail = () => {
                         <div className="activity-time" style={{ marginTop: '4px' }}>{new Date(c.lastMessageTime).toLocaleString()}</div>
                       </div>
                       <button className="button-pearl-capsule" onClick={() => window.alert('Chat viewer coming soon')}>
-                        <MessageSquare size={14} style={{ marginRight: '6px' }}/> View Chat
+                        <MessageSquare size={14} style={{ marginRight: '6px' }} /> View Chat
                       </button>
                     </div>
                   )) : <p className="empty-state">No recent chats</p>}

@@ -11,7 +11,7 @@ exports.getStats = async (req, res) => {
 
     const weekAgo = new Date();
     weekAgo.setDate(today.getDate() - 7);
-    
+
     const totalUsers = await User.countDocuments();
     const activeUsers = await User.countDocuments({ isActive: true });
     // Handle both false and null/missing if needed, but per instructions just isActive: false
@@ -21,7 +21,7 @@ exports.getStats = async (req, res) => {
     const unverifiedUsers = await User.countDocuments({ isVerified: false });
     const maleUsers = await User.countDocuments({ gender: 'Male' });
     const femaleUsers = await User.countDocuments({ gender: 'Female' });
-    
+
     const newToday = await User.countDocuments({ createdAt: { $gte: today } });
     const newThisWeek = await User.countDocuments({ createdAt: { $gte: weekAgo } });
 
@@ -130,7 +130,7 @@ exports.getMonthlyRevenue = async (req, res) => {
     const monthlyData = [];
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     const now = new Date();
-    
+
     for (let i = 11; i >= 0; i--) {
       const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
       const monthLabel = `${months[d.getMonth()]} ${d.getFullYear()}`;
@@ -340,10 +340,10 @@ exports.toggleVerify = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
     if (!user) return res.status(404).json({ success: false, message: "User not found" });
-    
+
     user.isVerified = !user.isVerified;
     await user.save();
-    
+
     res.status(200).json({ success: true, message: `User verified status: ${user.isVerified}`, data: user });
   } catch (error) {
     res.status(500).json({ success: false, message: "Operation failed", error: error.message });

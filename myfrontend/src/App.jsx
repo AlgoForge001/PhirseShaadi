@@ -78,10 +78,10 @@ const AppRouter = () => {
   if (loading) return <div className="loading-screen">Loading...</div>
 
   // Specific check for Admin Dashboard & Users (No Sidebar)
-  const isAdminRoute = location.pathname === '/admin-dashboard' || 
-                       location.pathname === '/admin-users' || 
-                       location.pathname.startsWith('/admin/users/');
-                       
+  const isAdminRoute = location.pathname === '/admin-dashboard' ||
+    location.pathname === '/admin-users' ||
+    location.pathname.startsWith('/admin/users/');
+
   if (isAdminRoute) {
     if (!isLoggedIn || user?.role !== 'admin') return <Navigate to="/login" />;
     return (
