@@ -198,7 +198,7 @@ const SearchBrowse = () => {
   const tabs = [
     { key: "all",         label: "All Members"   },
     { key: "sameCity",    label: "Same City Match"},
-    { key: "recommended", label: "Smart Matches"  },
+    { key: "smartMatch",  label: "AI Smart Match" },
     { key: "new",         label: "New Joins"      },
   ];
 
@@ -216,8 +216,8 @@ const SearchBrowse = () => {
 
       let endpoint = "/search";
       if (tab === "new")         endpoint = "/matches/new-joins";
-      if (tab === "nearby")      endpoint = "/matches/near-you";
       if (tab === "sameCity")    endpoint = "/matches/same-city";
+      if (tab === "smartMatch")  endpoint = "/matches/smart-match";
       if (tab === "recommended") endpoint = "/matches/recommended";
 
       const params = {
