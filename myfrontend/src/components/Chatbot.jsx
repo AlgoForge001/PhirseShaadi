@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { MessageSquare, X, Send, Bot, User, Minus, Maximize2 } from 'lucide-react';
-import api from '../utils/api';
+import { MessageSquare, X, Send, Bot, MessageCircle } from 'lucide-react';
+import axios from 'axios';
 import './Chatbot.css';
 
 const Chatbot = () => {
@@ -14,12 +14,23 @@ const Chatbot = () => {
     }
   ]);
 
-  // Global listener to open chatbot from anywhere
+  const messagesEndRef = useRef(null);
+  const backendUrl = import.meta.env.VITE_API_BASE_URL || (import.meta.env.PROD ? 'https://phirseshaadi.onrender.com/api' : 'http://localhost:5000/api');
+
+  // Dedicated axios for chatbot to avoid global 401 redirects
+  const chatApi = axios.create({ baseURL: backendUrl });
+
   useEffect(() => {
-    const handleOpenChat = () => setIsOpen(true);
-    window.addEventListener('open-chatbot', handleOpenChat);
-    return () => window.removeEventListener('open-chatbot', handleOpenChat);
+    // Attach to window for global access
+    window.openChatbot = () => setIsOpen(true);
+    return () => { delete window.openChatbot; };
   }, []);
+
+  useEffect(() => {
+    if (isOpen) {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages, isOpen]);
 
   const suggestions = [
     "How it works?",
@@ -30,22 +41,25 @@ const Chatbot = () => {
     "Premium features"
   ];
 
-  const handleSuggestionClick = (suggestion) => {
-    handleSend(null, suggestion);
-  };
-
   const handleSend = async (e, textOverride = null) => {
-    if (e) e.preventDefault();
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    
     const messageText = textOverride || input;
     if (!messageText.trim() || loading) return;
 
     const userMessage = { role: 'user', content: messageText };
+    
+    // Add user message to UI immediately
     setMessages(prev => [...prev, userMessage]);
     if (!textOverride) setInput('');
     setLoading(true);
 
     try {
-      const response = await api.post('/chatbot/chat', {
+      // Send messages including the new one
+      const response = await chatApi.post('/chatbot/chat', {
         messages: [...messages, userMessage]
       });
 
@@ -66,8 +80,10 @@ const Chatbot = () => {
   };
 
   const toggleChat = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     setIsOpen(!isOpen);
   };
 
@@ -111,7 +127,7 @@ const Chatbot = () => {
                 <p>Common Questions:</p>
                 <div className="suggestions-grid">
                   {suggestions.map((s, i) => (
-                    <button key={i} onClick={() => handleSuggestionClick(s)}>
+                    <button key={i} type="button" onClick={(e) => handleSend(e, s)}>
                       {s}
                     </button>
                   ))}
@@ -129,12 +145,13 @@ const Chatbot = () => {
             <div ref={messagesEndRef} />
           </div>
 
-          <form className="chatbot-input" onSubmit={(e) => handleSend(e)}>
+          <form className="chatbot-input" onSubmit={handleSend}>
             <input
               type="text"
               placeholder="Ask me anything..."
               value={input}
               onChange={(e) => setInput(e.target.value)}
+              autoFocus
             />
             <button type="submit" disabled={!input.trim() || loading}>
               <Send size={18} />

@@ -108,7 +108,7 @@ const LandingPage = () => {
             <button className="link-btn" onClick={() => navigate("/about")}>
               About
             </button>
-            <button className="link-btn" onClick={() => window.dispatchEvent(new CustomEvent('open-chatbot'))}>
+            <button className="link-btn" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.openChatbot?.(); }}>
               Help
             </button>
           </nav>

@@ -47,6 +47,13 @@ const Navbar = () => {
           <NavLink to="/search" className="nav-link">Search</NavLink>
           <NavLink to="/profile-viewers" className="nav-link">Viewers</NavLink>
           <NavLink to="/chat" className="nav-link">Messages</NavLink>
+          <button 
+            className="nav-link-btn" 
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.openChatbot?.(); }}
+            style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+          >
+            Help
+          </button>
         </div>
 
         {/* ACTIONS */}

@@ -79,7 +79,7 @@
 }
 
 /* LINK STYLING */
-.nav-link {
+.nav-link, .nav-link-btn {
   text-decoration: none;
   color: var(--muted);
   font-family: "Manrope", "Segoe UI", sans-serif;
@@ -91,9 +91,12 @@
   white-space: nowrap;
   padding: 8px 12px;
   border-radius: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
 }
 
-.nav-link:hover {
+.nav-link:hover, .nav-link-btn:hover {
   color: var(--brand);
   background: var(--brand-soft);
 }
