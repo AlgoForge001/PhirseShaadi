@@ -4,7 +4,7 @@ import {
   Users, UserCheck, Crown, Shield, Activity, 
   TrendingUp, TrendingDown, MapPin, PieChart as PieIcon, 
   BarChart as BarIcon, Calendar, ArrowRight, LogOut,
-  LayoutDashboard, Users as UsersIcon, ShieldCheck
+  LayoutDashboard, Users as UsersIcon, ShieldCheck, User
 } from "lucide-react";
 import { 
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, 
@@ -294,7 +294,7 @@ const AdminDashboard = () => {
               {activity.map((item, idx) => (
                 <div className="activity-item" key={idx}>
                   <div className={`activity-icon-wrap ${item.type}`}>
-                    {item.type === 'registration' ? <UserIcon size={14} /> : <Shield size={14} />}
+                    {item.type === 'registration' ? <User size={14} /> : <Shield size={14} />}
                   </div>
                   <div className="activity-content">
                     <p className="activity-msg">{item.message}</p>
