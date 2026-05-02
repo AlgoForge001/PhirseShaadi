@@ -389,108 +389,137 @@
 /* ─── FLOATING BAR ─── */
 .pv-floating-actions {
   position: fixed;
-  bottom: 40px;
+  bottom: 24px;
   left: 50%;
   transform: translateX(-50%);
-  width: calc(100% - 48px);
-  max-width: 560px;
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(24px);
-  padding: 16px;
-  border-radius: 32px;
-  box-shadow: 0 30px 60px rgba(107, 63, 105, 0.2);
-  border: 1.5px solid rgba(255, 255, 255, 0.6);
+  width: auto;
+  min-width: 320px;
+  max-width: 90vw;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  padding: 10px 14px;
+  border-radius: 20px;
+  box-shadow: 0 12px 40px rgba(107, 63, 105, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.8);
   z-index: 1000;
+  animation: floatUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .pv-actions-inner {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 10px;
 }
 
 .pv-btn-circle-secondary {
-  width: 64px;
-  height: 64px;
-  border-radius: 24px;
-  background: #fff;
-  border: 1px solid var(--border);
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  background: #fdfafd;
+  border: 1.5px solid var(--border);
   color: var(--brand);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s;
+  transition: all 0.25s ease;
+  flex-shrink: 0;
 }
 
 .pv-btn-circle-secondary:hover:not(:disabled) {
   background: var(--brand-soft);
-  transform: scale(1.05);
+  border-color: var(--brand-mid);
+  transform: translateY(-2px);
 }
 
 .pv-btn-circle-secondary.active {
   background: var(--brand);
   color: #fff;
+  border-color: var(--brand);
+}
+
+.pv-interest-actions {
+  flex: 1;
+  min-width: 180px;
 }
 
 .pv-btn-main-action {
-  flex: 1;
+  width: 100%;
   background: var(--brand);
   color: #fff;
   border: none;
-  height: 64px;
-  border-radius: 24px;
-  font-weight: 800;
-  font-size: 17px;
+  height: 46px;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 8px;
   cursor: pointer;
-  transition: all 0.3s;
-  box-shadow: 0 8px 24px rgba(107, 63, 105, 0.25);
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 12px rgba(107, 63, 105, 0.2);
+  white-space: nowrap;
 }
 
 .pv-btn-main-action:hover:not(.disabled) {
   background: var(--brand-dark);
-  transform: translateY(-4px);
-  box-shadow: 0 12px 32px rgba(107, 63, 105, 0.35);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(107, 63, 105, 0.3);
 }
 
-.pv-btn-main-action.sent { background: #f1f5f9; color: var(--muted); cursor: default; box-shadow: none; }
-.pv-btn-main-action.accepted { background: #10b981; }
+.pv-btn-main-action.sent { 
+  background: #f1f5f9; 
+  color: var(--muted); 
+  cursor: default; 
+  box-shadow: none;
+}
 
-.loader-dots {
+.pv-btn-main-action.accepted { 
+  background: #10b981; 
+}
+
+.pv-received-actions {
   display: flex;
-  gap: 6px;
+  gap: 8px;
+  width: 100%;
 }
 
-.loader-dots span {
-  width: 6px;
-  height: 6px;
-  background: currentColor;
-  border-radius: 50%;
-  animation: dotBlink 1s infinite alternate;
+.pv-btn-main-action.accept { 
+  background: #10b981; 
+  flex: 1;
 }
 
-.loader-dots span:nth-child(2) { animation-delay: 0.2s; }
-.loader-dots span:nth-child(3) { animation-delay: 0.4s; }
+.pv-btn-circle-secondary.reject { 
+  color: #ef4444; 
+  border-color: #fee2e2;
+}
 
-@keyframes dotBlink { from { opacity: 0.2; } to { opacity: 1; } }
+.pv-btn-circle-secondary.reject:hover {
+  background: #fff5f5;
+}
 
 /* ─── RESPONSIVE ─── */
-@media (max-width: 1024px) {
-  .pv-grid-layout { grid-template-columns: 1fr; gap: 48px; }
-  .pv-photo-experience { position: relative; top: 0; }
-  .pv-main-carousel { aspect-ratio: 1/1; }
-  .pv-display-name { font-size: 44px; }
-}
-
 @media (max-width: 640px) {
-  .pv-wrapper { padding: 0 16px; }
-  .pv-display-name { font-size: 32px; }
-  .grid-details-pv { grid-template-columns: 1fr; }
-  .pv-floating-actions { bottom: 20px; border-radius: 24px; padding: 12px; }
-  .pv-btn-main-action span { display: none; }
-  .pv-btn-main-action, .pv-btn-circle-secondary { height: 56px; border-radius: 16px; }
+  .pv-floating-actions {
+    bottom: 16px;
+    width: 92vw;
+    min-width: unset;
+    padding: 8px;
+  }
+  
+  .pv-btn-main-action {
+    font-size: 13px;
+    padding: 0 12px;
+  }
+  
+  .pv-btn-circle-secondary {
+    width: 42px;
+    height: 42px;
+  }
+  
+  .pv-interest-actions {
+    min-width: 140px;
+  }
 }
