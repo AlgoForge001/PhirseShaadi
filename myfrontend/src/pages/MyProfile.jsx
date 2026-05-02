@@ -96,16 +96,13 @@ const MyProfile = () => {
   const fileInputRef = useRef(null);
   const cvInputRef = useRef(null);
   const [uploading, setUploading] = useState(false);
-<<<<<<< HEAD
   const [cvFile, setCvFile] = useState(null);
   const [uploadingCv, setUploadingCv] = useState(false);
-=======
   const [imgFailed, setImgFailed] = useState({}); // Track multiple image failures by URL or ID
 
   const setImgError = (id) => {
     setImgFailed(prev => ({ ...prev, [id]: true }));
   };
->>>>>>> fdfb97b2381f76cdd533f1557ff5af4780da7e80
 
   const fetchProfile = async () => {
     try { setLoading(true); const res = await api.get("/profile/me"); setProfile(res.data.profile); }
@@ -184,15 +181,11 @@ const MyProfile = () => {
                     const u = normalizeImageUrl(originalUrl);
                     return (
                       <div key={i} className={`thumb ${p.isPrimary ? "thumb-active" : ""}`} onClick={() => { setGalleryStart(i); setGalleryOpen(true); }}>
-<<<<<<< HEAD
-                        <img src={u} alt="" />                      </div>
-=======
                         {u && !imgFailed[u] 
                           ? <img src={u} alt="" onError={() => setImgError(u)} />
                           : <div className="thumb-placeholder"><IconUser /></div>
                         }
                       </div>
->>>>>>> fdfb97b2381f76cdd533f1557ff5af4780da7e80
                     );
                   })}
                   {photos.length > 4 && (
