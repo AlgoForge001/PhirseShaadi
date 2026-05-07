@@ -89,8 +89,28 @@
 .sidebar-title-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 4px;
   margin-bottom: 18px;
+}
+
+.chat-back-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--neutral-white);
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-left: -4px;
+}
+
+.chat-back-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateX(-2px);
 }
 
 .sidebar-title-row h2 {
@@ -100,6 +120,7 @@
   margin: 0;
   font-weight: 700;
   letter-spacing: -0.3px;
+  flex: 1;
 }
 
 .conv-count-badge {

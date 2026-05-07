@@ -225,6 +225,13 @@ const Chat = () => {
           {/* Premium dark header */}
           <div className="sidebar-header">
             <div className="sidebar-title-row">
+              <button 
+                className="chat-back-btn" 
+                onClick={() => navigate('/dashboard')}
+                title="Back to Dashboard"
+              >
+                <ChevronLeft size={20} />
+              </button>
               <h2>Messages</h2>
               {conversations.length > 0 && (
                 <span className="conv-count-badge">{conversations.length} chats</span>
