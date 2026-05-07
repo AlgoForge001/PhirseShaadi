@@ -100,6 +100,30 @@
   padding: 32px 24px 80px;
 }
 
+.mp-back-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: white;
+  border: 1px solid rgba(216, 27, 96, 0.1);
+  padding: 8px 16px;
+  border-radius: 12px;
+  color: var(--primary-pink);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  margin-bottom: 24px;
+  transition: all 0.2s;
+  width: fit-content;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.mp-back-btn:hover {
+  background: var(--plum-soft);
+  transform: translateX(-4px);
+  border-color: var(--primary-pink);
+}
+
 .mp-layout {
   display: grid;
   grid-template-columns: 280px 1fr;

@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   Search, Filter, MapPin,
   ChevronDown, ChevronUp, X,
-  SlidersHorizontal
+  SlidersHorizontal, ChevronLeft
 } from "lucide-react";
 import api from "../utils/api";
 
@@ -179,6 +179,7 @@ const FilterPanel = ({ filters, setFilters, onApply, onClose }) => {
 // MAIN SEARCH PAGE
 // ─────────────────────────────────────────────
 const SearchBrowse = () => {
+  const navigate = useNavigate();
   const location = useLocation();
   const [searchQuery, setSearchQuery]   = useState("");
   const [showFilter, setShowFilter]     = useState(false);
@@ -313,8 +314,11 @@ const SearchBrowse = () => {
       <div className="search-container-main">
         <div className="search-content-area">
 
-          {/* SEARCH BAR */}
+          {/* BACK BUTTON & SEARCH BAR */}
           <div className="search-bar-wrap">
+            <button className="back-nav-btn" onClick={() => navigate(-1)} title="Go Back">
+              <ChevronLeft size={24} />
+            </button>
             <div className="search-bar">
               <Search size={18} className="search-icon" />
               <input

@@ -274,7 +274,7 @@ const Dashboard = () => {
               <span className="premium-tag">USP Exclusive</span>
             </div>
             <p className="section-subtitle">
-              Our AI has analyzed your bio and preferences to find these high-potential connections.
+              Intelligent matching powered by your personality. We've analyzed your bio and preferences to discover these highly compatible connections.
             </p>
             <div className="matches-grid-premium">
               {smartMatches.map(profile => (

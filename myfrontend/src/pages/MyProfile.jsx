@@ -143,6 +143,9 @@ const MyProfile = () => {
       <Navbar />
 
       <div className="mp-wrapper">
+        <button className="mp-back-btn" onClick={() => navigate(-1)} title="Go Back">
+          <IconChevL /> <span>Back</span>
+        </button>
         <div className="mp-layout">
 
           {/* ────────── LEFT SIDEBAR ────────── */}

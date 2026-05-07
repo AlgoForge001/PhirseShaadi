@@ -28,6 +28,28 @@
   align-items: center;
 }
 
+.back-nav-btn {
+  background: white;
+  border: 1.5px solid #ede0ed;
+  border-radius: 12px;
+  width: 46px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary-pink);
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(107,63,105,0.06);
+}
+
+.back-nav-btn:hover {
+  background: var(--soft-blush);
+  border-color: var(--primary-pink);
+  transform: translateX(-2px);
+}
+
 .search-bar {
   flex: 1;
   background: white;
@@ -447,4 +469,8 @@
     padding: 10px 16px;
     font-size: 0.85rem;
   }
+}
+
+@media (max-width: 380px) {
+  .profiles-grid { grid-template-columns: 1fr; gap: 16px; }
 }
