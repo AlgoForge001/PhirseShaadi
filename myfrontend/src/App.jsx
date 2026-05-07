@@ -54,8 +54,8 @@ const AppRouter = () => {
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
       {showSidebar && <Sidebar />}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-        <div style={{ flex: 1 }}>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', width: '100%', overflowX: 'hidden' }}>
+        <div style={{ flex: 1, width: '100%' }}>
           <Routes>
             {/* ── Public Routes ─────────────────────────────── */}
             <Route path="/"               element={<LandingPage />} />

@@ -376,13 +376,17 @@
 }
 
 @media (max-width: 480px) {
-  .stats-grid-minimal { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .stats-grid-minimal { grid-template-columns: repeat(2, 1fr); gap: 10px; }
   .matches-grid-premium, .matches-grid-compact { 
     grid-template-columns: repeat(2, 1fr); 
-    gap: 12px; 
-    padding: 0 4px;
+    gap: 10px; 
+    padding: 0;
+    width: 100%;
   }
   .hero-actions { flex-direction: column; }
-  .dashboard-container { padding: 24px 12px 60px; }
+  .dashboard-container { padding: 16px 12px 60px; gap: 24px; }
+  .dashboard-smart-matches { padding: 24px 12px; border-radius: 24px; margin: 0 -4px; }
+  .section-subtitle { font-size: 14px; margin-bottom: 24px; }
   .section-header h2 { font-size: 20px; }
+  .dashboard-hero { padding: 24px 16px; border-radius: 20px; }
 }
