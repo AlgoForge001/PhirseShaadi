@@ -27,10 +27,11 @@ const AdminDashboard = () => {
   const [planData, setPlanData] = useState([]);
   const [activity, setActivity] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [timeRange, setTimeRange] = useState("month");
 
   useEffect(() => {
     fetchAllData();
-  }, []);
+  }, [timeRange]);
 
   const fetchAllData = async () => {
     try {
@@ -111,7 +112,7 @@ const AdminDashboard = () => {
               Users
             </button>
             <button className="nav-link" onClick={handleLogout}>
-              <LogOut size={14} style={{ marginRight: 4 }} />
+              <LogOut size={14} color="#ffffff" style={{ marginRight: 4 }} />
               Log Out
             </button>
           </div>
@@ -125,8 +126,16 @@ const AdminDashboard = () => {
           <div className="sub-nav-actions">
             <div className="date-filter-pill">
               <Calendar size={14} />
-              <span>This Month</span>
-              <ChevronDown size={14} />
+              <select 
+                value={timeRange} 
+                onChange={(e) => setTimeRange(e.target.value)}
+                style={{ background: 'none', border: 'none', fontSize: '14px', fontWeight: 600, color: '#1d1d1f', cursor: 'pointer', outline: 'none', paddingRight: '8px' }}
+              >
+                <option value="today">Today</option>
+                <option value="week">This Week</option>
+                <option value="month">This Month</option>
+                <option value="year">This Year</option>
+              </select>
             </div>
           </div>
         </div>
@@ -139,12 +148,16 @@ const AdminDashboard = () => {
             title="Total Users" 
             value={formatNumber(stats?.totalUsers)} 
             icon={<UsersIcon size={16} />}
-            trend="+12% vs yesterday"
+            trend={`${stats?.newThisWeek || 0} new this week`}
             trendUp={true}
           />
           <StatCard 
-            title="New Today" 
-            value={formatNumber(stats?.newToday)} 
+            title={timeRange === 'today' ? "New Today" : timeRange === 'week' ? "New This Week" : "New This Month"} 
+            value={formatNumber(
+              timeRange === 'today' ? stats?.newToday : 
+              timeRange === 'week' ? stats?.newThisWeek : 
+              stats?.newThisMonth
+            )} 
             icon={<TrendingUp size={16} />}
           />
           <StatCard 
@@ -164,8 +177,12 @@ const AdminDashboard = () => {
             icon={<Activity size={16} />}
           />
           <StatCard 
-            title="Revenue" 
-            value={formatCurrency(stats?.revenueThisMonth || 0)} 
+            title={timeRange === 'today' ? "Revenue Today" : timeRange === 'week' ? "Revenue This Week" : "Revenue This Month"} 
+            value={formatCurrency(
+              timeRange === 'today' ? stats?.revenueToday : 
+              timeRange === 'week' ? stats?.revenueThisWeek : 
+              stats?.revenueThisMonth
+            )} 
             icon={<TrendingUp size={16} />}
           />
         </div>
@@ -260,21 +277,24 @@ const AdminDashboard = () => {
                 </tr>
               </thead>
               <tbody>
-                {planData.map((plan, idx) => (
-                  <tr key={idx}>
-                    <td>{plan.plan}</td>
-                    <td>{plan.count}</td>
-                    <td>{formatCurrency(plan.revenue)}</td>
-                    <td>
-                      <div className="progress-cell">
-                        <span>0%</span>
-                        <div className="progress-bar-bg">
-                          <div className="progress-bar-fill" style={{ width: '0%' }}></div>
+                {planData.map((plan, idx) => {
+                  const share = stats?.totalUsers > 0 ? ((plan.count / stats.totalUsers) * 100).toFixed(1) : 0;
+                  return (
+                    <tr key={idx}>
+                      <td>{plan.plan}</td>
+                      <td>{plan.count}</td>
+                      <td>{formatCurrency(plan.revenue)}</td>
+                      <td>
+                        <div className="progress-cell">
+                          <span>{share}%</span>
+                          <div className="progress-bar-bg">
+                            <div className="progress-bar-fill" style={{ width: `${share}%` }}></div>
+                          </div>
                         </div>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

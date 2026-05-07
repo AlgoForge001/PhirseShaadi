@@ -12,7 +12,7 @@
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   display: flex;
   align-items: center;
-  box-shadow: 0 4px 20px rgba(216, 27, 96, 0.04);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
 
 .navbar.scrolled {

@@ -97,8 +97,8 @@ const AppRouter = () => {
             } />
           </Routes>
         </div>
-        {!isAdminRoute && <Footer />}
-        {!isAdminRoute && <Chatbot />}
+        <Footer />
+        <Chatbot />
       </div>
     </div>
   )

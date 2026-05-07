@@ -366,9 +366,14 @@ const EditProfile = () => {
     <div className="ep-page">
       {/* HEADER */}
       <div className="ep-header">
-        <div className="ep-logo" onClick={() => navigate("/")}>
-          <Heart size={20} fill="#6B3F69" color="#6B3F69" />
-          <span>MarriageSphere</span>
+        <div className="ep-header-left">
+          <button className="ep-back-btn" onClick={() => navigate(-1)} title="Back to Profile">
+            <ChevronLeft size={20} />
+          </button>
+          <div className="ep-logo" onClick={() => navigate("/")}>
+            <Heart size={20} fill="#6B3F69" color="#6B3F69" />
+            <span>MarriageSphere</span>
+          </div>
         </div>
         <div className="ep-progress">
           <div className="ep-progress-bar">

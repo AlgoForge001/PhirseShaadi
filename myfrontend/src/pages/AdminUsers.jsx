@@ -166,7 +166,7 @@ const AdminUsers = () => {
           <div className="global-nav-links">
             <button className="nav-link" onClick={() => navigate('/admin-dashboard')}>Dashboard</button>
             <button className="nav-link active">Users</button>
-            <button className="nav-link" onClick={handleLogout}>Log Out</button>
+            <button className="nav-link" onClick={handleLogout}><LogOut size={14} color="#ffffff" style={{ marginRight: 4 }} />Log Out</button>
           </div>
         </div>
       </nav>

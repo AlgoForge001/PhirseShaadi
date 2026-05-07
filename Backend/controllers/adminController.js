@@ -13,18 +13,31 @@ exports.getStats = async (req, res) => {
     const weekAgo = new Date();
     weekAgo.setDate(today.getDate() - 7);
 
-    const totalUsers = await User.countDocuments();
-    const activeUsers = await User.countDocuments({ isActive: true });
-    // Handle both false and null/missing if needed, but per instructions just isActive: false
-    // Since isActive wasn't there before, maybe some are undefined. We'll use isActive: false or we just follow instruction exactly.
-    const bannedUsers = await User.countDocuments({ isActive: false });
-    const verifiedUsers = await User.countDocuments({ isVerified: true });
-    const unverifiedUsers = await User.countDocuments({ isVerified: false });
-    const maleUsers = await User.countDocuments({ gender: 'Male' });
-    const femaleUsers = await User.countDocuments({ gender: 'Female' });
+    const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
 
-    const newToday = await User.countDocuments({ createdAt: { $gte: today } });
-    const newThisWeek = await User.countDocuments({ createdAt: { $gte: weekAgo } });
+    const totalUsers = await User.countDocuments({ role: 'user' });
+    const activeUsers = await User.countDocuments({ isActive: true, role: 'user' });
+    const bannedUsers = await User.countDocuments({ isActive: false, role: 'user' });
+    const verifiedUsers = await User.countDocuments({ isVerified: true, role: 'user' });
+    const unverifiedUsers = await User.countDocuments({ isVerified: false, role: 'user' });
+    const premiumUsers = await User.countDocuments({ isPremium: true, role: 'user' });
+    const maleUsers = await User.countDocuments({ gender: 'Male', role: 'user' });
+    const femaleUsers = await User.countDocuments({ gender: 'Female', role: 'user' });
+
+    const newToday = await User.countDocuments({ createdAt: { $gte: today }, role: 'user' });
+    const newThisWeek = await User.countDocuments({ createdAt: { $gte: weekAgo }, role: 'user' });
+    const newThisMonth = await User.countDocuments({ createdAt: { $gte: monthStart }, role: 'user' });
+
+    // Mock revenue calculation (since no Payment model exists yet)
+    // We assume each premium user paid an average of 1499 INR
+    const revenueToday = (await User.countDocuments({ isPremium: true, createdAt: { $gte: today }, role: 'user' })) * 1499;
+    const revenueThisWeek = (await User.countDocuments({ isPremium: true, createdAt: { $gte: weekAgo }, role: 'user' })) * 1499;
+    const revenueThisMonth = (await User.countDocuments({ isPremium: true, createdAt: { $gte: monthStart }, role: 'user' })) * 1499;
+    
+    // Calculate active today (mocked based on lastActive if needed, but here we just use isActive and recently active)
+    const activeToday = await User.countDocuments({ lastActive: { $gte: today }, role: 'user' });
+
+    const conversionRate = totalUsers > 0 ? ((premiumUsers / totalUsers) * 100).toFixed(1) + '%' : '0%';
 
     res.status(200).json({
       success: true,
@@ -34,10 +47,17 @@ exports.getStats = async (req, res) => {
         bannedUsers,
         verifiedUsers,
         unverifiedUsers,
+        premiumUsers,
         maleUsers,
         femaleUsers,
         newToday,
-        newThisWeek
+        newThisWeek,
+        newThisMonth,
+        revenueToday,
+        revenueThisWeek,
+        revenueThisMonth,
+        activeToday,
+        conversionRate
       }
     });
   } catch (error) {

@@ -376,6 +376,13 @@
 }
 
 @media (max-width: 480px) {
-  .stats-grid-minimal, .matches-grid-premium, .matches-grid-compact { grid-template-columns: 1fr; }
+  .stats-grid-minimal { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .matches-grid-premium, .matches-grid-compact { 
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 12px; 
+    padding: 0 4px;
+  }
   .hero-actions { flex-direction: column; }
+  .dashboard-container { padding: 24px 12px 60px; }
+  .section-header h2 { font-size: 20px; }
 }

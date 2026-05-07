@@ -97,82 +97,67 @@ const ProfileCard = ({ profile, onInterest, onShortlist }) => {
 
         {!showPhoto && (
           <div className="premium-pc-photo-placeholder">
-            <Users size={48} />
+            <Users size={32} />
           </div>
         )}
 
         {/* FLOATING TOP BADGES */}
         <div className="premium-pc-top-badges">
-          {profile.matchPercentage !== undefined && (
-            <span className={`premium-pc-match-badge ${profile.matchPercentage >= 80 ? "high" : ""}`}>
-              {profile.matchPercentage}% Match
+          {profile.isSmartMatch && (
+            <span className="premium-pc-smart-badge-compact">
+              <Sparkles size={10} fill="white" /> AI
             </span>
           )}
-          {profile.isSmartMatch && (
-            <span className="premium-pc-smart-badge">
-              <Sparkles size={12} fill="white" /> AI
+          {profile.matchPercentage !== undefined && (
+            <span className={`premium-pc-match-badge-compact ${profile.matchPercentage >= 80 ? "high" : ""}`}>
+              {profile.matchPercentage}%
             </span>
           )}
         </div>
 
-        {/* PREMIUM GLASS TEXT OVERLAY (Bottom of image) */}
-        <div className="premium-pc-text-overlay">
-          <div className="premium-pc-text-main">
-            <div className="premium-pc-name-row">
-              <span className="premium-pc-user-name">
-                {truncateName(displayName, 18)}
-              </span>
-              {profile.isVerified && (
-                <CheckCircle size={16} fill="#10B981" color="white" className="premium-pc-verified-icon" />
-              )}
-            </div>
-            <p className="premium-pc-user-subtitle">
-              {profile.occupation || "Member"}{age ? ` • ${age} yrs` : ""}
-            </p>
-          </div>
-          <div className="premium-pc-location-badge">
+        {/* FLOATING ACTION BUTTONS */}
+        <div className="premium-pc-floating-actions">
+          <button
+            className={`floating-action-btn ${interested ? "active" : ""}`}
+            onClick={handleInterest}
+            disabled={interested || interestLoading}
+          >
+            <Heart size={14} fill={interested ? "currentColor" : "none"} />
+          </button>
+        </div>
+      </div>
+
+      {/* INFO SECTION */}
+      <div className="premium-pc-info">
+        <div className="premium-pc-name-row">
+          <h4 className="premium-pc-user-name">
+            {truncateName(displayName, 14)}
+            {profile.isVerified && (
+              <CheckCircle size={12} fill="#10B981" color="white" className="premium-pc-verified-icon" />
+            )}
+          </h4>
+        </div>
+        
+        <p className="premium-pc-user-subtitle">
+          {profile.occupation || "Member"}
+        </p>
+        
+        <div className="premium-pc-meta-row">
+          <span className="pc-meta-item">{age ? `${age} yrs` : ""}</span>
+          <span className="pc-meta-dot">•</span>
+          <div className="premium-pc-location-mini">
             <MapPin size={10} />
             <span>{profile.city || "Remote"}</span>
           </div>
         </div>
-
-        {/* AI INSIGHT PANEL (Slide up on hover) */}
-        {profile.isSmartMatch && profile.aiInsight && (
-          <div className="premium-pc-ai-insight-panel">
-            <div className="premium-ai-panel-header">
-              <Brain size={14} />
-              <span>AI Insight</span>
-            </div>
-            <p className="premium-ai-panel-text">{profile.aiInsight}</p>
-          </div>
-        )}
       </div>
 
-      {/* ACTION BUTTONS (Below Photo in a row) */}
-      <div className="premium-pc-bottom-actions">
-        <button
-          className="premium-pc-action-btn"
-          onClick={(e) => { e.stopPropagation(); navigate(`/profile/${profile._id}`); }}
-          title="View Profile"
-        >
-          <Eye size={18} />
-        </button>
-        <button
-          className="premium-pc-action-btn"
-          onClick={(e) => { e.stopPropagation(); navigate(`/chat/${profile._id}`); }}
-          title="Message"
-        >
-          <MessageCircle size={18} />
-        </button>
-        <button
-          className={`premium-pc-action-btn heart ${interested ? "active" : ""}`}
-          onClick={handleInterest}
-          disabled={interested || interestLoading}
-          title="Send Interest"
-        >
-          <Heart size={18} fill={interested ? "currentColor" : "none"} />
-        </button>
-      </div>
+      {/* AI INSIGHT PANEL (Hover only) */}
+      {profile.isSmartMatch && profile.aiInsight && (
+        <div className="premium-pc-ai-insight-panel">
+          <p className="premium-ai-panel-text">{profile.aiInsight}</p>
+        </div>
+      )}
     </div>
   );
 };

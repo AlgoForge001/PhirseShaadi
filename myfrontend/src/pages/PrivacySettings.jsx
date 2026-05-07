@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { ChevronLeft } from 'lucide-react';
 import { updatePrivacySettings, getBlockedUsers, unblockUser } from '../utils/api';
 import './PrivacySettings.css';
 
 const PrivacySettings = () => {
+  const navigate = useNavigate();
   const [settings, setSettings] = useState({
     showLastSeen: true,
     showOnlineStatus: true,
@@ -73,7 +76,12 @@ const PrivacySettings = () => {
   return (
     <div className="privacy-settings-page">
       <div className="privacy-container">
-        <h2>Privacy & Security</h2>
+        <div className="privacy-header">
+          <button className="privacy-back-btn" onClick={() => navigate(-1)}>
+            <ChevronLeft size={20} />
+          </button>
+          <h2>Privacy & Security</h2>
+        </div>
         
         <form onSubmit={handleSubmit} className="privacy-form">
           <div className="section">

@@ -318,8 +318,6 @@ const Dashboard = () => {
           </section>
         )}
       </main>
-
-      </main>
     </div>
   );
 };

@@ -241,11 +241,6 @@ const Chat = () => {
               />
             </div>
 
-            <div className="filter-tabs">
-              <button className="filter-tab active">All</button>
-              <button className="filter-tab">Online</button>
-              <button className="filter-tab">Recent</button>
-            </div>
           </div>
 
           {/* Conv list */}
@@ -470,8 +465,6 @@ const Chat = () => {
       </div>
     </div>
   );
-  <Footer />
 };
 
-import Footer from "../components/Footer";
 export default Chat;
