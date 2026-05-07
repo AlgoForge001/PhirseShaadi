@@ -9,14 +9,12 @@ import api from "../utils/api";
 import { normalizeImageUrl } from "../utils/imageUtils";
 import "./ProfileCard.css";
 
-const ProfileCard = ({ profile, onInterest, onShortlist }) => {
+const ProfileCard = ({ profile, onInterest }) => {
   console.log("ProfileCard Rendering:", profile.name);
   const navigate = useNavigate();
   const { token } = useAuth();
   const [interested, setInterested] = useState(false);
-  const [shortlisted, setShortlisted] = useState(false);
   const [interestLoading, setInterestLoading] = useState(false);
-  const [shortlistLoading, setShortlistLoading] = useState(false);
   const [imgFailed, setImgFailed] = useState(false);
 
   const photo = profile.photos?.find((p) => p.isPrimary) || profile.photos?.[0];
@@ -57,25 +55,6 @@ const ProfileCard = ({ profile, onInterest, onShortlist }) => {
       if (err.response?.status === 400) setInterested(true);
     } finally {
       setInterestLoading(false);
-    }
-  };
-
-  const handleShortlist = async (e) => {
-    e.stopPropagation();
-    if (!token) {
-      navigate("/login");
-      return;
-    }
-    try {
-      setShortlistLoading(true);
-      await api.post("/profile/shortlist", { targetUserId: profile._id });
-      setShortlisted(true);
-      if (onShortlist) onShortlist(profile._id);
-    } catch (err) {
-      console.error("Shortlist failed:", err);
-      if (err.response?.status === 400) setShortlisted(true);
-    } finally {
-      setShortlistLoading(false);
     }
   };
 

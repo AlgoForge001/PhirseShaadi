@@ -94,10 +94,7 @@ const MyProfile = () => {
   const [galleryStart, setGalleryStart] = useState(0);
   const [viewers, setViewers] = useState([]);
   const fileInputRef = useRef(null);
-  const cvInputRef = useRef(null);
   const [uploading, setUploading] = useState(false);
-  const [cvFile, setCvFile] = useState(null);
-  const [uploadingCv, setUploadingCv] = useState(false);
   const [imgFailed, setImgFailed] = useState({}); // Track multiple image failures by URL or ID
 
   const setImgError = (id) => {
@@ -110,7 +107,9 @@ const MyProfile = () => {
     finally { setLoading(false); }
   };
   const fetchViewers = async () => {
-    try { const res = await api.get("/profile/viewers"); setViewers(res.data.data || []); } catch {}  };
+    try { const res = await api.get("/profile/viewers"); setViewers(res.data.data || []); }
+    catch (_err) { setViewers([]); }
+  };
   useEffect(() => { fetchProfile(); fetchViewers(); }, []);
 
   const handlePhotoUpload = async (e) => {
@@ -132,12 +131,6 @@ const MyProfile = () => {
   const displayName = profile.name || profile.fullName || "Member";
   const location = [profile.city, profile.state].filter(Boolean).join(", ") || null;
 
-  const tabs = [
-    { id: "about",  label: "About"   },
-    { id: "career", label: "Career"  },
-    { id: "family", label: "Family"  },
-    { id: "faith",  label: "Faith"   },
-    { id: "photos", label: "Photos"  },  ];
   return (
     <div className="mp-page">
       <Navbar />

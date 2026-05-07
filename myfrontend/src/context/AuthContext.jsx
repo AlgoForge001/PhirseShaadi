@@ -14,7 +14,7 @@ export const AuthProvider = ({ children }) => {
     return storedUser ? JSON.parse(storedUser) : null;
   });
   const [token, setToken] = useState(() => localStorage.getItem("token") || null);
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
 
   const isLoggedIn = !!token && !!user;
   const isPremium = user?.isPremium || false;

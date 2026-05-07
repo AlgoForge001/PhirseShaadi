@@ -55,7 +55,7 @@ const AdminUserDetail = () => {
       await api.put(`/admin/verify-user/${userId}`);
       showToast("Profile verified");
       fetchUserDetail();
-    } catch (error) {
+    } catch (_error) {
       showToast("Error verifying user", "error");
     } finally {
       setActionLoading(false);
@@ -68,7 +68,7 @@ const AdminUserDetail = () => {
       await api.put(`/admin/unverify-user/${userId}`);
       showToast("Verification removed");
       fetchUserDetail();
-    } catch (error) {
+    } catch (_error) {
       showToast("Error removing verification", "error");
     } finally {
       setActionLoading(false);
@@ -82,7 +82,7 @@ const AdminUserDetail = () => {
       setShowBanModal(false);
       showToast("User banned");
       fetchUserDetail();
-    } catch (error) {
+    } catch (_error) {
       showToast("Error banning user", "error");
     } finally {
       setActionLoading(false);
@@ -95,7 +95,7 @@ const AdminUserDetail = () => {
       await api.put(`/admin/unban-user/${userId}`);
       showToast("User unbanned");
       fetchUserDetail();
-    } catch (error) {
+    } catch (_error) {
       showToast("Error unbanning user", "error");
     } finally {
       setActionLoading(false);
@@ -109,7 +109,7 @@ const AdminUserDetail = () => {
       await api.delete(`/admin/users/${userId}`);
       showToast("User deleted");
       setTimeout(() => navigate('/admin-users'), 1500);
-    } catch (error) {
+    } catch (_error) {
       showToast("Error deleting user", "error");
     } finally {
       setActionLoading(false);
@@ -124,7 +124,7 @@ const AdminUserDetail = () => {
     try {
       const res = await api.get(`/admin/conversations/${conversationId}/messages`);
       if (res.data.success) setChatMessages(res.data.data);
-    } catch (err) {
+    } catch (_err) {
       showToast('Failed to load chat messages', 'error');
       setShowChatModal(false);
     } finally {

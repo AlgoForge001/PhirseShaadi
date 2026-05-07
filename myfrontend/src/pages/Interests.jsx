@@ -4,6 +4,7 @@ import {
   Heart, X, Check, Clock, MapPin, Search, Users
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 import { getReceivedInterests, getSentInterests, respondInterest } from '../utils/api';
 import './Interests.css';
 
@@ -144,10 +145,9 @@ const Interests = () => {
         )}
 
       </div>
+
+      <Footer />
     </div>
   );
-  <Footer />
 };
-
-import Footer from "../components/Footer";
 export default Interests;

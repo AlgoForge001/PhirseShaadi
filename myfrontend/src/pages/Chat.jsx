@@ -161,7 +161,6 @@ const Chat = () => {
     if (activeConversation?.recipient?._id) {
       fetchMessages(activeConversation.recipient._id);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeConversation?.recipient?._id]);
 
   // 4. Socket listeners

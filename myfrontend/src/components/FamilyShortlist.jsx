@@ -4,6 +4,7 @@ import {
   Eye, Share2, Download
 } from "lucide-react";
 import api from "../utils/api";
+import Footer from "./Footer";
 import "./FamilyShortlist.css";
 
 const FamilyShortlist = () => {
@@ -258,10 +259,9 @@ const FamilyShortlist = () => {
           )}
         </section>
       )}
+
+      <Footer />
     </div>
   );
-  <Footer />
 };
-
-import Footer from "./Footer";
 export default FamilyShortlist;

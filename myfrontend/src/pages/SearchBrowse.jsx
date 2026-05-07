@@ -3,7 +3,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import {
   Search, Filter, MapPin,
   ChevronDown, ChevronUp, X,
-  SlidersHorizontal, ChevronLeft
+  SlidersHorizontal, ChevronLeft,
+  Users, Sparkles, Zap, Globe
 } from "lucide-react";
 import api from "../utils/api";
 

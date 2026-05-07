@@ -12,10 +12,10 @@ import Navbar from "../components/Navbar";
 import ProfileCard from "../components/ProfileCard";
 import "./Dashboard.css";
 
-const StatCard = ({ icon: Icon, iconClass, label, value, isLoading, onClick }) => (
+const StatCard = ({ icon, iconClass, label, value, isLoading, onClick }) => (
   <div className="mini-stat-card" onClick={onClick}>
     <div className={`mini-icon ${iconClass}`}>
-      <Icon size={20} />
+      {icon}
     </div>
     <div className="mini-data">
       <span className="mini-label">{label}</span>
