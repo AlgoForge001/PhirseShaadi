@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import api from "../utils/api";
 import { normalizeImageUrl } from "../utils/imageUtils";
 import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
 import "./MyProfile.css";
 
 const IconCamera   = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>;
@@ -414,7 +413,6 @@ const MyProfile = () => {
         </div>
       </div>
 
-      <Footer />
 
       {galleryOpen && photos.length > 0 && (
         <PhotoGalleryModal photos={photos} startIndex={galleryStart} onClose={() => setGalleryOpen(false)} onDelete={handleDeletePhoto} onSetPrimary={handleSetPrimary} />

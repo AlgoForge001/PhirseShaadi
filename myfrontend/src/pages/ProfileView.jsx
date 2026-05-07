@@ -12,7 +12,6 @@ import api from "../utils/api";
 import { normalizeImageUrl } from "../utils/imageUtils";
 
 import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
 import "./ProfileView.css";
 
 const ProfileView = () => {
@@ -319,7 +318,6 @@ const ProfileView = () => {
         </div>
       </footer>
       
-      <Footer />
     </div>
   );
 };
