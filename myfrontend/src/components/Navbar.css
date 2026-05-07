@@ -79,7 +79,7 @@
 /* LINK STYLING */
 .nav-link, .nav-link-btn {
   text-decoration: none;
-  color: #1a1a1a;
+  color: #1a1a1a !important; /* Force visibility */
   font-family: "Poppins", "Segoe UI", sans-serif;
   font-size: 0.92rem;
   font-weight: 600;
@@ -94,29 +94,13 @@
   cursor: pointer;
 }
 
-.nav-link::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  width: 0;
-  height: 2px;
-  background: var(--gold-accent);
-  transition: all 0.3s ease;
-  transform: translateX(-50%);
-}
-
-.nav-link:hover::after, .nav-link.active::after {
-  width: 60%;
-}
-
 .nav-link:hover, .nav-link-btn:hover {
-  color: var(--primary-pink);
+  color: var(--primary-pink) !important;
   background: var(--soft-blush);
 }
 
 .nav-link.active {
-  color: var(--primary-pink);
+  color: var(--primary-pink) !important;
   background: var(--soft-blush);
 }
 
