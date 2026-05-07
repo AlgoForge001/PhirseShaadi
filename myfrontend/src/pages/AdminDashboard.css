@@ -83,7 +83,7 @@ body {
 .nav-link {
   background: none;
   border: none;
-  color: #cccccc;
+  color: var(--neutral-white);
   font-size: 12px;
   font-weight: 400;
   letter-spacing: -0.12px;

@@ -19,6 +19,7 @@ const IconTrash    = () => <svg width="13" height="13" viewBox="0 0 24 24" fill=
 const IconCrown    = () => <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M2 20h20M5 20l-2-12 7 6 2-8 2 8 7-6-2 12"/></svg>;
 const IconUser     = () => <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>;
 const IconHeart    = () => <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>;
+const IconX        = () => <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>;
 const calculateAge = (dob) => {
   if (!dob) return null;
   const today = new Date(), birth = new Date(dob);
@@ -195,6 +196,15 @@ const MyProfile = () => {
                   )}
                 </div>
               )}
+
+              {/* VERIFICATION STATUS BANNER */}
+              <div className={`mp-verification-banner ${profile.isVerified ? 'is-verified' : 'is-unverified'}`}>
+                {profile.isVerified ? (
+                  <><IconCheck /> Profile Verified</>
+                ) : (
+                  <><IconX /> Not Verified</>
+                )}
+              </div>
             </div>
 
             {/* Quick facts */}
@@ -271,7 +281,11 @@ const MyProfile = () => {
                   )}
                   {location && <p className="ph-location"><IconMapPin /> {location}</p>}
                   <div className="ph-badges">
-                    {profile.isVerified && <span className="badge-verified"><IconCheck /> Verified</span>}
+                    {profile.isVerified ? (
+                      <span className="badge-verified"><IconCheck /> Verified Profile</span>
+                    ) : (
+                      <span className="badge-unverified"><IconX /> Not Verified</span>
+                    )}
                     {profile.isPremium && <span className="badge-premium"><IconCrown /> Premium</span>}
                     {profile.height && <span className="badge-info">{profile.height}</span>}
                     {profile.maritalStatus && <span className="badge-info">{profile.maritalStatus}</span>}

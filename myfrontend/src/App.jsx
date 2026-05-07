@@ -54,38 +54,6 @@ const AppRouter = () => {
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
       {showSidebar && <Sidebar />}
-      <div style={{ flex: 1 }}>
-        <Routes>
-          {/* ── Public Routes ─────────────────────────────── */}
-          <Route path="/"               element={<LandingPage />} />
-          <Route path="/home"           element={<LandingPage />} />
-          <Route path="/login"          element={<Login />} />
-          <Route path="/register"       element={<Register />} />
-          <Route path="/otp-verify"     element={<OtpVerify />} />
-          <Route path="/google-success" element={<GoogleSuccess />} />
-          <Route path="/about"          element={<About />} />
-
-          {/* ── Private User Routes ────────────────────────── */}
-          <Route path="/dashboard"       element={isLoggedIn ? (isAdmin ? <Navigate to="/admin-dashboard" replace /> : <Dashboard />) : <Navigate to="/login" replace />} />
-          <Route path="/profile-creation" element={isLoggedIn ? <ProfileCreation /> : <Navigate to="/login" replace />} />
-          <Route path="/search"           element={isLoggedIn ? <SearchBrowse /> : <Navigate to="/login" replace />} />
-          <Route path="/upload-photos"    element={isLoggedIn ? <UploadPhotos /> : <Navigate to="/login" replace />} />
-          <Route path="/my-profile"       element={isLoggedIn ? <MyProfile /> : <Navigate to="/login" replace />} />
-          <Route path="/edit-profile"     element={isLoggedIn ? <EditProfile /> : <Navigate to="/login" replace />} />
-          <Route path="/profile/:id"      element={isLoggedIn ? <ProfileView /> : <Navigate to="/login" replace />} />
-          <Route path="/chat"             element={isLoggedIn ? <Chat /> : <Navigate to="/login" replace />} />
-          <Route path="/chat/:id"         element={isLoggedIn ? <Chat /> : <Navigate to="/login" replace />} />
-          <Route path="/interests"        element={isLoggedIn ? <Interests /> : <Navigate to="/login" replace />} />
-          <Route path="/notifications"    element={isLoggedIn ? <Notifications /> : <Navigate to="/login" replace />} />
-          <Route path="/privacy"          element={isLoggedIn ? <PrivacySettings /> : <Navigate to="/login" replace />} />
-          <Route path="/profile-viewers"  element={isLoggedIn ? <ProfileViewers /> : <Navigate to="/login" replace />} />
-          <Route path="/family-members"   element={isLoggedIn ? <FamilyMembers /> : <Navigate to="/login" replace />} />
-          <Route path="/family-shortlist" element={isLoggedIn ? <FamilyShortlist /> : <Navigate to="/login" replace />} />
-
-          {/* ── Admin Routes ───────────────────────────────── */}
-          <Route path="/admin-dashboard"       element={(isLoggedIn && isAdmin) ? <AdminDashboard /> : <Navigate to="/login" replace />} />
-          <Route path="/admin-users"           element={(isLoggedIn && isAdmin) ? <AdminUsers /> : <Navigate to="/login" replace />} />
-          <Route path="/admin-users/:userId"   element={(isLoggedIn && isAdmin) ? <AdminUserDetail /> : <Navigate to="/login" replace />} />
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
         <div style={{ flex: 1 }}>
           <Routes>
@@ -129,8 +97,8 @@ const AppRouter = () => {
             } />
           </Routes>
         </div>
-        <Footer />
-        <Chatbot />
+        {!isAdminRoute && <Footer />}
+        {!isAdminRoute && <Chatbot />}
       </div>
     </div>
   )
