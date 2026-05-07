@@ -127,22 +127,22 @@
   width: 42px;
   height: 42px;
   border-radius: 12px;
-  border: 1px solid rgba(216, 27, 96, 0.1);
-  background: var(--neutral-white);
+  border: 1px solid var(--primary-pink);
+  background: var(--primary-pink);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--primary-pink);
+  color: white;
   cursor: pointer;
   position: relative;
   transition: all 0.25s ease;
 }
 
 .circle-btn:hover {
-  background: var(--soft-blush);
-  border-color: var(--primary-pink);
+  background: var(--deep-rose);
+  border-color: var(--deep-rose);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(216, 27, 96, 0.1);
+  box-shadow: 0 4px 12px rgba(216, 27, 96, 0.2);
 }
 
 .notification-badge {
@@ -216,9 +216,9 @@
   top: calc(100% + 15px);
   right: 0;
   width: 220px;
-  background: var(--neutral-white);
+  background: #FFFFFF;
   border-radius: 16px;
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
   padding: 10px;
   display: flex;
   flex-direction: column;

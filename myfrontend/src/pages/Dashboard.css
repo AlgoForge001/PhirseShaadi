@@ -282,13 +282,13 @@
 
 /* ─── SMART AI MATCHES ─── */
 .dashboard-smart-matches {
-  background: var(--main-gradient);
+  background: var(--deep-rose);
   border-radius: 32px;
   padding: 48px;
   color: white;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 30px 60px rgba(216, 27, 96, 0.2);
+  box-shadow: 0 30px 60px rgba(139, 13, 58, 0.2);
 }
 
 .dashboard-smart-matches::before {
@@ -315,7 +315,7 @@
 }
 
 .section-subtitle {
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.95);
   font-size: 16px;
   margin-bottom: 32px;
   max-width: 600px;

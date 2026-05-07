@@ -46,7 +46,7 @@
   left: 0;
   height: 100vh;
   width: 240px;
-  background: var(--neutral-white);
+  background: var(--soft-blush);
   border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
