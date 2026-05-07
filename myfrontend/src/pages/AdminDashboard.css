@@ -83,7 +83,7 @@ body {
 .nav-link {
   background: none;
   border: none;
-  color: #FFFFFF !important;
+  color: #000000 !important;
   font-size: 12px;
   font-weight: 400;
   letter-spacing: -0.12px;
@@ -96,7 +96,7 @@ body {
 
 .nav-link.active,
 .nav-link:hover {
-  color: #FFFFFF !important;
+  color: #000000 !important;
   opacity: 0.8;
 }
 

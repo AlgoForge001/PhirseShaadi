@@ -80,10 +80,10 @@
 /* LINK STYLING */
 .nav-link, .nav-link-btn {
   text-decoration: none;
-  color: #2d1a2d !important;
+  color: #000000 !important;
   font-family: "Poppins", "Segoe UI", sans-serif;
   font-size: 0.92rem;
-  font-weight: 700; /* Increased weight */
+  font-weight: 500;
   letter-spacing: 0.01em;
   transition: all 0.25s ease;
   position: relative;
@@ -190,7 +190,7 @@
 .user-name-text {
   font-size: 0.88rem;
   font-weight: 700;
-  color: #2d1a2d;
+  color: #000000;
   font-family: "Manrope", "Segoe UI", sans-serif;
 }
 
@@ -258,7 +258,7 @@
   display: none;
   background: none;
   border: none;
-  color: var(--primary-pink);
+  color: #000000;
   cursor: pointer;
   padding: 8px;
   border-radius: 10px;
@@ -306,7 +306,7 @@
 
 .mobile-menu a {
   text-decoration: none;
-  color: #2d1a2d;
+  color: #000000;
   font-weight: 600;
   font-size: 1.15rem;
   padding: 8px 0;
