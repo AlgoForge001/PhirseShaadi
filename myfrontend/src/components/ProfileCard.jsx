@@ -86,9 +86,8 @@ const ProfileCard = ({ profile, onInterest, onShortlist }) => {
 
   return (
     <div className="profile-card" onClick={() => navigate(`/profile/${profile._id}`)}>
+      {/* PHOTO SECTION */}
       <div className="pc-photo-wrapper">
-
-        {/* ✅ FIX: render img only when URL exists, set imgFailed on error */}
         {primaryPhotoUrl && (
           <img
             src={primaryPhotoUrl}
@@ -99,97 +98,84 @@ const ProfileCard = ({ profile, onInterest, onShortlist }) => {
           />
         )}
 
-        {/* ✅ FIX: placeholder shows when no photo OR image failed — pure React state, no DOM hacks */}
         {!showPhoto && (
           <div className="pc-photo-placeholder">
-            <Users size={60} color="#6B3F69" />
+            <Users size={48} />
           </div>
         )}
 
-        <div className="pc-overlay-gradient">
-          {/* TOP BADGES */}
-          <div className="pc-top-badges">
+        {/* FLOATING BADGES ON PHOTO */}
+        <div className="pc-top-badges">
+          {profile.matchPercentage !== undefined && (
+            <span className={`pc-match-badge ${profile.matchPercentage >= 80 ? "high" : ""}`}>
+              {profile.matchPercentage}% Match
+            </span>
+          )}
+          {profile.isSmartMatch && (
+            <span className="pc-smart-badge">
+              <Sparkles size={12} fill="white" /> AI
+            </span>
+          )}
+        </div>
+
+        {/* AI INSIGHT PANEL (Slide up on hover) */}
+        {profile.isSmartMatch && profile.aiInsight && (
+          <div className="pc-ai-insight-panel">
+            <div className="ai-panel-header">
+              <Brain size={14} />
+              <span>AI Insight</span>
+            </div>
+            <p className="ai-panel-text">{profile.aiInsight}</p>
+          </div>
+        )}
+      </div>
+
+      {/* INFO SECTION (Below Photo) */}
+      <div className="pc-info-content">
+        <div className="pc-text-main">
+          <div className="pc-name-row">
+            <span className="pc-user-name">
+              {truncateName(displayName, 18)}
+            </span>
             {profile.isVerified && (
-              <span className="pc-verified-dot" title="Verified">
-                <CheckCircle size={14} fill="#6B3F69" color="white" />
-              </span>
-            )}
-            {profile.isSmartMatch && (
-              <span className="pc-smart-badge">
-                <Sparkles size={12} fill="white" /> Smart AI Match
-              </span>
-            )}
-            {profile.matchPercentage !== undefined && (
-              <span className={`pc-match-badge ${profile.matchPercentage >= 80 ? "high" : ""}`}>
-                {profile.matchPercentage}% Match
-              </span>
+              <CheckCircle size={18} fill="#10B981" color="white" className="pc-verified-icon" />
             )}
           </div>
+          <p className="pc-user-subtitle">
+            {profile.occupation || "Member"}{age ? ` • ${age} yrs` : ""}
+          </p>
+        </div>
 
-          {/* AI INSIGHTS OVERLAY (if smart match) */}
-          {profile.isSmartMatch && profile.aiInsight && (
-            <div className="pc-ai-insight">
-              <div className="ai-insight-header">
-                <Brain size={14} color="#6B3F69" />
-                <span>AI Insight</span>
-              </div>
-              <p>{profile.aiInsight}</p>
-              {profile.aiTags && (
-                <div className="ai-tags">
-                  {profile.aiTags.map((tag, i) => (
-                    <span key={i} className="ai-tag">{tag}</span>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
+        <div className="pc-details-row">
+          <div className="pc-location-badge">
+            <MapPin size={12} />
+            <span>{profile.city || "Remote"}</span>
+          </div>
 
-          {/* BOTTOM INFO */}
-          <div className="pc-bottom-wrap">
-            <div className="pc-text-content">
-              <div className="pc-name-row">
-                {/* ✅ FIX: truncate long names */}
-                <span className="pc-user-name" title={displayName}>
-                  {truncateName(displayName)}
-                </span>
-                {profile.isVerified && (
-                  <CheckCircle size={14} fill="white" color="#6B3F69" className="pc-verified-icon" />
-                )}
-              </div>
-              <p className="pc-user-subtitle">
-                {profile.occupation || "Member"}{age ? ` • ${age}yrs` : ""}
-              </p>
-              <div className="pc-location-row">
-                <MapPin size={13} color="white" />
-                <span>{formatLocation(profile.city, profile.state)}</span>
-              </div>
-            </div>
-
-            <div className="pc-real-actions">
-              <button
-                className="pc-icon-action"
-                onClick={(e) => { e.stopPropagation(); navigate(`/chat/${profile._id}`); }}
-                title="Message"
-              >
-                <MessageCircle size={18} color="white" />
-              </button>
-              <button
-                className={`pc-icon-action ${interested ? "active" : ""}`}
-                onClick={handleInterest}
-                disabled={interested || interestLoading}
-                title="Send Interest"
-              >
-                <Heart size={18} fill={interested ? "white" : "none"} color="white" />
-              </button>
-              <button
-                className={`pc-icon-action ${shortlisted ? "active" : ""}`}
-                onClick={handleShortlist}
-                disabled={shortlistLoading}
-                title="Shortlist"
-              >
-                <Bookmark size={18} fill={shortlisted ? "white" : "none"} color="white" />
-              </button>
-            </div>
+          <div className="pc-actions-group">
+            <button
+              className="pc-action-btn"
+              onClick={(e) => { e.stopPropagation(); navigate(`/chat/${profile._id}`); }}
+              title="Message"
+            >
+              <MessageCircle size={18} />
+            </button>
+            <button
+              className={`pc-action-btn heart ${interested ? "active" : ""}`}
+              onClick={handleInterest}
+              disabled={interested || interestLoading}
+              title="Send Interest"
+            >
+              <Heart size={18} fill={interested ? "currentColor" : "none"} />
+            </button>
+            <button
+              className={`pc-action-btn bookmark ${shortlisted ? "active" : ""}`}
+              onClick={handleShortlist}
+              disabled={shortlistLoading}
+              title="Shortlist"
+            >
+              <Bookmark size={18} fill={shortlisted ? "currentColor" : "none"} />
+            </button>
           </div>
         </div>
       </div>

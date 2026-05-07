@@ -397,3 +397,9 @@ The overall feel should combine:
 
 ```
 ```
+
+
+update search page ui :
+1.remove transparency from navbar 
+2.add a thin dark color border to cards 
+3.add footer in all pages 
