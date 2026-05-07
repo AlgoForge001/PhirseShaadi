@@ -79,10 +79,10 @@
 /* LINK STYLING */
 .nav-link, .nav-link-btn {
   text-decoration: none;
-  color: #1a1a1a !important; /* Force visibility */
+  color: #4A2B48 !important; /* Deep Plum for high visibility */
   font-family: "Poppins", "Segoe UI", sans-serif;
   font-size: 0.92rem;
-  font-weight: 600;
+  font-weight: 700; /* Increased weight */
   letter-spacing: 0.01em;
   transition: all 0.25s ease;
   position: relative;
@@ -102,6 +102,7 @@
 .nav-link.active {
   color: var(--primary-pink) !important;
   background: var(--soft-blush);
+  box-shadow: inset 0 -2px 0 var(--primary-pink); /* Underline indicator */
 }
 
 /* ACTION BUTTONS */
