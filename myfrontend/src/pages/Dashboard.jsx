@@ -309,12 +309,16 @@ const Dashboard = () => {
         {/* PREMIUM BANNER */}
         {!userData.isPremium && (
           <section className="premium-banner-minimal">
-            <div className="banner-icon"><Star size={32} fill="#FFD700" color="#FFD700" /></div>
-            <div className="banner-text">
-              <h3>Unlock Premium Connections</h3>
-              <p>Get unlimited messages, see who visited your profile, and more.</p>
+            <div className="banner-content-wrap">
+              <div className="banner-icon-circle">
+                <Star size={32} fill="#FFD700" color="#FFD700" />
+              </div>
+              <div className="banner-text">
+                <h3>Unlock Premium Connections</h3>
+                <p>Get unlimited messages, see who visited your profile, and exclusive AI insights.</p>
+              </div>
             </div>
-            <button className="upgrade-btn">Explore Plans</button>
+            <button className="upgrade-btn">Explore Premium Plans</button>
           </section>
         )}
       </main>
