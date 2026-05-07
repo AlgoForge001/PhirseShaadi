@@ -1,13 +1,13 @@
 :root {
   --primary-pink: #D81B60;
   --deep-rose: #8B0D3A;
-  --soft-blush: var(--neutral-white)4F7;
+  --soft-blush: #FFF4F7;
   --gold-accent: #D4A373;
   --light-pink: #F8BBD0;
-  --neutral-white: var(--neutral-white);
+  --neutral-white: #FFFFFF;
   --dark-text: #2B2B2B;
   --main-gradient: linear-gradient(135deg, #D81B60 0%, #8B0D3A 100%);
-  --soft-gradient: linear-gradient(135deg, var(--neutral-white)4F7 0%, #F8BBD0 100%);
+  --soft-gradient: linear-gradient(135deg, #FFF4F7 0%, #F8BBD0 100%);
   --card-shadow: 0 10px 30px rgba(216, 27, 96, 0.08);
   --glass-bg: rgba(255, 255, 255, 0.7);
   --glass-border: rgba(255, 255, 255, 0.3);
