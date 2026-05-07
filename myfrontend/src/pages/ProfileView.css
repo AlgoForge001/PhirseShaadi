@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700;800&display=swap');
 
 :root {
-  --brand: #6b3f69;
+  --brand: var(--primary-pink);
   --brand-dark: #4e2e4d;
   --brand-light: #8b5a8f;
   --brand-soft: #f5eff7;
@@ -10,7 +10,7 @@
   --muted: #5a5168;
   --muted-light: #8a8099;
   --border: #e2d8e8;
-  --surface: #ffffff;
+  --surface: var(--neutral-white);
   --surface-2: #faf6fb;
   --gold: #c9952a;
   --shadow-sm: 0 2px 8px rgba(107, 63, 105, 0.05);
@@ -32,7 +32,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #fff;
+  background: var(--neutral-white);
 }
 
 .premium-loader {
@@ -74,7 +74,7 @@
   width: 48px;
   height: 48px;
   border-radius: 16px;
-  background: #fff;
+  background: var(--neutral-white);
   border: 1px solid var(--border);
   display: flex;
   align-items: center;
@@ -94,7 +94,7 @@
 
 .pv-icon-circle.danger:hover {
   color: #ef4444;
-  background: #fff5f5;
+  background: var(--neutral-white)5f5;
   border-color: #fee2e2;
 }
 
@@ -116,7 +116,7 @@
   position: relative;
   width: 100%;
   aspect-ratio: 4/5;
-  background: #fff;
+  background: var(--neutral-white);
   border-radius: 32px;
   overflow: hidden;
   border: 1px solid var(--border);
@@ -161,7 +161,7 @@
   box-shadow: 0 4px 20px rgba(0,0,0,0.15);
 }
 
-.pv-nav-btn:hover { background: #fff; transform: translateY(-50%) scale(1.1); }
+.pv-nav-btn:hover { background: var(--neutral-white); transform: translateY(-50%) scale(1.1); }
 .pv-nav-btn.left { left: 24px; }
 .pv-nav-btn.right { right: 24px; }
 
@@ -250,7 +250,7 @@
 }
 
 .meta-pill {
-  background: #fff;
+  background: var(--neutral-white);
   border: 1px solid var(--border);
   padding: 8px 20px;
   border-radius: 12px;
@@ -339,7 +339,7 @@
 }
 
 .profile-detail-card {
-  background: #fff;
+  background: var(--neutral-white);
   border: 1px solid var(--border);
   border-radius: 20px;
   padding: 20px;
@@ -435,7 +435,7 @@
 
 .pv-btn-circle-secondary.active {
   background: var(--brand);
-  color: #fff;
+  color: var(--neutral-white);
   border-color: var(--brand);
 }
 
@@ -447,7 +447,7 @@
 .pv-btn-main-action {
   width: 100%;
   background: var(--brand);
-  color: #fff;
+  color: var(--neutral-white);
   border: none;
   height: 46px;
   border-radius: 14px;
@@ -497,7 +497,7 @@
 }
 
 .pv-btn-circle-secondary.reject:hover {
-  background: #fff5f5;
+  background: var(--neutral-white)5f5;
 }
 
 /* ─── RESPONSIVE ─── */

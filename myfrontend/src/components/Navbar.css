@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
 
 .navbar {
   position: fixed;
@@ -10,11 +10,11 @@
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   z-index: 2000;
-  border-bottom: 1px solid rgba(107, 63, 105, 0.1);
+  border-bottom: 1px solid rgba(216, 27, 96, 0.1);
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   display: flex;
   align-items: center;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 4px 20px rgba(216, 27, 96, 0.04);
 }
 
 .navbar.scrolled {
@@ -82,7 +82,7 @@
 .nav-link, .nav-link-btn {
   text-decoration: none;
   color: var(--muted);
-  font-family: "Manrope", "Segoe UI", sans-serif;
+  font-family: "Poppins", "Segoe UI", sans-serif;
   font-size: 0.92rem;
   font-weight: 600;
   letter-spacing: 0.01em;
@@ -96,14 +96,30 @@
   cursor: pointer;
 }
 
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: var(--gold-accent);
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+}
+
+.nav-link:hover::after, .nav-link.active::after {
+  width: 60%;
+}
+
 .nav-link:hover, .nav-link-btn:hover {
-  color: var(--brand);
-  background: var(--brand-soft);
+  color: var(--primary-pink);
+  background: var(--soft-blush);
 }
 
 .nav-link.active {
-  color: var(--brand);
-  background: var(--brand-soft);
+  color: var(--primary-pink);
+  background: var(--soft-blush);
 }
 
 /* ACTION BUTTONS */
@@ -111,22 +127,22 @@
   width: 42px;
   height: 42px;
   border-radius: 12px;
-  border: 1px solid rgba(107, 63, 105, 0.1);
-  background: #ffffff;
+  border: 1px solid rgba(216, 27, 96, 0.1);
+  background: var(--neutral-white);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--brand);
+  color: var(--primary-pink);
   cursor: pointer;
   position: relative;
   transition: all 0.25s ease;
 }
 
 .circle-btn:hover {
-  background: var(--brand-soft);
-  border-color: var(--brand-mid);
+  background: var(--soft-blush);
+  border-color: var(--primary-pink);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(107, 63, 105, 0.1);
+  box-shadow: 0 4px 12px rgba(216, 27, 96, 0.1);
 }
 
 .notification-badge {
@@ -156,7 +172,7 @@
   align-items: center;
   gap: 10px;
   padding: 4px 12px 4px 4px;
-  background: #ffffff;
+  background: var(--neutral-white);
   border: 1px solid rgba(107, 63, 105, 0.1);
   border-radius: 100px;
   cursor: pointer;
@@ -200,7 +216,7 @@
   top: calc(100% + 15px);
   right: 0;
   width: 220px;
-  background: #ffffff;
+  background: var(--neutral-white);
   border-radius: 16px;
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
   padding: 10px;
@@ -236,7 +252,7 @@
 
 .user-dropdown button:hover {
   background: #f5eaf5;
-  color: #6b3f69;
+  color: var(--primary-pink);
 }
 
 .dropdown-divider {
@@ -250,7 +266,7 @@
 }
 
 .logout-btn:hover {
-  background: #fffafa !important;
+  background: var(--neutral-white)afa !important;
 }
 
 /* MOBILE RESPONSIVE */
@@ -258,7 +274,7 @@
   display: none;
   background: none;
   border: none;
-  color: #ffffff;
+  color: var(--neutral-white);
   cursor: pointer;
   padding: 8px;
   border-radius: 10px;
@@ -314,7 +330,7 @@
 }
 
 .mobile-logout {
-  background: #fff5f5;
+  background: var(--neutral-white)5f5;
   border: 1px solid #ffeded;
   color: #ff4757;
   font-weight: 700;

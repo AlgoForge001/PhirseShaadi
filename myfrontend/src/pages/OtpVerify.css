@@ -11,7 +11,7 @@
 /* ── LEFT PANEL ── */
 .otp-left {
   width: 42%;
-  background: linear-gradient(160deg, #6B3F69, #8D5F8C, #A376A2);
+  background: linear-gradient(160deg, var(--primary-pink), var(--deep-rose), #A376A2);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -101,7 +101,7 @@
 
 .otp-step-dot.active {
   background: white;
-  color: #6B3F69;
+  color: var(--primary-pink);
   border-color: white;
 }
 
@@ -148,7 +148,7 @@
 .otp-title {
   font-family: 'Playfair Display', serif;
   font-size: 2rem;
-  color: #2d1f2d;
+  color: var(--dark-text);
   margin-bottom: 0.6rem;
 }
 
@@ -163,10 +163,10 @@
   flex-wrap: wrap;
 }
 
-.otp-subtitle strong { color: #2d1f2d; }
+.otp-subtitle strong { color: var(--dark-text); }
 
 .change-number {
-  color: #6B3F69;
+  color: var(--primary-pink);
   font-weight: 600;
   cursor: pointer;
   font-size: 0.82rem;
@@ -189,7 +189,7 @@
   text-align: center;
   font-size: 1.4rem;
   font-weight: 700;
-  color: #2d1f2d;
+  color: var(--dark-text);
   background: white;
   outline: none;
   transition: all 0.25s ease;
@@ -197,14 +197,14 @@
 }
 
 .otp-input:focus {
-  border-color: #6B3F69;
+  border-color: var(--primary-pink);
   box-shadow: 0 0 0 3px rgba(107,63,105,0.12);
 }
 
 .otp-input.filled {
-  border-color: #8D5F8C;
+  border-color: var(--deep-rose);
   background: #f5eaf5;
-  color: #6B3F69;
+  color: var(--primary-pink);
 }
 
 .otp-input.error {
@@ -230,12 +230,12 @@
   color: #6b5b6b;
 }
 
-.otp-timer strong { color: #6B3F69; }
+.otp-timer strong { color: var(--primary-pink); }
 
 .resend-btn {
   background: none;
   border: none;
-  color: #6B3F69;
+  color: var(--primary-pink);
   font-size: 0.88rem;
   font-weight: 600;
   cursor: pointer;
@@ -253,7 +253,7 @@
   justify-content: center;
   gap: 7px;
   padding: 14px;
-  background: #6B3F69;
+  background: var(--primary-pink);
   color: white;
   border: none;
   border-radius: 12px;
@@ -266,7 +266,7 @@
 }
 
 .btn-verify:hover {
-  background: #8D5F8C;
+  background: var(--deep-rose);
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(107,63,105,0.25);
 }
@@ -316,7 +316,7 @@
 .otp-success h2 {
   font-family: 'Playfair Display', serif;
   font-size: 2rem;
-  color: #6B3F69;
+  color: var(--primary-pink);
 }
 
 .otp-success p {

@@ -11,7 +11,7 @@
 /* ── LEFT PANEL ── */
 .login-left {
   width: 42%;
-  background: linear-gradient(160deg, #6B3F69, #8D5F8C, #A376A2);
+  background: linear-gradient(160deg, var(--primary-pink), var(--deep-rose), #A376A2);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -101,7 +101,7 @@
 .login-title {
   font-family: 'Playfair Display', serif;
   font-size: 2rem;
-  color: #2d1f2d;
+  color: var(--dark-text);
   margin-bottom: 0.4rem;
 }
 
@@ -141,7 +141,7 @@
 
 .login-toggle button.active {
   background: white;
-  color: #6B3F69;
+  color: var(--primary-pink);
   font-weight: 600;
   box-shadow: 0 2px 8px rgba(107,63,105,0.12);
 }
@@ -157,7 +157,7 @@
 .form-group label {
   font-size: 0.85rem;
   font-weight: 600;
-  color: #2d1f2d;
+  color: var(--dark-text);
 }
 
 .label-row {
@@ -168,7 +168,7 @@
 
 .forgot-link {
   font-size: 0.8rem;
-  color: #6B3F69;
+  color: var(--primary-pink);
   font-weight: 600;
   cursor: pointer;
   transition: opacity 0.2s;
@@ -188,7 +188,7 @@
 }
 
 .input-wrap:focus-within {
-  border-color: #6B3F69;
+  border-color: var(--primary-pink);
   box-shadow: 0 0 0 3px rgba(107,63,105,0.1);
 }
 
@@ -207,12 +207,12 @@
   font-size: 0.92rem;
   font-family: 'Poppins', sans-serif;
   background: transparent;
-  color: #2d1f2d;
+  color: var(--dark-text);
 }
 
 .phone-code {
   font-size: 0.88rem;
-  color: #6B3F69;
+  color: var(--primary-pink);
   font-weight: 600;
   padding-right: 8px;
   border-right: 1.5px solid #e8dde8;
@@ -229,7 +229,7 @@
   padding: 4px;
   transition: color 0.2s;
 }
-.eye-btn:hover { color: #6B3F69; }
+.eye-btn:hover { color: var(--primary-pink); }
 
 .err-msg {
   font-size: 0.78rem;
@@ -245,7 +245,7 @@
   justify-content: center;
   gap: 7px;
   padding: 14px;
-  background: #6B3F69;
+  background: var(--primary-pink);
   color: white;
   border: none;
   border-radius: 12px;
@@ -258,7 +258,7 @@
 }
 
 .btn-login-submit:hover {
-  background: #8D5F8C;
+  background: var(--deep-rose);
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(107,63,105,0.25);
 }
@@ -305,7 +305,7 @@
   background: white;
   font-size: 0.92rem;
   font-weight: 500;
-  color: #2d1f2d;
+  color: var(--dark-text);
   cursor: pointer;
   transition: all 0.25s ease;
   font-family: 'Poppins', sans-serif;
@@ -325,7 +325,7 @@
 }
 
 .register-link span {
-  color: #6B3F69;
+  color: var(--primary-pink);
   font-weight: 600;
   cursor: pointer;
 }

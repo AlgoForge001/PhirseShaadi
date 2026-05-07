@@ -2,7 +2,7 @@
 
 /* Inherit Landing Page Variables and Base Styles */
 .about-page {
-  --brand: #6b3f69;
+  --brand: var(--primary-pink);
   --brand-dark: #4e2e4d;
   --brand-light: #8b5a8f;
   --brand-soft: #f5eff7;
@@ -70,7 +70,7 @@
 
 /* ── PARAGRAPH DISPLAY ── */
 .paragraph-display {
-  background: #fff;
+  background: var(--neutral-white);
   border: 1px solid var(--border);
   border-radius: 20px;
   padding: 50px;
@@ -137,7 +137,7 @@
   align-items: center;
   text-align: center;
   padding: 48px 24px;
-  background: #ffffff;
+  background: var(--neutral-white);
   border-radius: 20px;
   border: 1px solid var(--border);
   transition: all 0.3s ease;
@@ -164,7 +164,7 @@
 
 .value-card.step-card:hover .step-icon {
   background: var(--brand);
-  color: #ffffff;
+  color: var(--neutral-white);
   transform: scale(1.1);
 }
 

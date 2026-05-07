@@ -17,7 +17,7 @@
 }
 
 .viewers-header h2 {
-  color: #6B3F69;
+  color: var(--primary-pink);
   font-size: 2rem;
   margin-bottom: 5px;
 }
@@ -77,8 +77,8 @@
 
 .view-profile-btn {
   background: none;
-  border: 1px solid #6B3F69;
-  color: #6B3F69;
+  border: 1px solid var(--primary-pink);
+  color: var(--primary-pink);
   padding: 6px 15px;
   border-radius: 20px;
   font-size: 0.85rem;
@@ -87,7 +87,7 @@
 }
 
 .view-profile-btn:hover {
-  background: #6B3F69;
+  background: var(--primary-pink);
   color: white;
 }
 
@@ -109,7 +109,7 @@
 }
 
 .promo-card h2 {
-  color: #6B3F69;
+  color: var(--primary-pink);
   margin-bottom: 15px;
 }
 
@@ -120,7 +120,7 @@
 }
 
 .upgrade-btn {
-  background: linear-gradient(135deg, #6B3F69 0%, #a376a2 100%);
+  background: linear-gradient(135deg, var(--primary-pink) 0%, #a376a2 100%);
   color: white;
   border: none;
   padding: 15px 40px;

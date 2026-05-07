@@ -3,7 +3,7 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --plum:         #6b3f69;
+  --plum:         var(--primary-pink);
   --plum-dark:    #4a2848;
   --plum-mid:     #5a3458;
   --plum-light:   #8b5a8f;
@@ -11,13 +11,13 @@
   --plum-pale:    #fdf8fd;
   --plum-border:  rgba(107,63,105,0.14);
   --gold:         #c49a2e;
-  --gold-soft:    #fff8e1;
+  --gold-soft:    var(--neutral-white)8e1;
   --green:        #2e7d32;
   --green-soft:   #e8f5e9;
   --ink:          #1e1320;
   --ink-mid:      #4a3a4a;
   --ink-soft:     #7a6a7a;
-  --white:        #ffffff;
+  --white:        var(--neutral-white);
   --shadow-sm:    0 2px 12px rgba(107,63,105,0.07);
   --shadow-md:    0 8px 28px rgba(107,63,105,0.12);
   --shadow-lg:    0 20px 56px rgba(107,63,105,0.18);

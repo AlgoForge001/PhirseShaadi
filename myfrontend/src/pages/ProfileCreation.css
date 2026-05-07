@@ -29,7 +29,7 @@
   font-family: 'Playfair Display', serif;
   font-size: 1.3rem;
   font-weight: 700;
-  color: #6B3F69;
+  color: var(--primary-pink);
   cursor: pointer;
   flex-shrink: 0;
 }
@@ -52,7 +52,7 @@
 
 .pc-progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #6B3F69, #A376A2);
+  background: linear-gradient(90deg, var(--primary-pink), #A376A2);
   border-radius: 6px;
   transition: width 0.4s ease;
 }
@@ -60,7 +60,7 @@
 .pc-progress span {
   font-size: 0.82rem;
   font-weight: 600;
-  color: #6B3F69;
+  color: var(--primary-pink);
   white-space: nowrap;
 }
 
@@ -116,12 +116,12 @@
 }
 
 .pc-step.active .pc-step-icon {
-  background: #6B3F69;
+  background: var(--primary-pink);
   color: white;
 }
 
 .pc-step.done .pc-step-icon {
-  background: #8D5F8C;
+  background: var(--deep-rose);
   color: white;
 }
 
@@ -132,11 +132,11 @@
 }
 
 .pc-step.active span {
-  color: #6B3F69;
+  color: var(--primary-pink);
 }
 
 .pc-step.done span {
-  color: #8D5F8C;
+  color: var(--deep-rose);
 }
 
 /* ── FORM CARD ── */
@@ -150,7 +150,7 @@
 .pc-form h2 {
   font-family: 'Playfair Display', serif;
   font-size: 1.6rem;
-  color: #2d1f2d;
+  color: var(--dark-text);
   margin-bottom: 0.4rem;
 }
 
@@ -203,7 +203,7 @@
 
 .photo-upload-info h4 {
   font-size: 0.95rem;
-  color: #2d1f2d;
+  color: var(--dark-text);
   margin-bottom: 0.3rem;
 }
 
@@ -219,7 +219,7 @@
   align-items: center;
   gap: 6px;
   padding: 8px 16px;
-  background: #6B3F69;
+  background: var(--primary-pink);
   color: white;
   border-radius: 8px;
   font-size: 0.82rem;
@@ -229,7 +229,7 @@
 }
 
 .photo-upload-btn:hover {
-  background: #8D5F8C;
+  background: var(--deep-rose);
 }
 
 /* ── FORM ELEMENTS ── */
@@ -243,7 +243,7 @@
 .form-group label {
   font-size: 0.85rem;
   font-weight: 600;
-  color: #2d1f2d;
+  color: var(--dark-text);
 }
 
 .req {
@@ -268,7 +268,7 @@
 }
 
 .input-wrap:focus-within {
-  border-color: #6B3F69;
+  border-color: var(--primary-pink);
   box-shadow: 0 0 0 3px rgba(107, 63, 105, 0.1);
   background: white;
 }
@@ -286,7 +286,7 @@
   font-size: 0.9rem;
   font-family: 'Poppins', sans-serif;
   background: transparent;
-  color: #2d1f2d;
+  color: var(--dark-text);
   width: 100%;
 }
 
@@ -301,7 +301,7 @@
   border-radius: 12px;
   font-size: 0.9rem;
   font-family: 'Poppins', sans-serif;
-  color: #2d1f2d;
+  color: var(--dark-text);
   background: #faf7fa;
   resize: vertical;
   outline: none;
@@ -310,7 +310,7 @@
 }
 
 .pc-textarea:focus {
-  border-color: #6B3F69;
+  border-color: var(--primary-pink);
   box-shadow: 0 0 0 3px rgba(107, 63, 105, 0.1);
   background: white;
 }
@@ -339,13 +339,13 @@
   align-items: center;
   gap: 8px;
   font-size: 0.88rem;
-  color: #2d1f2d;
+  color: var(--dark-text);
   cursor: pointer;
   font-weight: 500;
 }
 
 .radio-label input[type="radio"] {
-  accent-color: #6B3F69;
+  accent-color: var(--primary-pink);
   width: 16px;
   height: 16px;
   cursor: pointer;
@@ -375,8 +375,8 @@
 }
 
 .btn-back:hover {
-  border-color: #6B3F69;
-  color: #6B3F69;
+  border-color: var(--primary-pink);
+  color: var(--primary-pink);
 }
 
 .btn-next,
@@ -387,7 +387,7 @@
   justify-content: center;
   gap: 7px;
   padding: 13px;
-  background: #6B3F69;
+  background: var(--primary-pink);
   color: white;
   border: none;
   border-radius: 12px;
@@ -400,7 +400,7 @@
 
 .btn-next:hover,
 .btn-submit:hover {
-  background: #8D5F8C;
+  background: var(--deep-rose);
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(107, 63, 105, 0.25);
 }
@@ -427,7 +427,7 @@
 }
 
 .btn-skip:hover {
-  color: #6B3F69;
+  color: var(--primary-pink);
 }
 
 /* SPINNER */

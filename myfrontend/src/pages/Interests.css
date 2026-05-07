@@ -16,7 +16,7 @@
 
 .interests-header h1 {
   font-family: 'Playfair Display', serif;
-  color: #2d1f2d;
+  color: var(--dark-text);
   font-size: 2.2rem;
   margin-bottom: 20px;
 }
@@ -40,7 +40,7 @@
 }
 
 .tab-btn.active {
-  color: #6B3F69;
+  color: var(--primary-pink);
 }
 
 .tab-btn.active::after {
@@ -50,12 +50,12 @@
   left: 0;
   right: 0;
   height: 3px;
-  background: #6B3F69;
+  background: var(--primary-pink);
   border-radius: 3px 3px 0 0;
 }
 
 .badge {
-  background: #6B3F69;
+  background: var(--primary-pink);
   color: white;
   font-size: 0.75rem;
   padding: 2px 8px;
@@ -101,7 +101,7 @@
 .ic-info h3 {
   font-size: 1.1rem;
   margin: 0 0 5px 0;
-  color: #2d1f2d;
+  color: var(--dark-text);
 }
 
 .ic-meta {
@@ -145,7 +145,7 @@
 
 .ic-btn.accept {
   background: #fdfafd;
-  color: #6B3F69;
+  color: var(--primary-pink);
 }
 
 .ic-btn.accept:hover {
@@ -159,7 +159,7 @@
 }
 
 .ic-btn.reject:hover {
-  background: #fff5f7;
+  background: var(--neutral-white)5f7;
 }
 
 .ic-status-bar {
@@ -171,7 +171,7 @@
 }
 
 .ic-status-bar.pending {
-  background: #fff9e6;
+  background: var(--neutral-white)9e6;
   color: #b58500;
 }
 
@@ -192,7 +192,7 @@
 }
 
 .empty-state h3 {
-  color: #2d1f2d;
+  color: var(--dark-text);
   font-size: 1.4rem;
   margin: 15px 0 10px;
   font-family: 'Playfair Display', serif;

@@ -8,7 +8,7 @@
 
 /* Toggle Button */
 .chatbot-toggle {
-  background: var(--brand, #6b3f69);
+  background: var(--brand, var(--primary-pink));
   color: white;
   border: none;
   padding: 12px 24px;
@@ -52,7 +52,7 @@
 
 /* Header */
 .chatbot-header {
-  background: var(--brand, #6b3f69);
+  background: var(--brand, var(--primary-pink));
   color: white;
   padding: 16px 20px;
   display: flex;
@@ -149,7 +149,7 @@
 }
 
 .message-row.user .message-bubble {
-  background: var(--brand, #6b3f69);
+  background: var(--brand, var(--primary-pink));
   color: white;
   border-bottom-right-radius: 4px;
 }
@@ -175,8 +175,8 @@
 
 .suggestions-grid button {
   background: white;
-  border: 1px solid var(--brand, #6b3f69);
-  color: var(--brand, #6b3f69);
+  border: 1px solid var(--brand, var(--primary-pink));
+  color: var(--brand, var(--primary-pink));
   padding: 6px 12px;
   border-radius: 15px;
   font-size: 12px;
@@ -228,11 +228,11 @@
 }
 
 .chatbot-input input:focus {
-  border-color: var(--brand, #6b3f69);
+  border-color: var(--brand, var(--primary-pink));
 }
 
 .chatbot-input button {
-  background: var(--brand, #6b3f69);
+  background: var(--brand, var(--primary-pink));
   color: white;
   border: none;
   width: 38px;

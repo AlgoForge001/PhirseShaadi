@@ -16,7 +16,7 @@
 }
 
 .privacy-container h2 {
-  color: #6B3F69;
+  color: var(--primary-pink);
   margin-bottom: 30px;
   font-size: 1.8rem;
 }
@@ -66,11 +66,11 @@
   width: 20px;
   height: 20px;
   cursor: pointer;
-  accent-color: #6B3F69;
+  accent-color: var(--primary-pink);
 }
 
 .save-btn {
-  background: #6B3F69;
+  background: var(--primary-pink);
   color: white;
   border: none;
   padding: 12px 25px;

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Playfair+Display:wght@700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=DM+Serif+Display&display=swap');
 
 /* ─── BASE CARD ─── */
 .profile-card {
@@ -9,9 +9,9 @@
   aspect-ratio: 0.72;
   transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1),
               box-shadow 0.32s cubic-bezier(0.22, 1, 0.36, 1);
-  background: #1a1020;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
-  font-family: "DM Sans", "Segoe UI", sans-serif;
+  background: var(--neutral-white);
+  box-shadow: var(--card-shadow);
+  font-family: "Poppins", "Segoe UI", sans-serif;
 }
 
 .profile-card:hover {
@@ -43,7 +43,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(160deg, #2a1a30 0%, #1a1025 100%);
+  background: var(--soft-gradient);
 }
 
 /* ─── OVERLAY ─── */
@@ -52,9 +52,9 @@
   inset: 0;
   background:
     linear-gradient(to top,
-      rgba(10, 5, 18, 0.96) 0%,
-      rgba(10, 5, 18, 0.72) 30%,
-      rgba(10, 5, 18, 0.20) 58%,
+      rgba(139, 13, 58, 0.95) 0%,
+      rgba(139, 13, 58, 0.6) 30%,
+      rgba(139, 13, 58, 0.1) 60%,
       transparent 100%
     );
   display: flex;
@@ -91,7 +91,7 @@
 }
 
 .pc-match-badge {
-  background: rgba(30, 18, 40, 0.75);
+  background: rgba(216, 27, 96, 0.85);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255,255,255,0.18);
   padding: 5px 11px;
@@ -99,14 +99,14 @@
   font-size: 10.5px;
   font-weight: 700;
   letter-spacing: 0.4px;
-  color: rgba(255,255,255,0.92);
+  color: white;
 }
 
 .pc-match-badge.high {
-  background: linear-gradient(135deg, #c9963a 0%, #e8b84b 100%);
+  background: linear-gradient(135deg, var(--gold) 0%, #f0c96a 100%);
   border-color: rgba(255,215,0,0.4);
-  color: #2a1800;
-  box-shadow: 0 4px 14px rgba(201, 150, 58, 0.4);
+  color: white;
+  box-shadow: 0 4px 14px rgba(212, 163, 115, 0.4);
 }
 
 .pc-smart-badge {
@@ -129,15 +129,15 @@
   top: 52px;
   left: 12px;
   right: 12px;
-  background: rgba(14, 8, 24, 0.88);
+  background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   padding: 14px 16px;
   border-radius: 16px;
-  color: #e8ddf4;
+  color: var(--dark-text);
   font-size: 12px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08);
-  border: 1px solid rgba(201, 150, 58, 0.25);
+  box-shadow: 0 8px 32px rgba(216, 27, 96, 0.15);
+  border: 1px solid var(--light-pink);
   opacity: 0;
   transform: translateY(6px) scale(0.98);
   transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
@@ -155,7 +155,7 @@
   align-items: center;
   gap: 7px;
   font-weight: 700;
-  color: #c9963a;
+  color: var(--primary-pink);
   margin-bottom: 8px;
   font-size: 9.5px;
   letter-spacing: 1.2px;
@@ -166,7 +166,7 @@
   line-height: 1.55;
   margin-bottom: 10px;
   font-weight: 400;
-  color: rgba(232, 221, 244, 0.88);
+  color: var(--dark-text);
   font-size: 11.5px;
 }
 
@@ -177,13 +177,13 @@
 }
 
 .ai-tag {
-  background: rgba(124, 63, 122, 0.22);
-  color: #c8a8e4;
+  background: var(--brand-soft);
+  color: var(--primary-pink);
   padding: 3px 10px;
   border-radius: 6px;
   font-size: 10px;
   font-weight: 600;
-  border: 1px solid rgba(124, 63, 122, 0.35);
+  border: 1px solid var(--brand-mid);
   letter-spacing: 0.2px;
 }
 
@@ -207,11 +207,11 @@
 }
 
 .pc-user-name {
-  font-family: "Playfair Display", Georgia, serif;
+  font-family: "DM Serif Display", Georgia, serif;
   font-size: 1.15rem;
   font-weight: 700;
   letter-spacing: -0.2px;
-  color: #fff;
+  color: white;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -223,7 +223,7 @@
 .pc-user-subtitle {
   font-size: 12px;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.72);
+  color: rgba(255, 255, 255, 0.9);
   margin-bottom: 9px;
   line-height: 1.35;
   display: -webkit-box;
@@ -239,9 +239,9 @@
   gap: 5px;
   font-size: 11px;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.88);
-  background: rgba(255, 255, 255, 0.10);
-  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: white;
+  background: rgba(216, 27, 96, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 999px;
   padding: 4px 11px;
   max-width: 100%;
@@ -260,10 +260,10 @@
 }
 
 .pc-icon-action {
-  background: rgba(255, 255, 255, 0.10);
+  background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   width: 38px;
   height: 38px;
   border-radius: 50%;
@@ -288,18 +288,19 @@
 
 .pc-icon-action:hover {
   transform: scale(1.12);
-  border-color: rgba(255,255,255,0.36);
-  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  background: var(--primary-pink);
+  border-color: white;
+  box-shadow: 0 4px 16px rgba(216, 27, 96, 0.4);
 }
 
 .pc-icon-action:hover::before {
-  background: rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.1);
 }
 
 .pc-icon-action.active {
-  background: linear-gradient(135deg, #7c3f7a 0%, #9a5498 100%);
-  border-color: rgba(124, 63, 122, 0.6);
-  box-shadow: 0 4px 16px rgba(124, 63, 122, 0.4);
+  background: var(--main-gradient);
+  border-color: white;
+  box-shadow: 0 4px 16px rgba(216, 27, 96, 0.5);
 }
 
 /* ─── RESPONSIVE ─── */

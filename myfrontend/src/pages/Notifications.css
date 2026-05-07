@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700;800&display=swap');
 
 :root {
-  --brand: #6b3f69;
+  --brand: var(--primary-pink);
   --brand-dark: #4e2e4d;
   --brand-light: #8b5a8f;
   --brand-soft: #f5eff7;
@@ -10,7 +10,7 @@
   --muted: #5a5168;
   --muted-light: #8a8099;
   --border: #e2d8e8;
-  --surface: #ffffff;
+  --surface: var(--neutral-white);
   --surface-2: #faf6fb;
   --shadow-sm: 0 2px 8px rgba(107, 63, 105, 0.05);
   --shadow-md: 0 8px 24px rgba(107, 63, 105, 0.08);
@@ -33,7 +33,7 @@
 }
 
 .nt-card {
-  background: #fff;
+  background: var(--neutral-white);
   border-radius: 24px;
   border: 1px solid var(--border);
   box-shadow: var(--shadow-md);
@@ -131,10 +131,10 @@
 }
 
 /* Custom background colors per type */
-.nt-icon-wrap.interest_received { background: #fff1f2; }
+.nt-icon-wrap.interest_received { background: var(--neutral-white)1f2; }
 .nt-icon-wrap.interest_accepted { background: #ecfdf5; }
 .nt-icon-wrap.new_message      { background: #f5f3ff; }
-.nt-icon-wrap.profile_viewed   { background: #fffbeb; }
+.nt-icon-wrap.profile_viewed   { background: var(--neutral-white)beb; }
 .nt-icon-wrap.payment_success  { background: #fefce8; }
 
 .nt-content {

@@ -32,13 +32,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #6B3F69;
+  color: var(--primary-pink);
 }
 
 .family-header h1 {
   font-family: "Playfair Display", serif;
   font-size: 2.5rem;
-  color: #2d1f2d;
+  color: var(--dark-text);
   margin: 0;
 }
 
@@ -48,7 +48,7 @@
 }
 
 .add-family-btn {
-  background: #6B3F69;
+  background: var(--primary-pink);
   color: white;
   border: none;
   padding: 12px 24px;
@@ -95,13 +95,13 @@
 .section-title h2 {
   font-family: "Playfair Display", serif;
   font-size: 2rem;
-  color: #2d1f2d;
+  color: var(--dark-text);
   margin: 0;
 }
 
 .member-count {
   background: #f5eaf5;
-  color: #6B3F69;
+  color: var(--primary-pink);
   padding: 6px 14px;
   border-radius: 50px;
   font-weight: 700;
@@ -124,7 +124,7 @@
 
 .empty-state h3 {
   font-size: 1.5rem;
-  color: #2d1f2d;
+  color: var(--dark-text);
   margin-bottom: 8px;
 }
 
@@ -161,7 +161,7 @@
 .member-avatar {
   width: 60px;
   height: 60px;
-  background: linear-gradient(135deg, #6B3F69, #8B5A8F);
+  background: linear-gradient(135deg, var(--primary-pink), #8B5A8F);
   border-radius: 12px;
   display: flex;
   align-items: center;
@@ -173,7 +173,7 @@
 
 .member-info h3 {
   font-size: 1.3rem;
-  color: #2d1f2d;
+  color: var(--dark-text);
   margin: 0 0 4px;
 }
 
@@ -186,7 +186,7 @@
 .member-info .relationship {
   text-transform: capitalize;
   font-weight: 600;
-  color: #6B3F69;
+  color: var(--primary-pink);
 }
 
 .member-info .contact {
@@ -235,7 +235,7 @@
 
 .edit-btn {
   background: #f5eaf5;
-  color: #6B3F69;
+  color: var(--primary-pink);
 }
 
 .edit-btn:hover {
@@ -264,7 +264,7 @@
 .access-levels-info h3 {
   font-family: "Playfair Display", serif;
   font-size: 1.8rem;
-  color: #2d1f2d;
+  color: var(--dark-text);
   margin: 0 0 32px;
 }
 
@@ -294,7 +294,7 @@
 
 .access-info-card h4 {
   font-size: 1.2rem;
-  color: #2d1f2d;
+  color: var(--dark-text);
   margin: 0 0 8px;
 }
 
@@ -313,7 +313,7 @@
   justify-content: center;
   font-family: "Playfair Display", serif;
   font-size: 1.5rem;
-  color: #6B3F69;
+  color: var(--primary-pink);
   background: #fdfafd;
 }
 

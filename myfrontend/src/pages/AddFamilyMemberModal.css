@@ -59,7 +59,7 @@
 .modal-header h2 {
   font-family: "Playfair Display", serif;
   font-size: 1.5rem;
-  color: #2d1f2d;
+  color: var(--dark-text);
   margin: 0;
 }
 
@@ -76,7 +76,7 @@
 }
 
 .close-btn:hover {
-  color: #2d1f2d;
+  color: var(--dark-text);
 }
 
 .modal-form {
@@ -95,7 +95,7 @@
 
 .form-group label {
   font-weight: 700;
-  color: #2d1f2d;
+  color: var(--dark-text);
   font-size: 0.95rem;
 }
 
@@ -105,7 +105,7 @@
   border: 2px solid rgba(107, 63, 105, 0.1);
   border-radius: 12px;
   font-size: 1rem;
-  color: #2d1f2d;
+  color: var(--dark-text);
   font-family: inherit;
   transition: all 0.2s;
 }
@@ -113,7 +113,7 @@
 .form-group input:focus,
 .form-group select:focus {
   outline: none;
-  border-color: #6B3F69;
+  border-color: var(--primary-pink);
   box-shadow: 0 0 0 3px rgba(107, 63, 105, 0.1);
 }
 
@@ -162,7 +162,7 @@
   width: 20px;
   height: 20px;
   min-width: 20px;
-  accent-color: #6B3F69;
+  accent-color: var(--primary-pink);
 }
 
 .option-content {
@@ -174,7 +174,7 @@
 
 .option-label {
   font-weight: 700;
-  color: #2d1f2d;
+  color: var(--dark-text);
   display: block;
 }
 
@@ -185,7 +185,7 @@
 }
 
 .access-option input[type="radio"]:checked ~ .option-content .option-label {
-  color: #6B3F69;
+  color: var(--primary-pink);
 }
 
 /* MODAL ACTIONS */
@@ -211,7 +211,7 @@
 
 .cancel-btn {
   background: #f5eaf5;
-  color: #6B3F69;
+  color: var(--primary-pink);
 }
 
 .cancel-btn:hover {
@@ -219,7 +219,7 @@
 }
 
 .submit-btn {
-  background: #6B3F69;
+  background: var(--primary-pink);
   color: white;
 }
 

@@ -1,17 +1,17 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Nunito:wght@400;600;700&family=DM+Serif+Display:ital@0;1&display=swap');
 
 :root {
-  --brand: #6b3f69;
-  --brand-dark: #4e2e4d;
-  --brand-light: #8b5a8f;
-  --brand-soft: #f5eff7;
-  --brand-mid: #e8d8eb;
-  --gold: #c9952a;
-  --text: #1a1025;
-  --muted: #5a5168;
-  --muted-light: #8a8099;
-  --border: #e2d8e8;
-  --surface-2: #faf6fb;
+  --brand: var(--primary-pink);
+  --brand-dark: var(--deep-rose);
+  --brand-light: var(--light-pink);
+  --brand-soft: var(--soft-blush);
+  --brand-mid: #F8BBD0;
+  --gold: var(--gold-accent);
+  --text: var(--dark-text);
+  --muted: #666666;
+  --muted-light: #999999;
+  --border: rgba(212, 163, 115, 0.2);
+  --surface-2: #FFF9FA;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -19,7 +19,7 @@
 /* ── BASE ── */
 .lp {
   min-height: 100vh;
-  background: #fff;
+  background: var(--neutral-white);
   color: var(--text);
 }
 
@@ -30,7 +30,7 @@
 .lp a,
 .lp button,
 .lp li {
-  font-family: "Inter", "Segoe UI", sans-serif;
+  font-family: "Poppins", "Nunito", sans-serif;
 }
 .lp h1,
 .lp h2,
@@ -133,7 +133,7 @@
 
 .btn.solid {
   background: var(--brand);
-  color: #fff;
+  color: var(--neutral-white);
   border-color: var(--brand);
 }
 
@@ -238,7 +238,7 @@
   font-weight: 400;
   line-height: 1.1;
   letter-spacing: -1px;
-  color: #fff;
+  color: var(--neutral-white);
   text-align: center;
   text-shadow: 0 4px 32px rgba(0, 0, 0, 0.4);
   margin-bottom: 8px;
@@ -329,13 +329,13 @@
   border-radius: 4px;
   letter-spacing: 0.3px;
   background: transparent;
-  color: #fff;
+  color: var(--neutral-white);
   border: 1.5px solid rgba(255, 255, 255, 0.45);
 }
 .hero-secondary-btn:hover {
   background: rgba(255, 255, 255, 0.12);
   border-color: rgba(255, 255, 255, 0.75);
-  color: #fff;
+  color: var(--neutral-white);
 }
 
 /* ══════════════════════════════
@@ -429,7 +429,7 @@
   gap: 20px;
 }
 .feature-card {
-  background: #fff;
+  background: var(--neutral-white);
   border: 1px solid var(--border);
   border-radius: 16px;
   padding: 28px 22px;
@@ -454,7 +454,7 @@
 }
 .feature-card:hover .feature-icon-wrap {
   background: var(--brand);
-  color: #fff;
+  color: var(--neutral-white);
 }
 .feature-card h4 {
   font-family: "Inter", sans-serif;
@@ -475,7 +475,7 @@
 ══════════════════════════════ */
 .steps {
   padding: 88px 0;
-  background: #fff;
+  background: var(--neutral-white);
 }
 .steps-grid {
   display: grid;
@@ -507,7 +507,7 @@
   height: 42px;
   border-radius: 12px;
   background: var(--brand);
-  color: #fff;
+  color: var(--neutral-white);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -557,7 +557,7 @@
   font-family: "DM Serif Display", Georgia, serif;
   font-size: 36px;
   font-weight: 700;
-  color: #fff;
+  color: var(--neutral-white);
   display: block;
   margin-bottom: 6px;
   letter-spacing: -1px;
@@ -583,7 +583,7 @@
   gap: 20px;
 }
 .story-card {
-  background: #fff;
+  background: var(--neutral-white);
   border: 1px solid var(--border);
   border-radius: 16px;
   padding: 28px 24px;
@@ -647,7 +647,7 @@
 ══════════════════════════════ */
 .faq-section {
   padding: 88px 0;
-  background: #fff;
+  background: var(--neutral-white);
 }
 .faq-container {
   max-width: 780px;
@@ -655,7 +655,7 @@
   border: 1px solid var(--border);
   border-radius: 16px;
   overflow: hidden;
-  background: #fff;
+  background: var(--neutral-white);
 }
 .faq-item {
   border-bottom: 1px solid var(--border);
@@ -705,7 +705,7 @@
 }
 .faq-item.expanded .faq-number {
   background: var(--brand);
-  color: #fff;
+  color: var(--neutral-white);
   border-color: var(--brand);
 }
 .faq-text { flex: 1; line-height: 1.5; }
@@ -810,7 +810,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1px;
-  color: #fff;
+  color: var(--neutral-white);
   margin-bottom: 18px;
 }
 .footer-column p {

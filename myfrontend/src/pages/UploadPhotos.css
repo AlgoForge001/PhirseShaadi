@@ -11,7 +11,7 @@
 /* ── LEFT PANEL ── */
 .upload-left {
   width: 38%;
-  background: linear-gradient(160deg, #6B3F69, #8D5F8C, #A376A2);
+  background: linear-gradient(160deg, var(--primary-pink), var(--deep-rose), #A376A2);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -143,7 +143,7 @@
 .upload-title {
   font-family: 'Playfair Display', serif;
   font-size: 1.9rem;
-  color: #2d1f2d;
+  color: var(--dark-text);
   margin-bottom: 0.4rem;
 }
 
@@ -179,14 +179,14 @@
 }
 
 .drop-zone.dragging {
-  border-color: #6B3F69;
+  border-color: var(--primary-pink);
   background: #f5eaf5;
   transform: scale(1.01);
 }
 
 .drop-zone h3 {
   font-size: 1rem;
-  color: #2d1f2d;
+  color: var(--dark-text);
   font-weight: 600;
 }
 
@@ -333,7 +333,7 @@
 
 /* ERROR & SUCCESS */
 .upload-error {
-  background: #fff5f5;
+  background: var(--neutral-white)5f5;
   border: 1px solid #ffcdd2;
   color: #c62828;
   padding: 12px 16px;
@@ -377,8 +377,8 @@
 }
 
 .btn-skip-upload:hover {
-  border-color: #6B3F69;
-  color: #6B3F69;
+  border-color: var(--primary-pink);
+  color: var(--primary-pink);
 }
 
 .btn-save-photos {
@@ -388,7 +388,7 @@
   justify-content: center;
   gap: 7px;
   padding: 13px;
-  background: #6B3F69;
+  background: var(--primary-pink);
   color: white;
   border: none;
   border-radius: 12px;
@@ -400,7 +400,7 @@
 }
 
 .btn-save-photos:hover {
-  background: #8D5F8C;
+  background: var(--deep-rose);
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(107,63,105,0.25);
 }
