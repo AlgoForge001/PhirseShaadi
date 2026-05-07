@@ -195,69 +195,56 @@ const ProfileView = () => {
                   </div>
                 </div>
 
-                <div className="pv-tabs-nav">
-                  <button className={activeTab === "about" ? "active" : ""} onClick={() => setActiveTab("about")}>
-                    <UserCheck size={16} /> Personal
-                  </button>
-                  <button className={activeTab === "education" ? "active" : ""} onClick={() => setActiveTab("education")}>
-                    <Briefcase size={16} /> Professional
-                  </button>
-                  <button className={activeTab === "family" ? "active" : ""} onClick={() => setActiveTab("family")}>
-                    <HeartHandshake size={16} /> Background
-                  </button>
-                </div>
+                <div className="pv-sections-stack">
+                  {/* ABOUT SECTION */}
+                  <div className="pv-section-block anim-fade">
+                    <div className="section-intro">
+                      <Sparkles size={14} className="kicker-icon" />
+                      <span className="section-kicker">About the Individual</span>
+                    </div>
+                    <p className="pv-bio-text">{profile.about || "This member has not added a bio yet. Start a conversation to learn more about them!"}</p>
+                    
+                    <div className="grid-details-pv">
+                      {renderDetail(<Heart size={18} />, "Marital Status", profile.maritalStatus)}
+                      {renderDetail(<Languages size={18} />, "Mother Tongue", profile.motherTongue)}
+                      {renderDetail(<Users size={18} />, "Body Type", profile.bodyType)}
+                      {renderDetail(<Compass size={18} />, "Complexion", profile.complexion)}
+                      {renderDetail(<Layers size={18} />, "Physical Status", profile.physicalStatus)}
+                      {renderDetail(<Info size={18} />, "Dietary Habits", profile.diet)}
+                    </div>
+                  </div>
 
-                <div className="pv-tab-pane">
-                  {activeTab === "about" && (
-                    <div className="pv-tab-content anim-fade">
-                      <div className="section-intro">
-                        <Sparkles size={14} className="kicker-icon" />
-                        <span className="section-kicker">About the Individual</span>
-                      </div>
-                      <p className="pv-bio-text">{profile.about || "This member has not added a bio yet. Start a conversation to learn more about them!"}</p>
-                      
-                      <div className="grid-details-pv">
-                        {renderDetail(<Heart size={18} />, "Marital Status", profile.maritalStatus)}
-                        {renderDetail(<Languages size={18} />, "Mother Tongue", profile.motherTongue)}
-                        {renderDetail(<Users size={18} />, "Body Type", profile.bodyType)}
-                        {renderDetail(<Compass size={18} />, "Complexion", profile.complexion)}
-                        {renderDetail(<Layers size={18} />, "Physical Status", profile.physicalStatus)}
-                        {renderDetail(<Info size={18} />, "Dietary Habits", profile.diet)}
-                      </div>
+                  {/* EDUCATION & CAREER SECTION */}
+                  <div className="pv-section-block anim-fade">
+                    <div className="section-intro">
+                      <GraduationCap size={14} className="kicker-icon" />
+                      <span className="section-kicker">Career & Education</span>
                     </div>
-                  )}
-                  {activeTab === "education" && (
-                    <div className="pv-tab-content anim-fade">
-                      <div className="section-intro">
-                        <GraduationCap size={14} className="kicker-icon" />
-                        <span className="section-kicker">Career & Education</span>
-                      </div>
-                      <div className="grid-details-pv">
-                        {renderDetail(<GraduationCap size={18} />, "Education", profile.education)}
-                        {renderDetail(<Briefcase size={18} />, "Profession", profile.occupation)}
-                        {renderDetail(<Users size={18} />, "Employed In", profile.employedIn)}
-                        {renderDetail(<Award size={18} />, "Company", profile.companyName)}
-                        {renderDetail(<Sparkles size={18} />, "Annual Income", profile.annualIncome)}
-                        {renderDetail(<MapPin size={18} />, "Work Location", profile.workLocation)}
-                      </div>
+                    <div className="grid-details-pv">
+                      {renderDetail(<GraduationCap size={18} />, "Education", profile.education)}
+                      {renderDetail(<Briefcase size={18} />, "Profession", profile.occupation)}
+                      {renderDetail(<Users size={18} />, "Employed In", profile.employedIn)}
+                      {renderDetail(<Award size={18} />, "Company", profile.companyName)}
+                      {renderDetail(<Sparkles size={18} />, "Annual Income", profile.annualIncome)}
+                      {renderDetail(<MapPin size={18} />, "Work Location", profile.workLocation)}
                     </div>
-                  )}
-                  {activeTab === "family" && (
-                    <div className="pv-tab-content anim-fade">
-                      <div className="section-intro">
-                        <Users size={14} className="kicker-icon" />
-                        <span className="section-kicker">Family Details</span>
-                      </div>
-                       <div className="grid-details-pv">
-                        {renderDetail(<Users size={18} />, "Family Type", profile.familyType)}
-                        {renderDetail(<Heart size={18} />, "Family Values", profile.familyValues)}
-                        {renderDetail(<Award size={18} />, "Family Status", profile.familyStatus)}
-                        {renderDetail(<Briefcase size={18} />, "Father Occ.", profile.fatherOccupation)}
-                        {renderDetail(<Briefcase size={18} />, "Mother Occ.", profile.motherOccupation)}
-                        {renderDetail(<Users size={18} />, "Siblings", profile.siblings)}
-                      </div>
+                  </div>
+
+                  {/* FAMILY SECTION */}
+                  <div className="pv-section-block anim-fade">
+                    <div className="section-intro">
+                      <Users size={14} className="kicker-icon" />
+                      <span className="section-kicker">Family Details</span>
                     </div>
-                  )}
+                     <div className="grid-details-pv">
+                      {renderDetail(<Users size={18} />, "Family Type", profile.familyType)}
+                      {renderDetail(<Heart size={18} />, "Family Values", profile.familyValues)}
+                      {renderDetail(<Award size={18} />, "Family Status", profile.familyStatus)}
+                      {renderDetail(<Briefcase size={18} />, "Father Occ.", profile.fatherOccupation)}
+                      {renderDetail(<Briefcase size={18} />, "Mother Occ.", profile.motherOccupation)}
+                      {renderDetail(<Users size={18} />, "Siblings", profile.siblings)}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

@@ -90,9 +90,8 @@ const Chatbot = () => {
   return (
     <div className={`floating-chatbot ${isOpen ? 'open' : ''}`} onClick={(e) => e.stopPropagation()}>
       {!isOpen ? (
-        <button type="button" className="chatbot-toggle" onClick={toggleChat}>
-          <MessageSquare size={24} />
-          <span className="toggle-label">Help</span>
+        <button type="button" className="chatbot-toggle-compact" onClick={toggleChat} title="AI Assistant">
+          <Bot size={24} />
         </button>
       ) : (
         <div className="chatbot-window">

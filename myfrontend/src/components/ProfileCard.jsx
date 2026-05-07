@@ -150,10 +150,21 @@ const ProfileCard = ({ profile, onInterest, onShortlist }) => {
             <span>{profile.city || "Remote"}</span>
           </div>
         </div>
+
+        <button 
+          className="pc-message-btn"
+          onClick={(e) => {
+            e.stopPropagation();
+            navigate(`/chat/${profile._id}`);
+          }}
+        >
+          <MessageCircle size={14} />
+          <span>Message</span>
+        </button>
       </div>
 
       {/* AI INSIGHT PANEL (Hover only) */}
-      {profile.isSmartMatch && profile.aiInsight && (
+      {profile.isSmartMatch && profile.aiInsight && !profile.aiInsight.toLowerCase().includes("unavailable") && !profile.aiInsight.toLowerCase().includes("deep analysis unavailable") && (
         <div className="premium-pc-ai-insight-panel">
           <p className="premium-ai-panel-text">{profile.aiInsight}</p>
         </div>

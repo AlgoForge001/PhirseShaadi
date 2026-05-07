@@ -62,6 +62,15 @@ const EditProfile = () => {
     // Photos & CV
     photos: [],
     cvUrl: "",
+
+    // Lifestyle (Missing fields)
+    diet: "",
+    smoking: "No",
+    drinking: "No",
+
+    // Family Names (Missing fields)
+    fatherName: "",
+    motherName: "",
   });
 
   const [cvFile, setCvFile] = useState(null);
@@ -158,6 +167,9 @@ const EditProfile = () => {
           religion: formData.religion,
           community: formData.community,
           physicalStatus: formData.physicalStatus,
+          diet: formData.diet,
+          smoking: formData.smoking,
+          drinking: formData.drinking,
         });
       }
 
@@ -181,6 +193,8 @@ const EditProfile = () => {
           familyValues: formData.familyValues,
           fatherOccupation: formData.fatherOccupation,
           motherOccupation: formData.motherOccupation,
+          fatherName: formData.fatherName,
+          motherName: formData.motherName,
           siblings: formData.siblings,
           aboutFamily: formData.aboutFamily,
         });
@@ -550,6 +564,42 @@ const EditProfile = () => {
                   />
                 </div>
               </div>
+
+              {/* LIFESTYLE - DIET, SMOKING, DRINKING */}
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Diet</label>
+                  <div className="input-wrap">
+                    <select name="diet" value={formData.diet} onChange={handleChange}>
+                      <option value="">Select Diet</option>
+                      <option value="Vegetarian">Vegetarian</option>
+                      <option value="Non-Vegetarian">Non-Vegetarian</option>
+                      <option value="Eggetarian">Eggetarian</option>
+                      <option value="Vegan">Vegan</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label>Smoking</label>
+                  <div className="input-wrap">
+                    <select name="smoking" value={formData.smoking} onChange={handleChange}>
+                      <option value="No">No</option>
+                      <option value="Occasionally">Occasionally</option>
+                      <option value="Yes">Yes</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label>Drinking</label>
+                  <div className="input-wrap">
+                    <select name="drinking" value={formData.drinking} onChange={handleChange}>
+                      <option value="No">No</option>
+                      <option value="Occasionally">Occasionally</option>
+                      <option value="Yes">Yes</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
 
@@ -702,7 +752,35 @@ const EditProfile = () => {
                 {errors.familyValues && <span className="err-msg">{errors.familyValues}</span>}
               </div>
 
-              {/* FATHER & MOTHER */}
+              {/* FATHER & MOTHER NAMES */}
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Father's Name</label>
+                  <div className="input-wrap">
+                    <input
+                      type="text"
+                      name="fatherName"
+                      placeholder="Enter father's name"
+                      value={formData.fatherName}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label>Mother's Name</label>
+                  <div className="input-wrap">
+                    <input
+                      type="text"
+                      name="motherName"
+                      placeholder="Enter mother's name"
+                      value={formData.motherName}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* FATHER & MOTHER OCCUPATIONS */}
               <div className="form-row">
                 <div className="form-group">
                   <label>Father's Occupation</label>

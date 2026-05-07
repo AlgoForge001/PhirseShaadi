@@ -38,3 +38,5 @@ lerna-debug.log*
 admin/admin.md
 admin/design.md
 error.md
+admin/fix.md
+admin/ui.md

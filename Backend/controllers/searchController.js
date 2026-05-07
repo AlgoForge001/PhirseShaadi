@@ -106,27 +106,46 @@ const calculateMatchScore = (user, candidate) => {
   let score = 0;
   const prefs = user.partnerPreferences || {};
 
-  // 1. Religion (20%)
-  if (prefs.religion && candidate.religion === prefs.religion) score += 20;
+  // 1. Religion (15%)
+  if (prefs.religion && candidate.religion === prefs.religion) score += 15;
+  else if (!prefs.religion && candidate.religion === user.religion) score += 10;
 
-  // 2. Age (20%)
+  // 2. Age (15%)
   const age = calculateAge(candidate.dob);
-  if (prefs.minAge && prefs.maxAge) {
-    if (age >= prefs.minAge && age <= prefs.maxAge) score += 20;
-    else if (age >= prefs.minAge - 2 && age <= prefs.maxAge + 2) score += 10;
-  }
+  const minAge = prefs.minAge || 18;
+  const maxAge = prefs.maxAge || 60;
+  if (age >= minAge && age <= maxAge) score += 15;
+  else if (age >= minAge - 2 && age <= maxAge + 2) score += 7;
 
-  // 3. Location (20%)
-  if (prefs.city && candidate.city === prefs.city) score += 20;
-  else if (prefs.state && candidate.state === prefs.state) score += 10;
+  // 3. Location (10%)
+  if (prefs.city && candidate.city === prefs.city) score += 10;
+  else if (candidate.city === user.city) score += 8;
+  else if (candidate.state === user.state) score += 5;
 
-  // 4. Education (20%)
-  if (prefs.education && candidate.education === prefs.education) score += 20;
+  // 4. Education & Profession (10%)
+  if (prefs.education && candidate.education === prefs.education) score += 10;
+  else if (candidate.education === user.education) score += 5;
 
-  // 5. Income (20%)
-  if (prefs.income && candidate.income === prefs.income) score += 20;
+  // 5. Income (10%)
+  if (prefs.income && candidate.income === prefs.income) score += 10;
 
-  return score;
+  // 6. Mother Tongue (10%)
+  if (candidate.motherTongue === user.motherTongue) score += 10;
+
+  // 7. Marital Status (10%)
+  if (candidate.maritalStatus === user.maritalStatus) score += 10;
+  else if (user.maritalStatus === 'Never Married' && candidate.maritalStatus === 'Never Married') score += 10;
+
+  // 8. Diet (10%)
+  if (candidate.diet && user.diet && candidate.diet === user.diet) score += 10;
+  else if (!candidate.diet || !user.diet) score += 5;
+
+  // 9. Smoking & Drinking (10%)
+  if (candidate.smoking === user.smoking) score += 5;
+  if (candidate.drinking === user.drinking) score += 5;
+
+  // Ensure score doesn't exceed 100
+  return Math.min(score, 100);
 };
 
 // GET /api/matches/recommended

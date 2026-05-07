@@ -162,7 +162,13 @@ const userSchema = new mongoose.Schema({
   familyValues: {
     type: String
   },
+  fatherName: {
+    type: String
+  },
   fatherOccupation: {
+    type: String
+  },
+  motherName: {
     type: String
   },
   motherOccupation: {
@@ -173,6 +179,17 @@ const userSchema = new mongoose.Schema({
   },
   aboutFamily: {
     type: String
+  },
+  diet: {
+    type: String
+  },
+  smoking: {
+    type: String,
+    default: 'No'
+  },
+  drinking: {
+    type: String,
+    default: 'No'
   },
   birthTime: {
     type: String

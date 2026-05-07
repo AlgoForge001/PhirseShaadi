@@ -7,22 +7,35 @@
 }
 
 /* Toggle Button */
-.chatbot-toggle {
+.chatbot-toggle, .chatbot-toggle-compact {
   background: var(--brand, var(--primary-pink));
   color: white;
   border: none;
-  padding: 12px 24px;
-  border-radius: 50px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
   cursor: pointer;
   box-shadow: 0 4px 15px rgba(107, 63, 105, 0.3);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.chatbot-toggle:hover {
-  transform: translateY(-3px) scale(1.02);
+.chatbot-toggle {
+  padding: 12px 24px;
+  border-radius: 50px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.chatbot-toggle-compact {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10001;
+}
+
+.chatbot-toggle:hover, .chatbot-toggle-compact:hover {
+  transform: translateY(-3px) scale(1.05);
   box-shadow: 0 6px 20px rgba(107, 63, 105, 0.4);
 }
 

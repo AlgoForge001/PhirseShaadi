@@ -52,9 +52,15 @@ const AppRouter = () => {
   const showSidebar = isLoggedIn && !isPublicRoute && !isAdminRoute
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh' }}>
+    <div style={{ minHeight: '100vh', width: '100%', position: 'relative' }}>
       {showSidebar && <Sidebar />}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', width: '100%', overflowX: 'hidden' }}>
+      <div style={{ 
+        display: 'flex', 
+        flexDirection: 'column', 
+        width: '100%', 
+        minHeight: '100vh',
+        overflowX: 'hidden' 
+      }}>
         <div style={{ flex: 1, width: '100%' }}>
           <Routes>
             {/* ── Public Routes ─────────────────────────────── */}
