@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom"; // HMR Trigger
 import {
-  Heart, MapPin, CheckCircle,
-  Bookmark, Users, MessageCircle, Sparkles, Brain
+  Eye, MapPin, CheckCircle, Heart,
+  Users, MessageCircle, Sparkles, Brain
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import api from "../utils/api";
@@ -101,7 +101,7 @@ const ProfileCard = ({ profile, onInterest, onShortlist }) => {
           </div>
         )}
 
-        {/* FLOATING BADGES ON PHOTO */}
+        {/* FLOATING TOP BADGES */}
         <div className="premium-pc-top-badges">
           {profile.matchPercentage !== undefined && (
             <span className={`premium-pc-match-badge ${profile.matchPercentage >= 80 ? "high" : ""}`}>
@@ -113,6 +113,27 @@ const ProfileCard = ({ profile, onInterest, onShortlist }) => {
               <Sparkles size={12} fill="white" /> AI
             </span>
           )}
+        </div>
+
+        {/* PREMIUM GLASS TEXT OVERLAY (Bottom of image) */}
+        <div className="premium-pc-text-overlay">
+          <div className="premium-pc-text-main">
+            <div className="premium-pc-name-row">
+              <span className="premium-pc-user-name">
+                {truncateName(displayName, 18)}
+              </span>
+              {profile.isVerified && (
+                <CheckCircle size={16} fill="#10B981" color="white" className="premium-pc-verified-icon" />
+              )}
+            </div>
+            <p className="premium-pc-user-subtitle">
+              {profile.occupation || "Member"}{age ? ` • ${age} yrs` : ""}
+            </p>
+          </div>
+          <div className="premium-pc-location-badge">
+            <MapPin size={10} />
+            <span>{profile.city || "Remote"}</span>
+          </div>
         </div>
 
         {/* AI INSIGHT PANEL (Slide up on hover) */}
@@ -127,54 +148,30 @@ const ProfileCard = ({ profile, onInterest, onShortlist }) => {
         )}
       </div>
 
-      {/* INFO SECTION (Below Photo) */}
-      <div className="premium-pc-info-content">
-        <div className="premium-pc-text-main">
-          <div className="premium-pc-name-row">
-            <span className="premium-pc-user-name">
-              {truncateName(displayName, 18)}
-            </span>
-            {profile.isVerified && (
-              <CheckCircle size={18} fill="#10B981" color="white" className="premium-pc-verified-icon" />
-            )}
-          </div>
-          <p className="premium-pc-user-subtitle">
-            {profile.occupation || "Member"}{age ? ` • ${age} yrs` : ""}
-          </p>
-        </div>
-
-        <div className="premium-pc-details-row">
-          <div className="premium-pc-location-badge">
-            <MapPin size={12} />
-            <span>{profile.city || "Remote"}</span>
-          </div>
-
-          <div className="premium-pc-actions-group">
-            <button
-              className="premium-pc-action-btn"
-              onClick={(e) => { e.stopPropagation(); navigate(`/chat/${profile._id}`); }}
-              title="Message"
-            >
-              <MessageCircle size={18} />
-            </button>
-            <button
-              className={`premium-pc-action-btn heart ${interested ? "active" : ""}`}
-              onClick={handleInterest}
-              disabled={interested || interestLoading}
-              title="Send Interest"
-            >
-              <Heart size={18} fill={interested ? "currentColor" : "none"} />
-            </button>
-            <button
-              className={`premium-pc-action-btn bookmark ${shortlisted ? "active" : ""}`}
-              onClick={handleShortlist}
-              disabled={shortlistLoading}
-              title="Shortlist"
-            >
-              <Bookmark size={18} fill={shortlisted ? "currentColor" : "none"} />
-            </button>
-          </div>
-        </div>
+      {/* ACTION BUTTONS (Below Photo in a row) */}
+      <div className="premium-pc-bottom-actions">
+        <button
+          className="premium-pc-action-btn"
+          onClick={(e) => { e.stopPropagation(); navigate(`/profile/${profile._id}`); }}
+          title="View Profile"
+        >
+          <Eye size={18} />
+        </button>
+        <button
+          className="premium-pc-action-btn"
+          onClick={(e) => { e.stopPropagation(); navigate(`/chat/${profile._id}`); }}
+          title="Message"
+        >
+          <MessageCircle size={18} />
+        </button>
+        <button
+          className={`premium-pc-action-btn heart ${interested ? "active" : ""}`}
+          onClick={handleInterest}
+          disabled={interested || interestLoading}
+          title="Send Interest"
+        >
+          <Heart size={18} fill={interested ? "currentColor" : "none"} />
+        </button>
       </div>
     </div>
   );
