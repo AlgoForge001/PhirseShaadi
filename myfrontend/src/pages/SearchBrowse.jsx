@@ -198,10 +198,10 @@ const SearchBrowse = () => {
   });
 
   const tabs = [
-    { key: "all",         label: "All Members"   },
-    { key: "sameCity",    label: "Same City Match"},
-    { key: "smartMatch",  label: "AI Smart Match" },
-    { key: "new",         label: "New Joins"      },
+    { key: "all",         label: "All Members",   icon: <Users size={16} /> },
+    { key: "sameCity",    label: "Same City Match", icon: <MapPin size={16} /> },
+    { key: "smartMatch",  label: "AI Smart Match",  icon: <Sparkles size={16} /> },
+    { key: "new",         label: "New Joins",       icon: <Zap size={16} /> },
   ];
 
   // ── FETCH PROFILES ──────────────────────────
@@ -371,7 +371,8 @@ const SearchBrowse = () => {
                 className={`tab-btn ${activeTab === t.key ? "active" : ""}`}
                 onClick={() => handleTabChange(t.key)}
               >
-                {t.label}
+                {t.icon}
+                <span>{t.label}</span>
               </button>
             ))}
           </div>
