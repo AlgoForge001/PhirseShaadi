@@ -8,7 +8,7 @@ const jwt = require('jsonwebtoken');
 const req = {
   body: {
     identifier: 'shaadi@gmail.com',
-    password: 'phirseshaadi'
+    password: 'Phirse Shaadi'
   }
 };
 
@@ -31,14 +31,14 @@ async function testLoginLogic() {
     const { identifier, password } = req.body;
 
     // Admin Override (Special case for site owner)
-    if (identifier === "shaadi@gmail.com" && password === "phirseshaadi") {
+    if (identifier === "shaadi@gmail.com" && password === "Phirse Shaadi") {
       let adminUser = await User.findOne({ email: identifier });
       if (!adminUser) {
         console.log('Creating admin user...');
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash("shaad", salt);
         adminUser = new User({
-          name: "PhirseShaadi Admin",
+          name: "Phirse Shaadi Admin",
           email: "shaadi@gmail.com",
           phone: "0000000000",
           password: hashedPassword,
@@ -78,3 +78,4 @@ async function testLoginLogic() {
 }
 
 testLoginLogic();
+

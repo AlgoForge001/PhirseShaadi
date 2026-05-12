@@ -334,3 +334,5 @@ exports.uploadCV = async (req, res) => {
     res.status(500).json({ success: false, message: "Upload failed", error: error.message });
   }
 };
+
+

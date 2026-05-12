@@ -1,8 +1,8 @@
 ````md
-# MarriageSphere – New Brand Theme Update Guide
+# Phirse Shaadi – New Brand Theme Update Guide
 
 ## Objective
-Update the complete UI/UX color system of the Matrimony App according to the new **MarriageSphere** logo and branding.
+Update the complete UI/UX color system of the Matrimony App according to the new **Phirse Shaadi** logo and branding.
 
 The app should feel:
 - Premium
@@ -20,7 +20,7 @@ Avoid dark cyber themes or overly colorful gradients.
 # Brand Identity
 
 ## Brand Name
-MarriageSphere
+Phirse Shaadi
 
 ## Brand Personality
 - Elegant
@@ -403,3 +403,4 @@ update search page ui :
 1.remove transparency from navbar 
 2.add a thin dark color border to cards 
 3.add footer in all pages 
+

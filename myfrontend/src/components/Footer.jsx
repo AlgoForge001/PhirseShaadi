@@ -8,7 +8,7 @@ const Footer = () => (
       <div className="footer-column footer-brand-col">
         <div className="footer-brand">
           <Heart size={16} />
-          <h4>MarriageSphere</h4>
+          <h4>Phirse Shaadi</h4>
         </div>
         <p>
           Making matrimony accessible and authentic for everyone. Your
@@ -44,10 +44,11 @@ const Footer = () => (
       </div>
     </div>
     <div className="footer-bottom">
-      <p>&copy; 2026 MarriageSphere. All rights reserved.</p>
+      <p>&copy; 2026 Phirse Shaadi. All rights reserved.</p>
       <p className="footer-tagline">Made with ❤️ for meaningful connections</p>
     </div>
   </footer>
 );
 
 export default Footer;
+

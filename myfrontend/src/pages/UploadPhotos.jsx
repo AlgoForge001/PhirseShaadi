@@ -195,7 +195,7 @@ const UploadPhotos = () => {
         <div className="upload-left-content">
           <div className="upload-logo" onClick={() => navigate("/")}>
             <Heart size={22} fill="#fff" color="#fff" />
-            <span>MarriageSphere</span>
+            <span>Phirse Shaadi</span>
           </div>
 
           <div className="upload-left-icon">
@@ -362,3 +362,4 @@ const UploadPhotos = () => {
 };
 
 export default UploadPhotos;
+

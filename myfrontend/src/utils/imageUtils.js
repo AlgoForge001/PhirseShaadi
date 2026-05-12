@@ -14,8 +14,8 @@ export const normalizeImageUrl = (url) => {
       return url.replace('https://phirseshaadi.onrender.com', 'http://localhost:5000');
     }
     // Also handle rebranding domain if it was already updated in DB
-    if (isLocal && url.includes('marriagesphere.onrender.com')) {
-      return url.replace('https://marriagesphere.onrender.com', 'http://localhost:5000');
+    if (isLocal && url.includes('phirseshaadi.onrender.com')) {
+      return url.replace('https://phirseshaadi.onrender.com', 'http://localhost:5000');
     }
     return url;
   }
@@ -30,3 +30,6 @@ export const normalizeImageUrl = (url) => {
   // but usually it's just /uploads/...
   return `${backendUrl.replace(/\/api$/, '')}${cleanUrl}`;
 };
+
+
+

@@ -4,7 +4,7 @@ async function testLogin() {
   try {
     const response = await axios.post('http://localhost:5000/api/auth/login', {
       identifier: 'shaadi@gmail.com',
-      password: 'phirseshaadi'
+      password: 'Phirse Shaadi'
     });
     console.log('Response:', response.data);
   } catch (error) {
@@ -17,3 +17,4 @@ async function testLogin() {
 }
 
 testLogin();
+

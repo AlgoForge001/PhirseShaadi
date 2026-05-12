@@ -27,13 +27,13 @@ const LandingPage = () => {
   const faqItems = [
     {
       id: 1,
-      question: "What makes MarriageSphere different from other matrimonial sites?",
+      question: "What makes Phirse Shaadi different from other matrimonial sites?",
       answer:
-        "MarriageSphere combines intelligent matchmaking with verified profiles and strong privacy controls. Our smart filters help you find partners based on location, values, and lifestyle preferences. We focus on meaningful connections for both individuals and families, with a transparent and secure environment.",
+        "Phirse Shaadi combines intelligent matchmaking with verified profiles and strong privacy controls. Our smart filters help you find partners based on location, values, and lifestyle preferences. We focus on meaningful connections for both individuals and families, with a transparent and secure environment.",
     },
     {
       id: 2,
-      question: "How are profiles verified on MarriageSphere?",
+      question: "How are profiles verified on Phirse Shaadi?",
       answer:
         "All profiles go through a verification process to ensure authenticity. Members can add photos, complete their profile information, and optional background checks are available. This helps build trust and ensures you're connecting with genuine people.",
     },
@@ -51,7 +51,7 @@ const LandingPage = () => {
     },
     {
       id: 5,
-      question: "Is my personal information safe on MarriageSphere?",
+      question: "Is my personal information safe on Phirse Shaadi?",
       answer:
         "Your safety and privacy are our top priorities. We use secure encryption for all data, don't share information with third parties, and put you in control of what's visible. Messages are private, and you decide which contact details to share.",
     },
@@ -68,7 +68,7 @@ const LandingPage = () => {
       names: "Priya & Rahul",
       location: "Mumbai",
       quote:
-        "We never thought an online platform could lead to something so real. MarriageSphere helped us find each other effortlessly.",
+        "We never thought an online platform could lead to something so real. Phirse Shaadi helped us find each other effortlessly.",
       rating: 5,
     },
     {
@@ -96,12 +96,9 @@ const LandingPage = () => {
       {/* ── NAVBAR ── */}
       <header className="lp-nav">
         <div className="lp-wrap nav-inner">
-          <div className="brand" onClick={() => navigate("/")}>
-            <img
-              src="/Media.jpg"
-              alt="MarriageSphere"
-              className="lp-navbar-logo-img"
-            />
+          <div className="brand" onClick={() => navigate("/")} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <Heart size={24} fill="#D81B60" color="#D81B60" />
+            <span style={{ fontSize: '1.6rem', fontWeight: 'bold', color: '#6B3F69', fontFamily: '"DM Serif Display", serif' }}>Phirse Shaadi</span>
           </div>
 
           <nav className="nav-links">
@@ -292,7 +289,7 @@ const LandingPage = () => {
             <span className="section-title-underline" />
             <p className="section-subtitle">
               Thousands of couples have found their soulmate through
-              MarriageSphere. Here are some of their stories.
+              Phirse Shaadi. Here are some of their stories.
             </p>
           </div>
 
@@ -363,7 +360,7 @@ const LandingPage = () => {
             <h3>Ready to Start Your Journey?</h3>
             <p>
               Join thousands of happy members finding their perfect match on
-              MarriageSphere. Your love story starts here.
+              Phirse Shaadi. Your love story starts here.
             </p>
             <button
               className="btn solid cta-button"
@@ -390,7 +387,7 @@ const LandingPage = () => {
           <div className="footer-column footer-brand-col">
             <div className="footer-brand">
               <Heart size={16} />
-              <h4>MarriageSphere</h4>
+              <h4>Phirse Shaadi</h4>
             </div>
             <p>
               Making matrimony accessible and authentic for everyone. Your
@@ -426,7 +423,7 @@ const LandingPage = () => {
           </div>
         </div>
         <div className="footer-bottom">
-          <p>&copy; 2026 MarriageSphere. All rights reserved.</p>
+          <p>&copy; 2026 Phirse Shaadi. All rights reserved.</p>
           <p className="footer-tagline">Made with ❤️ for meaningful connections</p>
         </div>
       </footer>

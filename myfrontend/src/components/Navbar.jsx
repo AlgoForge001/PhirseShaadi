@@ -35,13 +35,9 @@ const Navbar = () => {
   return (
     <nav className={`navbar ${isScrolled ? "scrolled" : ""}`}>
       <div className="navbar-container">
-        {/* LOGO */}
         <div className="navbar-logo" onClick={() => navigate("/dashboard")}>
-          <img
-            src="/Media.jpg"
-            alt="MarriageSphere"
-            className="navbar-logo-img"
-          />
+          <Heart size={24} fill="#6B3F69" color="#6B3F69" className="navbar-logo-icon" />
+          <span className="navbar-logo-text">Phirse Shaadi</span>
         </div>
 
         {/* DESKTOP NAV */}

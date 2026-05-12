@@ -386,7 +386,7 @@ const EditProfile = () => {
           </button>
           <div className="ep-logo" onClick={() => navigate("/")}>
             <Heart size={20} fill="#6B3F69" color="#6B3F69" />
-            <span>MarriageSphere</span>
+            <span>Phirse Shaadi</span>
           </div>
         </div>
         <div className="ep-progress">
@@ -1020,3 +1020,4 @@ const EditProfile = () => {
 };
 
 export default EditProfile;
+

@@ -16,7 +16,7 @@ const About = () => {
       icon: <Target size={28} />,
       title: "Our Mission",
       shortDesc: "What we aim to achieve",
-      fullDesc: `Our mission at MarriageSphere is to revolutionize the matrimonial experience by creating a safe, transparent, and inclusive platform where genuine connections are fostered. We believe that finding a life partner should be a respectful and joyful journey. Through advanced technology and rigorous verification processes, we empower individuals and families to find their perfect match while maintaining the values and traditions that matter most to them.`
+      fullDesc: `Our mission at Phirse Shaadi is to revolutionize the matrimonial experience by creating a safe, transparent, and inclusive platform where genuine connections are fostered. We believe that finding a life partner should be a respectful and joyful journey. Through advanced technology and rigorous verification processes, we empower individuals and families to find their perfect match while maintaining the values and traditions that matter most to them.`
     },
     {
       id: 2,
@@ -30,14 +30,14 @@ const About = () => {
       icon: <Users size={28} />,
       title: "About Us",
       shortDesc: "Who we are",
-      fullDesc: `MarriageSphere is a modern matrimonial platform founded with the vision of transforming the way people find their life partners. Our team comprises experienced professionals from diverse backgrounds—engineers, developers, and matrimonial experts—all united by a single goal: to help people find genuine, lasting connections. Every feature on our platform is designed with our users in mind, ensuring that your journey to finding your perfect match is smooth, safe, and successful.`
+      fullDesc: `Phirse Shaadi is a modern matrimonial platform founded with the vision of transforming the way people find their life partners. Our team comprises experienced professionals from diverse backgrounds—engineers, developers, and matrimonial experts—all united by a single goal: to help people find genuine, lasting connections. Every feature on our platform is designed with our users in mind, ensuring that your journey to finding your perfect match is smooth, safe, and successful.`
     },
     {
       id: 4,
       icon: <Leaf size={28} />,
       title: "We Care",
       shortDesc: "Our commitment to you",
-      fullDesc: `At MarriageSphere, we care deeply about our community and the impact we make. We are committed to protecting your privacy and data security with industry-leading encryption and strict confidentiality policies. We actively work against fraud and deception by verifying every profile. Our customer support team is available to help you with any questions or concerns. Your trust is our most valuable asset, and we work tirelessly to earn and maintain it every single day.`
+      fullDesc: `At Phirse Shaadi, we care deeply about our community and the impact we make. We are committed to protecting your privacy and data security with industry-leading encryption and strict confidentiality policies. We actively work against fraud and deception by verifying every profile. Our customer support team is available to help you with any questions or concerns. Your trust is our most valuable asset, and we work tirelessly to earn and maintain it every single day.`
     }
   ];
 
@@ -58,7 +58,7 @@ const About = () => {
             </div>
 
             <h1 className="hero-main-title">
-              About <span className="hero-highlight">MarriageSphere</span>
+              About <span className="hero-highlight">Phirse Shaadi</span>
             </h1>
 
             <div className="hero-divider">
@@ -87,7 +87,7 @@ const About = () => {
           <div style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", marginBottom: "56px" }}>
             <span className="section-eyebrow">Our Story</span>
             <h2 className="section-title">
-              The Journey of <em>MarriageSphere</em>
+              The Journey of <em>Phirse Shaadi</em>
             </h2>
             <span className="section-title-underline" />
             <p className="section-subtitle">
@@ -170,7 +170,7 @@ const About = () => {
             <h3>Ready to Start Your Journey?</h3>
             <p>
               Join thousands of happy members finding their perfect match on
-              MarriageSphere. Your love story starts here.
+              Phirse Shaadi. Your love story starts here.
             </p>
             <button
               className="btn solid cta-button"
@@ -188,3 +188,4 @@ const About = () => {
 };
 
 export default About;
+

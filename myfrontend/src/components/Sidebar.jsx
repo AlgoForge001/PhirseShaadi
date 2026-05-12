@@ -52,10 +52,9 @@ const Sidebar = () => {
 
       {/* SIDEBAR */}
       <div className={`app-sidebar ${open ? "open" : ""}`}>
-        {/* LOGO */}
         <div className="app-sidebar-logo" onClick={() => { navigate("/dashboard"); setOpen(false); }}>
           <Heart size={20} fill="#6B3F69" color="#6B3F69" />
-          <span>MarriageSphere</span>
+          <span>Phirse Shaadi</span>
         </div>
 
         {/* LABEL */}

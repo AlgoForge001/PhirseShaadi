@@ -12,7 +12,7 @@ const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 exports.analyzeCompatibility = async (user, candidate) => {
   try {
     const prompt = `
-      You are an expert relationship counselor and matchmaker for a premium matrimonial site "PhirseShaadi".
+      You are an expert relationship counselor and matchmaker for a premium matrimonial site "Phirse Shaadi".
       Analyze the compatibility between User A and User B based on their profile data.
       
       User A:
@@ -92,3 +92,4 @@ exports.checkMessageSafety = async (text) => {
     return false; // Default to safe if AI fails to prevent blocking genuine messages
   }
 };
+

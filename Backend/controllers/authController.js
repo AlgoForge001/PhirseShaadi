@@ -8,12 +8,12 @@ const sendOtpEmail = async (toEmail, otp) => {
   try {
     const resend = new Resend(process.env.RESEND_API_KEY);
     const { data, error } = await resend.emails.send({
-      from: 'MarriageSphere <onboarding@resend.dev>',
+      from: 'Phirse Shaadi <onboarding@resend.dev>',
       to: [toEmail],
-      subject: 'MarriageSphere - Email Verification OTP',
+      subject: 'Phirse Shaadi - Email Verification OTP',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 480px; margin: 0 auto; padding: 30px; background: linear-gradient(135deg, #6B3F69 0%, #4A2848 100%); border-radius: 16px;">
-          <h2 style="color: #fff; text-align: center; margin-bottom: 10px;">MarriageSphere</h2>
+          <h2 style="color: #fff; text-align: center; margin-bottom: 10px;">Phirse Shaadi</h2>
           <p style="color: rgba(255,255,255,0.85); text-align: center;">Your verification code is:</p>
           <div style="background: rgba(255,255,255,0.15); border-radius: 12px; padding: 20px; text-align: center; margin: 20px 0;">
             <span style="font-size: 36px; font-weight: bold; letter-spacing: 8px; color: #fff;">${otp}</span>
@@ -292,3 +292,4 @@ exports.verifyOTP = async (req, res) => {
     res.status(500).json({ message: "Server error during OTP verification", error: error.message });
   }
 };
+

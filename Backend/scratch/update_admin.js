@@ -9,7 +9,7 @@ async function updateAdminPassword() {
     console.log('Connected to MongoDB');
     
     const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash("phirseshaadi", salt);
+    const hashedPassword = await bcrypt.hash("Phirse Shaadi", salt);
     
     const result = await User.updateOne(
       { email: 'shaadi@gmail.com' },
@@ -21,7 +21,7 @@ async function updateAdminPassword() {
     } else {
       console.log('Admin user not found, creating one...');
       const adminUser = new User({
-        name: "PhirseShaadi Admin",
+        name: "Phirse Shaadi Admin",
         email: "shaadi@gmail.com",
         phone: "0000000000",
         password: hashedPassword,
@@ -40,3 +40,4 @@ async function updateAdminPassword() {
 }
 
 updateAdminPassword();
+

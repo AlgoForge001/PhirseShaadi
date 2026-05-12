@@ -10,7 +10,7 @@ const Chatbot = () => {
   const [messages, setMessages] = useState([
     { 
       role: 'assistant', 
-      content: 'Hi! I am your MarriageSphere AI Assistant. I can help you find matches, understand how the platform works, or answer any other questions you have. How can I help you today? 💕' 
+      content: 'Hi! I am your Phirse Shaadi AI Assistant. I can help you find matches, understand how the platform works, or answer any other questions you have. How can I help you today? 💕' 
     }
   ]);
 
@@ -101,7 +101,7 @@ const Chatbot = () => {
                 <Bot size={20} />
               </div>
               <div className="bot-name">
-                <h4>MarriageSphere AI</h4>
+                <h4>Phirse Shaadi AI</h4>
                 <span className="status">Online</span>
               </div>
             </div>
@@ -163,3 +163,6 @@ const Chatbot = () => {
 };
 
 export default Chatbot;
+
+
+

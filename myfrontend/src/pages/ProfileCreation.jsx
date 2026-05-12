@@ -165,7 +165,7 @@ const ProfileCreation = () => {
       <div className="pc-header">
         <div className="pc-logo" onClick={() => navigate("/")}>
           <Heart size={20} fill="#6B3F69" color="#6B3F69" />
-          <span>MarriageSphere</span>
+          <span>Phirse Shaadi</span>
         </div>
         <div className="pc-progress">
           <div className="pc-progress-bar">
@@ -720,3 +720,4 @@ const ProfileCreation = () => {
 };
 
 export default ProfileCreation;
+

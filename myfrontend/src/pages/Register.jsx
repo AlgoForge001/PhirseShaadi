@@ -226,10 +226,10 @@ const Register = () => {
         <div className="reg-left-content">
           <div className="reg-logo" onClick={() => navigate("/")}>
             <Heart size={26} fill="#fff" color="#fff" />
-            <span>MarriageSphere</span>
+            <span>Phirse Shaadi</span>
           </div>
           <h2>Find Your Perfect Life Partner</h2>
-          <p>Join thousands of happy couples who found their soulmate on PhirseShaadi. Your journey starts here.</p>
+          <p>Join thousands of happy couples who found their soulmate on Phirse Shaadi. Your journey starts here.</p>
           
           <div className="reg-trust-points">
             <div className="trust-point">
@@ -837,3 +837,5 @@ const Register = () => {
 };
 
 export default Register;
+
+

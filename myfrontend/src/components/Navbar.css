@@ -39,26 +39,36 @@
   z-index: 1001;
 }
 
-/* ── LOGO IMAGE ── */
-.navbar-logo-img {
-  display: block;
-  height: 64px;
-  width: auto;
-  max-width: 240px;
-  object-fit: contain;
+.navbar-logo-icon {
   transition: transform 0.3s ease;
+  flex-shrink: 0;
 }
 
-.navbar.scrolled {
-  height: 70px;
+.navbar-logo-text {
+  font-family: "DM Serif Display", serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #6B3F69;
+  letter-spacing: -0.01em;
+  transition: all 0.3s ease;
+  white-space: nowrap;
 }
 
-.navbar.scrolled .navbar-logo-img {
-  height: 54px;
+.navbar.scrolled .navbar-logo-text {
+  font-size: 1.45rem;
 }
 
-.navbar-logo:hover .navbar-logo-img {
-  transform: scale(1.02);
+.navbar.scrolled .navbar-logo-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.navbar-logo:hover .navbar-logo-text {
+  color: var(--primary-pink);
+}
+
+.navbar-logo:hover .navbar-logo-icon {
+  transform: scale(1.1) rotate(5deg);
 }
 
 .navbar-links {
