@@ -10,7 +10,6 @@ import "./AdminDashboard.css"; // Reuse common styles or specific ones
 const AdminUsers = () => {
   const navigate = useNavigate();
   const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState(null);
   const [loadingStats, setLoadingStats] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -44,14 +43,11 @@ const AdminUsers = () => {
 
   const fetchUsers = async () => {
     try {
-      setLoading(true);
       const res = await api.get("/admin/users");
       setUsers(res.data.data);
     } catch (err) {
       console.error("Failed to fetch users", err);
       if (err.response?.status === 403) navigate("/login");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -66,7 +62,7 @@ const AdminUsers = () => {
     try {
       await api.delete(`/admin/users/${id}`);
       setUsers(users.filter(u => u._id !== id));
-    } catch (err) {
+    } catch (_err) {
       alert("Failed to delete user");
     }
   };
@@ -78,7 +74,7 @@ const AdminUsers = () => {
       setUsers(users.map(u => u._id === id ? { ...u, isVerified: true } : u));
       alert("Profile verified");
       fetchStats();
-    } catch (err) {
+    } catch (_err) {
       alert("Failed to verify user");
     }
   };
@@ -89,7 +85,7 @@ const AdminUsers = () => {
       setUsers(users.map(u => u._id === id ? { ...u, isVerified: false } : u));
       alert("Verification removed");
       fetchStats();
-    } catch (err) {
+    } catch (_err) {
       alert("Failed to unverify user");
     }
   };
@@ -105,7 +101,7 @@ const AdminUsers = () => {
       setUsers(users.map(u => u._id === editUser._id ? editUser : u));
       setShowEditModal(false);
       alert("User updated successfully");
-    } catch (err) {
+    } catch (_err) {
       alert("Update failed");
     }
   };
@@ -125,7 +121,7 @@ const AdminUsers = () => {
       setUserToBan(null);
       alert("User banned");
       fetchStats();
-    } catch (err) {
+    } catch (_err) {
       alert("Failed to ban user");
     } finally {
       setBanning(false);
@@ -139,7 +135,7 @@ const AdminUsers = () => {
       setUsers(users.map(u => u._id === id ? { ...u, isActive: true, banReason: null } : u));
       alert("User unbanned");
       fetchStats();
-    } catch (err) {
+    } catch (_err) {
       alert("Failed to unban user");
     } finally {
       setUnbanningId(null);

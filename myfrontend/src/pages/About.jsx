@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Heart, Target, Users, Leaf, Sparkles, ArrowRight, ShieldCheck } from "lucide-react";
-import couplesImg from "../couples.jpg";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import "./About.css";

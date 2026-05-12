@@ -5,6 +5,7 @@ import {
   Users, ChevronRight
 } from "lucide-react";
 import api from "../utils/api";
+import Footer from "./Footer";
 import "./FamilyMembers.css";
 
 
@@ -228,10 +229,9 @@ const FamilyMembers = () => {
           initialData={editingMember}
         />
       )}
+
+      <Footer />
     </div>
   );
-  <Footer />
 };
-
-import Footer from "./Footer";
 export default FamilyMembers;

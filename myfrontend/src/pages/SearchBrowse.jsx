@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   Search, Filter, MapPin,
   ChevronDown, ChevronUp, X,
-  SlidersHorizontal
+  SlidersHorizontal, ChevronLeft,
+  Users, Sparkles, Zap, Globe
 } from "lucide-react";
 import api from "../utils/api";
 
@@ -179,6 +180,7 @@ const FilterPanel = ({ filters, setFilters, onApply, onClose }) => {
 // MAIN SEARCH PAGE
 // ─────────────────────────────────────────────
 const SearchBrowse = () => {
+  const navigate = useNavigate();
   const location = useLocation();
   const [searchQuery, setSearchQuery]   = useState("");
   const [showFilter, setShowFilter]     = useState(false);
@@ -196,10 +198,10 @@ const SearchBrowse = () => {
   });
 
   const tabs = [
-    { key: "all",         label: "All Members"   },
-    { key: "sameCity",    label: "Same City Match"},
-    { key: "smartMatch",  label: "AI Smart Match" },
-    { key: "new",         label: "New Joins"      },
+    { key: "all",         label: "All Members",   icon: <Users size={16} /> },
+    { key: "sameCity",    label: "Same City Match", icon: <MapPin size={16} /> },
+    { key: "smartMatch",  label: "AI Smart Match",  icon: <Sparkles size={16} /> },
+    { key: "new",         label: "New Joins",       icon: <Zap size={16} /> },
   ];
 
   // ── FETCH PROFILES ──────────────────────────
@@ -313,8 +315,11 @@ const SearchBrowse = () => {
       <div className="search-container-main">
         <div className="search-content-area">
 
-          {/* SEARCH BAR */}
+          {/* BACK BUTTON & SEARCH BAR */}
           <div className="search-bar-wrap">
+            <button className="back-nav-btn" onClick={() => navigate(-1)} title="Go Back">
+              <ChevronLeft size={24} />
+            </button>
             <div className="search-bar">
               <Search size={18} className="search-icon" />
               <input
@@ -366,7 +371,8 @@ const SearchBrowse = () => {
                 className={`tab-btn ${activeTab === t.key ? "active" : ""}`}
                 onClick={() => handleTabChange(t.key)}
               >
-                {t.label}
+                {t.icon}
+                <span>{t.label}</span>
               </button>
             ))}
           </div>

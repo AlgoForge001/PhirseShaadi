@@ -274,7 +274,7 @@ const Dashboard = () => {
               <span className="premium-tag">USP Exclusive</span>
             </div>
             <p className="section-subtitle">
-              Our AI has analyzed your bio and preferences to find these high-potential connections.
+              Intelligent matching powered by your personality. We've analyzed your bio and preferences to discover these highly compatible connections.
             </p>
             <div className="matches-grid-premium">
               {smartMatches.map(profile => (
@@ -309,12 +309,16 @@ const Dashboard = () => {
         {/* PREMIUM BANNER */}
         {!userData.isPremium && (
           <section className="premium-banner-minimal">
-            <div className="banner-icon"><Star size={32} fill="#FFD700" color="#FFD700" /></div>
-            <div className="banner-text">
-              <h3>Unlock Premium Connections</h3>
-              <p>Get unlimited messages, see who visited your profile, and more.</p>
+            <div className="banner-content-wrap">
+              <div className="banner-icon-circle">
+                <Star size={32} fill="#FFD700" color="#FFD700" />
+              </div>
+              <div className="banner-text">
+                <h3>Unlock Premium Connections</h3>
+                <p>Get unlimited messages, see who visited your profile, and exclusive AI insights.</p>
+              </div>
             </div>
-            <button className="upgrade-btn">Explore Plans</button>
+            <button className="upgrade-btn">Explore Premium Plans</button>
           </section>
         )}
       </main>

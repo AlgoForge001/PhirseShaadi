@@ -31,10 +31,8 @@ const ProfileView = () => {
 
   // States
   const [interestStatus, setInterestStatus] = useState({ sent: false, received: false, status: null });
-  const [shortlisted, setShortlisted] = useState(false);
   const [interestLoading, setInterestLoading] = useState(false);
   const [_shortlistLoading, _setShortlistLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState("about");
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -45,7 +43,6 @@ const ProfileView = () => {
         if (res.data.interestStatus) {
             setInterestStatus(res.data.interestStatus);
         }
-        setShortlisted(res.data.profile.isShortlisted || false);
       } catch (err) {
         console.error("Profile view failed:", err);
         setError("User profile not found.");
@@ -85,21 +82,6 @@ const ProfileView = () => {
       setInterestStatus(prev => ({ ...prev, status }));
     } catch (err) { console.error(err); }
     finally { setInterestLoading(false); }
-  };
-
-  const renderDetail = (icon, label, value) => (
-    <div className="profile-detail-card">
-      <div className="detail-icon-box">{icon}</div>
-      <div className="detail-info">
-        <span className="detail-label">{label}</span>
-        <span className="detail-value">{value || "Not Specified"}</span>
-      </div>
-    </div>
-  );
-
-  const formatLocation = (city, state) => {
-    if (city && state) return `${city}, ${state}`;
-    return city || state || "Location hidden for privacy";
   };
 
   const Section = ({ title, children }) => (
